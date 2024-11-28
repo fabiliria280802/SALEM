@@ -1,0 +1,98 @@
+.loginPage {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 75vh;
+	padding: 20px;
+}
+
+.buttons {
+	background-color: black;
+	border-color: black;
+	border-radius: 10px;
+	height: 38px;
+	width: 401px;
+}
+
+.contentTitle {
+	font-size: 1.5rem;
+	margin-bottom: -13px;
+	font-weight: bold;
+	text-align: left;
+	color: #333;
+}
+
+.contentText {
+	font-size: 1.9rem;
+	margin-bottom: 20px;
+	text-align: left;
+	margin-left: -45px;
+	font-family: Arial;
+	color: #555;
+}
+
+.microsoftButton {
+	width: 100%;
+	max-width: 400px;
+	font-weight: 18px;
+	background-color: white;
+	color: #333;
+	margin-bottom: 20px;
+	border-radius: 8px;
+	border: 1px solid #ddd;
+}
+
+.contentInfo {
+	font-size: 0.9rem;
+	color: #888;
+	text-align: center;
+	margin-bottom: 20px;
+	box-shadow: 0 1px solid #555;
+}
+
+input {
+	width: 100%;
+	padding: 10px 0;
+	border-radius: 8px;
+	border: 1px solid #ddd;
+	font-size: 1rem;
+}
+
+.contentFields {
+	width: 58vh;
+}
+
+.contentFields,
+.contentFieldsLabel {
+	padding: 10px 0;
+	font-size: 16px !important;
+}
+
+.passwordContainer {
+	margin-bottom: 1rem;
+}
+
+.passwordInput {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.passwordInput input {
+	flex: 1;
+}
+
+.emailInput input,
+.passwordInput input {
+	padding: 0.5rem;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.passwordInput button {
+	background-color: black;
+	border: none;
+	cursor: pointer;
+	font-size: 1.2rem;
+}

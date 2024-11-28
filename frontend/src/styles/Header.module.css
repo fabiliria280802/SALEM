@@ -1,0 +1,49 @@
+.pageTitle {
+	margin: 0 10px 0 10px;
+}
+
+.pageContainerTitle {
+	display: flex;
+	align-items: center;
+	background-color: #ffffff;
+	border: none;
+	position: relative;
+	box-shadow: -2px 0 0 0 #cccccc;
+}
+.buttons {
+	background-color: black;
+	border-color: black;
+	border-radius: 10px;
+	height: 38px;
+	width: 130px;
+}
+
+.header {
+	background-color: #ffffff;
+	border: none;
+	position: relative;
+	height: 72px;
+}
+
+.headerShadow {
+	box-shadow: 0 0 0 2px #cccccc;
+}
+
+.headerWithImage {
+	background-image: url('../assets/margin.png');
+	background-repeat: no-repeat;
+	background-position: bottom;
+	background-size: contain;
+}
+
+.menuItem {
+	font-size: 18px;
+	font-weight: normal;
+	padding: 10px;
+}
+
+@media (max-width: 768px) {
+	.header {
+		justify-content: space-between;
+	}
+}

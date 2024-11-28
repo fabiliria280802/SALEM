@@ -1,0 +1,156 @@
+{
+	"Invoice": {
+		"fields": {
+			"invoice_number": {
+				"label": "Número de factura",
+				"regex": "(?i)\\b(?:número de factura|factura no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*([\\d\\-\\.\\s]+)\\b"
+			},
+			"provider_ruc": {
+				"label": "RUC",
+				"regex": "(?i)\\b(?:ruc|r\\.u\\.c\\.|ruc / ci)\\s*[:\\-]?\\s*(\\d{10,13})\\b"
+			},
+			"provider_name": {
+				"label": "Nombre del proveedor",
+				"regex": "(?i)\\b(?:nombre del proveedor|proveedor|razón social)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"issue_date": {
+				"label": "Fecha de emisión",
+				"regex": "(?i)\\b(?:fecha de emisión|fecha|emisión)\\s*[:\\-]?\\s*(\\d{2}[/-]\\d{2}[/-]\\d{4})\\b"
+			},
+			"total": {
+				"label": "Total",
+				"regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)\\s*\\$?\\b"
+			},
+			"subtotal": {
+				"label": "Subtotal",
+				"regex": "(?i)\\b(?:subtotal(?:\\s*\\d+%|)|subtotal\\s*neto)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)\\s*\\$?\\b"
+			},
+			"iva": {
+				"label": "IVA",
+				"regex": "(?i)\\b(?:iva\\s*\\d+%|impuesto)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)\\s*\\$?\\b"
+			},
+			"client_name": {
+				"label": "Cliente",
+				"regex": "(?i)\\b(?:cliente|nombre cliente|consumidor final|razón social / nombres)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"client_id": {
+				"label": "ID del Cliente",
+				"regex": "(?i)\\b(?:cédula|identificación|id cliente|ruc / ci)\\s*[:\\-]?\\s*(\\d+)"
+			},
+			"logo": {
+				"label": "Logo",
+				"type": "image"
+			}
+		}
+	},
+	"HES": {
+		"fields": {
+			"title": {
+				"label": "Título",
+				"regex": "(?i)^ACTA DE ENTREGA DE SERVICIO$"
+			},
+			"receiving_company": {
+				"label": "Empresa receptora",
+				"regex": "(?i)ENAP SIPETROL S\\.A\\."
+			},
+			"order_number": {
+				"label": "Orden de Servicio",
+				"regex": "(?i)\\bORDEN DE SERVICIO\\s*[:\\-]?\\s*Nº\\s*\\d{5}\\b"
+			},
+			"start_date": {
+				"label": "Fechas de Inicio",
+				"regex": "(?i)Fecha de Inicio\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4}).*Fecha de Término\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+			},
+			"end_date": {
+				"label": "Fechas de Término",
+				"regex": "(?i)Fecha de Inicio\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4}).*Fecha de Término\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+			},
+			"service_location": {
+				"label": "Ubicación del servicio",
+				"regex": "(?i)Ubicación\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"service_description": {
+				"label": "Descripción del Servicio",
+				"regex": "(?i)Descripción del Servicio\\s*[:\\-]?\\s*(.*)"
+			},
+			"observations": {
+				"label": "Observaciones",
+				"regex": "(?i)Observaciones\\s*[:\\-]?\\s*(.*)"
+			},
+			"signatures": {
+				"label": "Firmas",
+				"type": "array",
+				"structure": [
+					{
+						"first_name": {
+							"label": "Primer Nombre",
+							"regex": "(?i)^[A-Z][a-z]+$"
+						},
+						"title_and_full_name": {
+							"label": "Título y Nombre Completo",
+							"regex": "(?i)^(Ing\\.|Lic\\.)\\s+[A-Z][a-z]+\\s+[A-Z][a-z]+$"
+						},
+						"role": {
+							"label": "Cargo",
+							"regex": "(?i)^Supervisor de Mantenimiento|Gerente de Operaciones|Inspector Técnico|Supervisor de Planta|Jefe de Seguridad Industrial|Coordinador de Proyectos|Especialista en Mantenimiento|Ingeniero de Planta|Supervisor de Calidad|Responsable de Logística|Representante del Proveedor|Supervisor de Campo|Técnico Especializado|Coordinador de Servicios|Jefe de Operaciones|Ingeniero de Soporte Técnico|Especialista en Equipos|Asesor Técnico|Técnico de Mantenimiento|Coordinador de Calidad$"
+						}
+					}
+				]
+			}
+		}
+	},
+	"MIGO": {
+		"fields": {
+			"title": {
+				"label": "Título",
+				"regex": "(?i)^NOTA DE ENTREGA$"
+			},
+			"migo_number": {
+				"label": "Número de MIGO",
+				"regex": "(?i)^Número\\s*[:\\-]?\\s*(MIGO\\d{3,}-\\w+)$"
+			},
+			"date": {
+				"label": "Fecha",
+				"regex": "(?i)^Fecha\\s*[:\\-]?\\s*(\\d{4}[/-]\\d{2}[/-]\\d{2})$"
+			},
+			"client": {
+				"label": "Cliente",
+				"regex": "(?i)^Cliente\\s*[:\\-]?\\s*(.*)$"
+			},
+			"address": {
+				"label": "Domicilio",
+				"regex": "(?i)^Domicilio\\s*[:\\-]?\\s*(.*)$"
+			},
+			"item_details": {
+				"label": "Detalles de Ítems",
+				"type": "table",
+                "columns": {
+						"quantity": {
+							"label": "Cantidad",
+							"regex": "(?i)^\\d+$"
+						},
+						"description": {
+							"label": "Concepto/Referencia",
+							"regex": "(?i)^\\w.*$"
+						},
+						"unit_price": {
+							"label": "Precio Unitario",
+							"regex": "(?i)^\\d+(\\.\\d{1,2})?$"
+						},
+						"total_price": {
+							"label": "Precio Total",
+							"regex": "(?i)^\\d+(\\.\\d{1,2})?$"
+						}
+					}
+			},
+            "client_signature": {
+				"label": "Conforme Cliente",
+				"regex": "(?i)^Conforme Cliente\\s*[:\\-]?\\s*(\\w+\\s+\\w+)$"
+			},
+			"observations": {
+				"label": "Observaciones",
+				"regex": "(?i)^Observaciones\\s*[:\\-]?\\s*(.*)$"
+			}
+		}
+	}
+}

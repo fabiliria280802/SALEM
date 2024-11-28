@@ -1,0 +1,15 @@
+# dependencies
+/node_modules
+
+# misc
+.env
+
+/data
+
+best_model_fold_1.pth
+model_fold_1.pth
+model_fold_2.pth
+model_fold_3.pth
+model_fold_4.pth
+model_fold_5.pth
+

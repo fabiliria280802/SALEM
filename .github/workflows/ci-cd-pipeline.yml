@@ -1,0 +1,260 @@
+# Description: setup backend & frontend, init unit test & integration test
+# Last Update: 30-08-2024
+# By: Fabi Liria
+# version: 1.6
+# TODO: add e2e tests, Jmeter & Locust
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - Development
+      - QA
+      - Production
+  pull_request:
+    branches:
+      - Development
+      - QA
+      - Production
+
+jobs:
+  check-package-json:
+    runs-on: ubuntu-latest
+    outputs:
+      has_package_json_frontend: ${{ steps.check_frontend.outputs.has_package_json }}
+      has_package_json_backend: ${{ steps.check_backend.outputs.has_package_json }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for package.json in frontend
+        id: check_frontend
+        run: |
+          if [ -f frontend/package.json ]; then
+            echo "::set-output name=has_package_json::true"
+          else
+            echo "::set-output name=has_package_json::false"
+          fi
+
+      - name: Check for package.json in backend
+        id: check_backend
+        run: |
+          if [ -f backend/package.json ]; then
+            echo "::set-output name=has_package_json::true"
+          else
+            echo "::set-output name=has_package_json::false"
+          fi
+
+  setup-frontend:
+    runs-on: ubuntu-latest
+    needs: check-package-json
+    if: ${{ needs.check-package-json.outputs.has_package_json_frontend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js for frontend
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm install
+
+  setup-backend:
+    runs-on: ubuntu-latest
+    needs: check-package-json
+    if: ${{ needs.check-package-json.outputs.has_package_json_backend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js for backend
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+
+  prettier-frontend:
+    runs-on: ubuntu-latest
+    needs: setup-frontend
+    if: ${{ needs.check-package-json.outputs.has_package_json_frontend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run prettier for frontend
+        run: |
+          cd frontend
+          npx prettier --write .
+
+  prettier-backend:
+    runs-on: ubuntu-latest
+    needs: setup-backend
+    if: ${{ needs.check-package-json.outputs.has_package_json_backend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run prettier for backend
+        run: |
+          cd backend
+          npx prettier --write .
+
+  lint-frontend:
+    runs-on: ubuntu-latest
+    needs: setup-frontend
+    if: ${{ needs.check-package-json.outputs.has_package_json_frontend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run linter for frontend
+        run: |
+          cd frontend
+          npm install eslint@8.57.0 eslint-plugin-react@7.35.0
+          npx eslint --fix .
+
+  lint-backend:
+    runs-on: ubuntu-latest
+    needs: setup-backend
+    if: ${{ needs.check-package-json.outputs.has_package_json_backend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run linter for backend
+        run: |
+          cd backend
+          npm install eslint@8.57.0
+          npx eslint --fix .
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    needs: setup-frontend
+    if: ${{ needs.check-package-json.outputs.has_package_json_frontend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run tests for frontend
+        run: |
+          cd frontend
+          npm i jest-environment-jsdom@29.7.0
+          npx jest
+
+  test-backend:
+    runs-on: ubuntu-latest
+    needs: setup-backend
+    if: ${{ needs.check-package-json.outputs.has_package_json_backend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run tests for backend
+        run: |
+          cd backend
+          npm i jest-environment-jsdom@29.7.0 node-fetch@2.7.0
+          npx jest
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    needs: [setup-frontend, lint-frontend, test-frontend, prettier-frontend]
+    if: ${{ needs.check-package-json.outputs.has_package_json_frontend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build the frontend application
+        run: |
+          cd frontend
+          npm i react-scripts@5.0.1
+          npm run build
+
+      - name: Upload build artifacts for frontend
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build-artifacts
+          path: frontend/build/
+
+  build-backend:
+    runs-on: ubuntu-latest
+    needs: [setup-backend, lint-backend, test-backend, prettier-backend]
+    if: ${{ needs.check-package-json.outputs.has_package_json_backend == 'true' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build the backend application
+        run: |
+          cd backend
+          npm i react-scripts@5.0.1
+          npm run build
+
+      - name: Upload build artifacts for backend
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-build-artifacts
+          path: backend/build/
+
+  sonarcloud:
+    runs-on: ubuntu-latest
+    environment: secrets
+    needs: [setup-frontend, lint-frontend, test-frontend, prettier-frontend, build-frontend, setup-backend, lint-backend, test-backend, prettier-backend, build-backend]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd frontend && npm install
+          cd ../backend && npm install
+
+      - name: Set branch name
+        run: echo "SONAR_BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+
+      - name: Run SonarCloud analysis
+        uses: SonarSource/sonarcloud-github-action@v2.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_BRANCH: ${{ env.SONAR_BRANCH }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-frontend
+    if: github.ref == 'refs/heads/Production'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: frontend/build
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run CodeQL analysis
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3

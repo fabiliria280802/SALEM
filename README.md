@@ -1,20 +1,19 @@
-# project SALEM
-A responsive web application for automatic document review and validation using the MVC (Model-View-Controller) architecture, streamlining the validation process. This application has components of Google API Vision, SharePoint, Power Automate and Power Apps and AI.
+# Project SALEM
+Project SALEM is an advanced web application designed for the automatic review and validation of documents using cutting-edge machine learning techniques. The application leverages Convolutional Neural Networks (CNNs) and Faster R-CNN for object detection and classification tasks, ensuring high accuracy in document processing. By utilizing these algorithms, SALEM can efficiently extract and validate key information from various document types, such as invoices and service delivery notes.
 
-# By:
-Fabiana Liria & Mateo Ávila
+The choice of CNNs, specifically ResNet50, allows the application to benefit from a deep learning model pre-trained on a vast dataset, providing robust feature extraction capabilities. Faster R-CNN is employed for its superior performance in object detection, enabling precise identification of document fields. Additionally, the application incorporates techniques like data augmentation and early stopping to enhance model generalization and prevent overfitting.
+
+SALEM's architecture is built on the MVC (Model-View-Controller) pattern, ensuring a clean separation of concerns and facilitating maintainability. The integration of Tesseract OCR further enhances the system's ability to extract textual information from images, making it a comprehensive solution for document validation.
+
+By: Fabiana Liria & Mateo Ávila
 
 ## Prerequisites
 - Python 3.8
 - Node.js
 - npm (Node Package Manager)
-- SharePoint
-- Power Automate
-- Power Apps
-- OCR
+- Account in MongoDB Atlas or you must have install MongoDB on your machine
+- Tesseract OCR
 - Azure Active Directory (AAD)
-
-# Project SALEM
 
 ## Installation
 
@@ -74,13 +73,13 @@ Fabiana Liria & Mateo Ávila
 The project uses a custom workflow for transitioning between branches through pull requests.
 
 - **Transition from Development to QA:**
-  To transition from the `development` branch to the `QA` branch, you must write the following in your commit message:
+  To transition from `development` branch to the `qa` branch, you must write the following in your commit message:
     ```bash
     QA transition: YOUR_MESSAGE_CONTENT
     ```
 
 - **Transition from QA to Production:**
-To transition from the `QA` branch to the `production` branch, write the following in your commit message:
+To transition from `qa` branch to the `main` branch, write the following in your commit message:
     ```bash
     Production transition: YOUR_MESSAGE_CONTENT
     ```

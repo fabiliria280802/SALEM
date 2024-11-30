@@ -5,23 +5,9 @@
 .env
 
 # data
-/data
+data/docs/
+data/practice/
 
 # IA related files
-controllers/IA
-model_fold_1.pth
-model_fold_2.pth
-model_fold_3.pth
-model_fold_4.pth
-model_fold_5.pth
-
-result_fold_1.json
-result_fold_2.json
-result_fold_3.json
-result_fold_4.json
-result_fold_5.json
-
-training_results_hes.json
-training_results_invoice.json
-training_results_migo.json
+learning/
 

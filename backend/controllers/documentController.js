@@ -173,91 +173,31 @@ async function processInvoice(result, document, user) {
 	const { extracted_data } = result;
 
 	const userByRuc = await User.findOne({ ruc: document.ruc });
-    if (!userByRuc) {
-        console.warn(`No se encontró usuario con RUC: ${document.ruc}`);
-    }
+	if (!userByRuc) {
+		console.warn(`No se encontró usuario con RUC: ${document.ruc}`);
+	}
 
-    const invoiceData = {
-        document_id: document._id,
-        user_id: userByRuc ? userByRuc._id : null
-    };
+	const invoiceData = {
+		document_id: document._id,
+		user_id: userByRuc ? userByRuc._id : null,
+	};
 
 	// Solo agregar los campos que existen en extracted_data
-	if (extracted_data.invoice_number) invoiceData.invoice_number = extracted_data.invoice_number;
-	if (extracted_data.provider_ruc) invoiceData.provider_ruc = extracted_data.provider_ruc;
-	if (extracted_data.provider_name) invoiceData.provider_name = extracted_data.provider_name;
-	if (extracted_data.issue_date) invoiceData.issue_date = new Date(extracted_data.issue_date);
-	if (extracted_data.total) invoiceData.total = parseFloat(extracted_data.total);
-	if (extracted_data.subtotal) invoiceData.subtotal = parseFloat(extracted_data.subtotal);
+	if (extracted_data.invoice_number)
+		invoiceData.invoice_number = extracted_data.invoice_number;
+	if (extracted_data.provider_ruc)
+		invoiceData.provider_ruc = extracted_data.provider_ruc;
+	if (extracted_data.provider_name)
+		invoiceData.provider_name = extracted_data.provider_name;
+	if (extracted_data.issue_date)
+		invoiceData.issue_date = new Date(extracted_data.issue_date);
+	if (extracted_data.total)
+		invoiceData.total = parseFloat(extracted_data.total);
+	if (extracted_data.subtotal)
+		invoiceData.subtotal = parseFloat(extracted_data.subtotal);
 	if (extracted_data.iva) invoiceData.iva = parseFloat(extracted_data.iva);
 
 	const invoice = new Invoice(invoiceData);
 	return await invoice.save();
 }
 
-async function processHES(result, document, user) {
-	const { extracted_data } = result;
-
-	const userByRuc = await User.findOne({ ruc: document.ruc });
-    if (!userByRuc) {
-        console.warn(`No se encontró usuario con RUC: ${document.ruc}`);
-    }
-
-    const hesData = {
-        document_id: document._id,
-        user_id: userByRuc ? userByRuc._id : null
-    };
-
-	// Solo agregar los campos que existen en extracted_data
-	if (extracted_data.title) hesData.title = extracted_data.title;
-	if (extracted_data.receiving_company) hesData.receiving_company = extracted_data.receiving_company;
-	if (extracted_data.order_number) hesData.order_number = extracted_data.order_number;
-	if (extracted_data.start_date) hesData.start_date = new Date(extracted_data.start_date);
-	if (extracted_data.end_date) hesData.end_date = new Date(extracted_data.end_date);
-	if (extracted_data.service_location) hesData.service_location = extracted_data.service_location;
-	if (extracted_data.service_description) hesData.service_description = extracted_data.service_description;
-	if (extracted_data.observations) hesData.observations = extracted_data.observations;
-	if (extracted_data.signatures && Array.isArray(extracted_data.signatures)) {
-		hesData.signatures = extracted_data.signatures;
-	}
-
-	const hes = new HES(hesData);
-	return await hes.save();
-}
-
-async function processMIGO(result, document, user) {
-	const { extracted_data } = result;
-
-	const userByRuc = await User.findOne({ ruc: document.ruc });
-    if (!userByRuc) {
-        console.warn(`No se encontró usuario con RUC: ${document.ruc}`);
-    }
-
-    const migoData = {
-        document_id: document._id,
-        user_id: userByRuc ? userByRuc._id : null
-    };
-
-
-	// Solo agregar los campos que existen en extracted_data
-	if (extracted_data.title) migoData.title = extracted_data.title;
-	if (extracted_data.migo_number) migoData.migo_number = extracted_data.migo_number;
-	if (extracted_data.date) migoData.date = new Date(extracted_data.date);
-	if (extracted_data.client) migoData.client = extracted_data.client;
-	if (extracted_data.address) migoData.address = extracted_data.address;
-	if (extracted_data.client_signature) migoData.client_signature = extracted_data.client_signature;
-	if (extracted_data.observations) migoData.observations = extracted_data.observations;
-
-	// Procesar item_details solo si existen y son válidos
-	if (extracted_data.item_details && Array.isArray(extracted_data.item_details)) {
-		migoData.item_details = extracted_data.item_details.map(item => ({
-			quantity: item.quantity ? parseFloat(item.quantity) : undefined,
-			description: item.description,
-			unit_price: item.unit_price ? parseFloat(item.unit_price) : undefined,
-			total_price: item.total_price ? parseFloat(item.total_price) : undefined
-		}));
-	}
-
-	const migo = new MIGO(migoData);
-	return await migo.save();
-}

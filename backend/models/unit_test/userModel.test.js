@@ -71,7 +71,7 @@ describe('User Model Test Suite', () => {
 		it('debería fallar con un nombre que contiene números', async () => {
 			const userWithInvalidName = new User({
 				...validUserData,
-				name: 'Carlos123'
+				name: 'Carlos123',
 			});
 
 			let err;
@@ -82,13 +82,15 @@ describe('User Model Test Suite', () => {
 			}
 
 			expect(err).toBeDefined();
-			expect(err.errors.name.message).toBe('El nombre solo debe contener letras y espacios.');
+			expect(err.errors.name.message).toBe(
+				'El nombre solo debe contener letras y espacios.',
+			);
 		});
 
 		it('debería fallar con un número de teléfono inválido', async () => {
 			const userWithInvalidPhone = new User({
 				...validUserData,
-				phone: '123'
+				phone: '123',
 			});
 
 			let err;
@@ -99,13 +101,15 @@ describe('User Model Test Suite', () => {
 			}
 
 			expect(err).toBeDefined();
-			expect(err.errors.phone.message).toBe('El número de teléfono debe tener exactamente 10 dígitos.');
+			expect(err.errors.phone.message).toBe(
+				'El número de teléfono debe tener exactamente 10 dígitos.',
+			);
 		});
 
 		it('debería fallar con un nombre de empresa que contiene caracteres especiales', async () => {
 			const userWithInvalidCompany = new User({
 				...validUserData,
-				company_name: 'Empresa@123'
+				company_name: 'Empresa@123',
 			});
 
 			let err;
@@ -116,7 +120,9 @@ describe('User Model Test Suite', () => {
 			}
 
 			expect(err).toBeDefined();
-			expect(err.errors.company_name.message).toBe('El nombre de la empresa no puede contener caracteres especiales ni números.');
+			expect(err.errors.company_name.message).toBe(
+				'El nombre de la empresa no puede contener caracteres especiales ni números.',
+			);
 		});
 	});
 
@@ -127,7 +133,7 @@ describe('User Model Test Suite', () => {
 
 			const isPasswordHashed = await bcrypt.compare(
 				validUserData.password,
-				user.password
+				user.password,
 			);
 			expect(isPasswordHashed).toBe(true);
 			expect(user.password).not.toBe(validUserData.password);
@@ -149,7 +155,7 @@ describe('User Model Test Suite', () => {
 		it('debería asignar rol Proveedor por defecto', async () => {
 			const userWithoutRole = new User({
 				...validUserData,
-				role: undefined
+				role: undefined,
 			});
 			await userWithoutRole.save();
 
@@ -159,7 +165,7 @@ describe('User Model Test Suite', () => {
 		it('debería fallar con un rol inválido', async () => {
 			const userWithInvalidRole = new User({
 				...validUserData,
-				role: 'RolInvalido'
+				role: 'RolInvalido',
 			});
 
 			let err;

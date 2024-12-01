@@ -1,3 +1,8 @@
+/*
+    Description: IA metrics Controller for create, get, update and delete metrics.
+    By: Fabiana Liria
+    version: 1.0
+*/
 const AiMetrics = require('../models/AI_metrics');
 const mongoose = require('mongoose');
 

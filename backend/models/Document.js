@@ -1,37 +1,16 @@
 const mongoose = require('mongoose');
 
 const documentSchema = new mongoose.Schema({
-	user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-	ruc: { type: String, required: true },
-	contrato: { type: String, required: true },
-	tipoDocumento: {
-		type: String,
-		enum: ['Invoice', 'HES', 'MIGO'],
-		required: true,
-	},
-	file_path: { type: String, required: true },
-	related_id: {
+	service_delivery_record_id: {
 		type: mongoose.Schema.Types.ObjectId,
-		refPath: 'tipoDocumento',
+		ref: 'ServiceDeliveryRecord',
 	},
-	created_at: { type: Date, default: Date.now },
-	status: {
+	number: { type: String, required: true },
+	register_date: { type: Date, required: true },
+	type: {
 		type: String,
-		enum: [
-			'Enviado',
-			'Analizando',
-			'Aceptado',
-			'Denegado',
-			'Revalidación',
-			'Transferido a contabilidad',
-			'Transferido a control interno',
-		],
-		default: 'Enviado',
-	},
-	ai_decision_explanation: { type: String },
-	human_review_needed: { type: Boolean, default: false },
-	revalidation_manager_name: {
-		type: String,
+		enum: ['HES', 'MIGO'],
+		required: true,
 	},
 });
 

@@ -124,26 +124,26 @@
 			"item_details": {
 				"label": "Detalles de Ítems",
 				"type": "table",
-                "columns": {
-						"quantity": {
-							"label": "Cantidad",
-							"regex": "(?i)^\\d+$"
-						},
-						"description": {
-							"label": "Concepto/Referencia",
-							"regex": "(?i)^\\w.*$"
-						},
-						"unit_price": {
-							"label": "Precio Unitario",
-							"regex": "(?i)^\\d+(\\.\\d{1,2})?$"
-						},
-						"total_price": {
-							"label": "Precio Total",
-							"regex": "(?i)^\\d+(\\.\\d{1,2})?$"
-						}
+				"columns": {
+					"quantity": {
+						"label": "Cantidad",
+						"regex": "(?i)^\\d+$"
+					},
+					"description": {
+						"label": "Concepto/Referencia",
+						"regex": "(?i)^\\w.*$"
+					},
+					"unit_price": {
+						"label": "Precio Unitario",
+						"regex": "(?i)^\\d+(\\.\\d{1,2})?$"
+					},
+					"total_price": {
+						"label": "Precio Total",
+						"regex": "(?i)^\\d+(\\.\\d{1,2})?$"
 					}
+				}
 			},
-            "client_signature": {
+			"client_signature": {
 				"label": "Conforme Cliente",
 				"regex": "(?i)^Conforme Cliente\\s*[:\\-]?\\s*(\\w+\\s+\\w+)$"
 			},

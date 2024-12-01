@@ -7,6 +7,11 @@ const invoiceSchema = new mongoose.Schema({
 		required: true,
 	},
 	user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+	status: {
+		type: String,
+		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación'],
+		required: true,
+	},
 	invoice_number: { type: String },
 	provider_ruc: { type: String },
 	provider_name: { type: String },

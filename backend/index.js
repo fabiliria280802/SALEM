@@ -3,8 +3,6 @@ const bodyParser = require('body-parser');
 //const helmet = require('helmet');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
-const hesRoutes = require('./routes/hes');
-const migoRoutes = require('./routes/migo');
 const invoiceRoutes = require('./routes/invoice');
 const iaMetricsRoutes = require('./routes/ia_metrics');
 const reportRoutes = require('./routes/report');
@@ -43,8 +41,6 @@ app.use('/api/report/report', authMiddleware, reportRoutes);
 app.use('/api/process-document', documentRoutes);
 app.use('/api/report/ia-metrics', authMiddleware, iaMetricsRoutes);
 app.use('/api/document/invoice', authMiddleware, invoiceRoutes);
-app.use('/api/document/hes', authMiddleware, hesRoutes);
-app.use('/api/document/migo', authMiddleware, migoRoutes);
 
 app.use(errorMiddleware);
 

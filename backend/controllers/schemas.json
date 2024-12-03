@@ -1,45 +1,45 @@
 {
 	"Invoice": {
 		"fields": {
-			"invoice_number": {
-				"label": "Número de factura",
-				"regex": "(?i)\\b(?:número de factura|factura no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*([\\d\\-\\.\\s]+)\\b"
+			"factura_number": {
+				"label": "Número de Factura",
+				"regex": "(?i)\\b(?:factura n°|factura no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(invoice-\\d{6})\\b"
 			},
-			"provider_ruc": {
-				"label": "RUC",
-				"regex": "(?i)\\b(?:ruc|r\\.u\\.c\\.|ruc / ci)\\s*[:\\-]?\\s*(\\d{10,13})\\b"
+			"fecha_emision": {
+				"label": "Fecha de Emisión",
+				"regex": "(?i)\\b(?:fecha de emisión|fecha)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
 			},
-			"provider_name": {
-				"label": "Nombre del proveedor",
-				"regex": "(?i)\\b(?:nombre del proveedor|proveedor|razón social)\\s*[:\\-]?\\s*([^\\n]+)"
+			"empresa_emisora": {
+				"label": "Empresa Emisora",
+				"regex": "(?i)\\b(?:empresa emisora)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"issue_date": {
-				"label": "Fecha de emisión",
-				"regex": "(?i)\\b(?:fecha de emisión|fecha|emisión)\\s*[:\\-]?\\s*(\\d{2}[/-]\\d{2}[/-]\\d{4})\\b"
+			"empresa_receptora": {
+				"label": "Empresa Receptora",
+				"regex": "(?i)\\b(?:empresa receptora)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"total": {
-				"label": "Total",
-				"regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)\\s*\\$?\\b"
+			"servicio": {
+				"label": "Servicio",
+				"regex": "(?i)\\b(?:servicio|detalle)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
 			"subtotal": {
 				"label": "Subtotal",
-				"regex": "(?i)\\b(?:subtotal(?:\\s*\\d+%|)|subtotal\\s*neto)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)\\s*\\$?\\b"
+				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
+			},
+			"descuento": {
+				"label": "Descuento",
+				"regex": "(?i)\\b(?:descuento\\s*\\(?\\d+%\\)?|descuento)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
+			},
+			"subtotal_con_descuento": {
+				"label": "Subtotal con descuento",
+				"regex": "(?i)\\b(?:subtotal con descuento)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
 			},
 			"iva": {
-				"label": "IVA",
-				"regex": "(?i)\\b(?:iva\\s*\\d+%|impuesto)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:,\\d{3})*(?:\\.\\d{2})?)\\s*\\$?\\b"
+				"label": "IVA (15%)",
+				"regex": "(?i)\\b(?:iva\\s*\\(?15%\\)?|iva)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
 			},
-			"client_name": {
-				"label": "Cliente",
-				"regex": "(?i)\\b(?:cliente|nombre cliente|consumidor final|razón social / nombres)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"client_id": {
-				"label": "ID del Cliente",
-				"regex": "(?i)\\b(?:cédula|identificación|id cliente|ruc / ci)\\s*[:\\-]?\\s*(\\d+)"
-			},
-			"logo": {
-				"label": "Logo",
-				"type": "image"
+			"total": {
+				"label": "Total a pagar",
+				"regex": "(?i)\\b(?:total a pagar|total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
 			}
 		}
 	},

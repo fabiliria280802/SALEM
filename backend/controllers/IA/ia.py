@@ -438,7 +438,7 @@ def convert_pdf_to_images(pdf_path):
 
 def process_invoice_document(image, schema, text):
     """
-    Procesa un documento tipo factura
+    Procesa un documento tipo factura según el schema definido
     """
     extracted_data = {}
     confidence_scores = {}
@@ -460,25 +460,156 @@ def process_invoice_document(image, schema, text):
         )
 
     # Validaciones específicas para facturas
-    if 'total' in extracted_data and 'subtotal' in extracted_data and 'iva' in extracted_data:
+    if all(k in extracted_data for k in ['subtotal', 'descuento_porcentaje', 'descuento', 'subtotal_con_descuento', 'iva', 'total']):
         try:
-            total = float(extracted_data['total'])
             subtotal = float(extracted_data['subtotal'])
+            descuento_porcentaje = float(extracted_data['descuento_porcentaje'])
+            descuento = float(extracted_data['descuento'])
+            subtotal_con_descuento = float(extracted_data['subtotal_con_descuento'])
             iva = float(extracted_data['iva'])
+            total = float(extracted_data['total'])
 
-            # Validar cálculos
-            calculated_total = round(subtotal + iva, 2)
-            if abs(calculated_total - total) > 0.01:  # Permitir pequeña diferencia por redondeo
-                validation_errors.append(
-                    f"Error en cálculos: subtotal ({subtotal}) + IVA ({iva}) ≠ total ({total})"
-                )
+            # Validar porcentaje de descuento
+            if descuento_porcentaje not in [0, 5, 10, 15, 20]:
+                validation_errors.append("Porcentaje de descuento inválido")
+
+            # Validar cálculo de descuento
+            calculated_descuento = round(subtotal * descuento_porcentaje / 100, 2)
+            if abs(calculated_descuento - descuento) > 0.01:
+                validation_errors.append("Error en cálculo del descuento")
+
+            # Validar subtotal con descuento
+            calculated_subtotal_con_descuento = round(subtotal - descuento, 2)
+            if abs(calculated_subtotal_con_descuento - subtotal_con_descuento) > 0.01:
+                validation_errors.append("Error en cálculo del subtotal con descuento")
+
+            # Validar IVA (15%)
+            calculated_iva = round(subtotal_con_descuento * 0.15, 2)
+            if abs(calculated_iva - iva) > 0.01:
+                validation_errors.append("Error en cálculo del IVA")
+
+            # Validar total
+            calculated_total = round(subtotal_con_descuento + iva, 2)
+            if abs(calculated_total - total) > 0.01:
+                validation_errors.append("Error en cálculo del total")
+
         except ValueError:
             validation_errors.append("Error en conversión de valores numéricos")
 
-    # Validar RUC si existe
-    if 'provider_ruc' in extracted_data:
-        if not validate_ruc(extracted_data['provider_ruc']):
-            validation_errors.append("RUC del proveedor inválido")
+    # Validar formato del número de factura
+    if 'factura_number' in extracted_data:
+        if not re.match(r'^invoice-\d{6}$', extracted_data['factura_number']):
+            validation_errors.append("Formato de número de factura inválido")
+
+    return {
+        "extracted_data": extracted_data,
+        "confidence_scores": confidence_scores,
+        "validation_errors": validation_errors,
+        "missing_fields": missing_fields
+    }
+
+def process_service_delivery_record(image, schema, text):
+    """
+    Procesa un documento tipo acta de entrega de servicio según el schema definido
+    """
+    extracted_data = {}
+    confidence_scores = {}
+    validation_errors = []
+    missing_fields = []
+
+    record_fields = schema["ServiceDeliveryRecord"]["fields"]
+
+    # Procesar cada campo según el schema
+    for field_name, field_info in record_fields.items():
+        process_field(
+            field_name,
+            text,
+            field_info,
+            extracted_data,
+            confidence_scores,
+            validation_errors,
+            missing_fields
+        )
+
+    # Validaciones específicas
+    if 'hes_number' in extracted_data:
+        if not re.match(r'^record-\d{3}$', extracted_data['hes_number']):
+            validation_errors.append("Formato de número HES inválido")
+
+    if 'contrato' in extracted_data:
+        if not re.match(r'^contract-\d{4}$', extracted_data['contrato']):
+            validation_errors.append("Formato de número de contrato inválido")
+
+    # Validar fechas
+    if 'fecha_inicio' in extracted_data and 'fecha_termino' in extracted_data:
+        try:
+            fecha_inicio = datetime.strptime(extracted_data['fecha_inicio'], '%d/%m/%Y')
+            fecha_termino = datetime.strptime(extracted_data['fecha_termino'], '%d/%m/%Y')
+            if fecha_termino < fecha_inicio:
+                validation_errors.append("La fecha de término no puede ser anterior a la fecha de inicio")
+        except ValueError:
+            validation_errors.append("Formato de fechas inválido")
+
+    # Validar firmas
+    if 'firmas' in extracted_data:
+        firmas = extracted_data['firmas']
+        if not isinstance(firmas, list) or len(firmas) != 2:
+            validation_errors.append("Se requieren exactamente dos firmas")
+        else:
+            tipos_esperados = set(['Proveedor', 'Receptor'])
+            tipos_encontrados = set(firma['tipo'] for firma in firmas)
+            if tipos_esperados != tipos_encontrados:
+                validation_errors.append("Se requiere una firma de Proveedor y una de Receptor")
+
+    return {
+        "extracted_data": extracted_data,
+        "confidence_scores": confidence_scores,
+        "validation_errors": validation_errors,
+        "missing_fields": missing_fields
+    }
+
+def process_contract_document(image, schema, text):
+    """
+    Procesa un documento tipo contrato según el schema definido
+    """
+    extracted_data = {}
+    confidence_scores = {}
+    validation_errors = []
+    missing_fields = []
+
+    contract_fields = schema["Contract"]["fields"]
+
+    # Procesar cada campo según el schema
+    for field_name, field_info in contract_fields.items():
+        process_field(
+            field_name,
+            text,
+            field_info,
+            extracted_data,
+            confidence_scores,
+            validation_errors,
+            missing_fields
+        )
+
+    # Validaciones específicas
+    if 'contrato_number' in extracted_data:
+        if not re.match(r'^contract-\d{4}$', extracted_data['contrato_number']):
+            validation_errors.append("Formato de número de contrato inválido")
+
+    # Validar fechas
+    if 'fecha_inicio' in extracted_data and 'fecha_termino' in extracted_data:
+        try:
+            fecha_inicio = datetime.strptime(extracted_data['fecha_inicio'], '%d/%m/%Y')
+            fecha_termino = datetime.strptime(extracted_data['fecha_termino'], '%d/%m/%Y')
+            if fecha_termino < fecha_inicio:
+                validation_errors.append("La fecha de término no puede ser anterior a la fecha de inicio")
+        except ValueError:
+            validation_errors.append("Formato de fechas inválido")
+
+    # Validar empresas
+    if 'empresa_contratante' in extracted_data and 'empresa_contratada' in extracted_data:
+        if extracted_data['empresa_contratante'] == extracted_data['empresa_contratada']:
+            validation_errors.append("La empresa contratante no puede ser la misma que la contratada")
 
     return {
         "extracted_data": extracted_data,
@@ -679,7 +810,7 @@ def calculate_confidence(regex_match):
     return 0.5
 
 def load_document_schema():
-    schema_path = os.path.join(os.path.dirname(__file__), '..', 'document_schemas.json')
+    schema_path = os.path.join(os.path.dirname(__file__), '..', 'schemas.json')
     with open(schema_path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
@@ -693,9 +824,9 @@ if __name__ == "__main__":
     else:
         # Entrenamiento para cada tipo de documento
         try:
-            for doc_type in ["HES", "MIGO"]:
+            for doc_type in ["Invoice","ServiceDeliveryRecord","Contract"]:
                 print(f"\nIniciando entrenamiento para {doc_type}")
-                dataset = DocumentDataset(dataset_path='../../data/trainning', document_type=doc_type)
+                dataset = DocumentDataset(dataset_path='../../data/practice', document_type=doc_type)
                 print(f"Iniciando entrenamiento con {len(dataset)} documentos de tipo {doc_type}")
                 results = cross_validate(dataset)
 

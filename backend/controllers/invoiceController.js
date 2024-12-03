@@ -1,5 +1,5 @@
 /*
-    Description: Migo logic
+    Description: Invoice logic for
     By: Fabiana Liria
     version: 1.0
 */
@@ -9,44 +9,30 @@ const mongoose = require('mongoose');
 exports.createInvoice = async (req, res) => {
 	try {
 		const {
-			user_id,
-			invoice_number,
-			provider_ruc,
-			provider_name,
-			provider_address,
-			issue_date,
-			details,
-			total,
-			invoice_documents,
+			factura_number,
+			fecha_emision,
+			empresa_emisora,
+			empresa_receptora,
+			servicio,
+			subtotal,
+			descuento_porcentaje
 		} = req.body;
 
-		const calculatedTotal = details.reduce(
-			(acc, item) => acc + item.quantity * item.unit_price,
-			0,
-		);
-		if (calculatedTotal !== total) {
-			return res.status(400).json({
-				error: 'El total calculado no coincide con el total proporcionado',
-			});
-		}
-
-		const invoice = new Invoice({
-			user_id,
-			invoice_number,
-			provider_ruc,
-			provider_name,
-			provider_address,
-			issue_date,
-			details,
-			total,
-			invoice_documents,
+		const newInvoice = new Invoice({
+			factura_number,
+			fecha_emision,
+			empresa_emisora,
+			empresa_receptora,
+			servicio,
+			subtotal,
+			descuento_porcentaje,
+			created_by: req.user.id
 		});
 
-		const savedInvoice = await invoice.save();
+		const savedInvoice = await newInvoice.save();
 		res.status(201).json(savedInvoice);
 	} catch (error) {
-		console.error('Error al crear la factura:', error);
-		res.status(500).json({ error: 'Error al crear la factura' });
+		res.status(500).json({ message: error.message });
 	}
 };
 

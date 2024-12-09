@@ -5,7 +5,6 @@ const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const invoiceRoutes = require('./routes/invoice');
 const iaMetricsRoutes = require('./routes/ia_metrics');
-const reportRoutes = require('./routes/report');
 const createPasswordRoutes = require('./routes/create-password');
 const documentRoutes = require('./routes/documents');
 const mailRoutes = require('./routes/mail');
@@ -38,7 +37,6 @@ app.use('/api/new-user', createPasswordRoutes);
 app.use('/api/mail', mailRoutes);
 //routes for users public
 app.use('/api/public', userPublicRoutes);
-app.use('/api/report/report', authMiddleware, reportRoutes);
 app.use('/api/process-document', documentRoutes);
 app.use('/api/report/ia-metrics', authMiddleware, iaMetricsRoutes);
 app.use('/api/document/invoice', authMiddleware, invoiceRoutes);

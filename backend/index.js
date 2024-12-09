@@ -36,7 +36,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', authMiddleware, userRoutes);
 app.use('/api/new-user', createPasswordRoutes);
 app.use('/api/mail', mailRoutes);
-app.use('/api/users-mail', userPublicRoutes);
+//routes for users public
+app.use('/api/public', userPublicRoutes);
 app.use('/api/report/report', authMiddleware, reportRoutes);
 app.use('/api/process-document', documentRoutes);
 app.use('/api/report/ia-metrics', authMiddleware, iaMetricsRoutes);

@@ -1,23 +1,23 @@
 {
 	"Invoice": {
 		"fields": {
-			"factura_number": {
+			"invoice_number": {
 				"label": "Número de Factura",
 				"regex": "(?i)\\b(?:factura n°|factura no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(invoice-\\d{6})\\b"
 			},
-			"fecha_emision": {
+			"issue_date": {
 				"label": "Fecha de Emisión",
 				"regex": "(?i)\\b(?:fecha de emisión|fecha)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
 			},
-			"empresa_emisora": {
+			"issuing_company": {
 				"label": "Empresa Emisora",
 				"regex": "(?i)\\b(?:empresa emisora)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"empresa_receptora": {
+			"receiving_company": {
 				"label": "Empresa Receptora",
 				"regex": "(?i)\\b(?:empresa receptora)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"servicio": {
+			"service": {
 				"label": "Servicio",
 				"regex": "(?i)\\b(?:servicio|detalle)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
@@ -25,15 +25,15 @@
 				"label": "Subtotal",
 				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
 			},
-			"descuento": {
+			"discount": {
 				"label": "Descuento",
 				"regex": "(?i)\\b(?:descuento\\s*\\(?\\d+%\\)?|descuento)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
 			},
-			"subtotal_con_descuento": {
+			"subtotal_with_discount": {
 				"label": "Subtotal con descuento",
 				"regex": "(?i)\\b(?:subtotal con descuento)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
 			},
-			"iva": {
+			"vat": {
 				"label": "IVA (15%)",
 				"regex": "(?i)\\b(?:iva\\s*\\(?15%\\)?|iva)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
 			},
@@ -49,46 +49,46 @@
 				"label": "Número de HES",
 				"regex": "(?i)\\b(?:número de hes|hes no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(record-\\d{3})\\b"
 			},
-			"empresa_receptora": {
+			"receiving_company": {
 				"label": "Empresa que recibe el servicio",
 				"regex": "(?i)\\b(?:empresa que recibe el servicio|empresa receptora)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"servicio": {
+			"service": {
 				"label": "Servicio",
 				"regex": "(?i)\\b(?:servicio)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"ubicacion": {
+			"location": {
 				"label": "Ubicación del servicio",
 				"regex": "(?i)\\b(?:ubicación del servicio|ubicación)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"contrato": {
+			"contract": {
 				"label": "Contrato N°",
 				"regex": "(?i)\\b(?:contrato n°|contrato no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(contract-\\d{4})\\b"
 			},
-			"fecha_inicio": {
+			"start_date": {
 				"label": "Fecha de inicio",
 				"regex": "(?i)\\b(?:fecha de inicio)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
 			},
-			"fecha_termino": {
+			"end_date": {
 				"label": "Fecha de término",
 				"regex": "(?i)\\b(?:fecha de término|fecha de termino)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
 			},
-			"firmas": {
+			"signatures": {
 				"label": "Firmas",
 				"type": "array",
 				"structure": [
 					{
-						"nombre": {
+						"name": {
 							"label": "Nombre",
 							"regex": "(?i)^[A-Za-zÁáÉéÍíÓóÚúÑñ\\s]+$"
 						},
-						"cargo": {
+						"position": {
 							"label": "Cargo",
 							"regex": "(?i)^[A-Za-zÁáÉéÍíÓóÚúÑñ\\s]+$"
 						},
-						"tipo": {
+						"type": {
 							"label": "Tipo de firma",
-							"regex": "(?i)^(Proveedor|Receptor)$"
+							"regex": "(?i)^(Provider|Receiver)$"
 						}
 					}
 				]
@@ -97,27 +97,27 @@
 	},
 	"Contract": {
 		"fields": {
-			"contrato_number": {
+			"contract_number": {
 				"label": "Número de Contrato",
 				"regex": "(?i)\\b(?:contrato n°|contrato no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(contract-\\d{4})\\b"
 			},
-			"empresa_contratante": {
+			"contracting_company": {
 				"label": "Empresa Contratante",
 				"regex": "(?i)\\b(?:empresa contratante)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"empresa_contratada": {
+			"contracted_company": {
 				"label": "Empresa Contratada",
 				"regex": "(?i)\\b(?:empresa contratada)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"servicio": {
+			"service": {
 				"label": "Servicio",
 				"regex": "(?i)\\b(?:servicio)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"fecha_inicio": {
+			"start_date": {
 				"label": "Fecha de inicio",
 				"regex": "(?i)\\b(?:fecha de inicio)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
 			},
-			"fecha_termino": {
+			"end_date": {
 				"label": "Fecha de término",
 				"regex": "(?i)\\b(?:fecha de término|fecha de termino)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
 			}

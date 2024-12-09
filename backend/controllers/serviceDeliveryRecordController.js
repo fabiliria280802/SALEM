@@ -7,41 +7,42 @@ const ServiceDeliveryRecord = require('../models/serviceDeliveryRecord');
 const mongoose = require('mongoose');
 
 // Create new service delivery record
-exports.reateServiceDeliveryRecord = async (req, res) => {
+exports.createServiceDeliveryRecord = async (req, res) => {
     try {
         const {
             hes_number,
-            empresa_receptora,
-            servicio,
-            ubicacion,
-            nombres,
-            cargos,
-            contrato,
-            fecha_inicio,
-            fecha_termino
+            receiving_company,
+            service,
+            location,
+            names,
+            positions,
+            contract,
+            start_date,
+            end_date
         } = req.body;
 
         const newRecord = new ServiceDeliveryRecord({
             hes_number,
-            empresa_receptora,
-            servicio,
-            ubicacion,
-            firmas: [
+            receiving_company,
+            service,
+            location,
+            signatures: [
                 {
-                    nombre: nombres[0],
-                    cargo: cargos[0],
-                    tipo: 'Proveedor'
+                    name: names[0],
+                    position: positions[0],
+                    type: 'Provider'
                 },
                 {
-                    nombre: nombres[1],
-                    cargo: cargos[1],
-                    tipo: 'Receptor'
+                    name: names[1],
+                    position: positions[1],
+                    type: 'Receiver'
                 }
             ],
-            contrato,
-            fecha_inicio,
-            fecha_termino,
-            created_by: req.user.id
+            contract,
+            start_date,
+            end_date,
+            created_by: req.user.id,
+            status: 'Pending'
         });
 
         const savedRecord = await newRecord.save();

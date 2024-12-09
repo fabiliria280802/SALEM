@@ -9,24 +9,29 @@ const mongoose = require('mongoose');
 exports.createInvoice = async (req, res) => {
 	try {
 		const {
-			factura_number,
-			fecha_emision,
-			empresa_emisora,
-			empresa_receptora,
-			servicio,
+			invoice_number,
+			issue_date,
+			issuing_company,
+			receiving_company,
+			service,
 			subtotal,
-			descuento_porcentaje
+			discount_percentage
 		} = req.body;
 
 		const newInvoice = new Invoice({
-			factura_number,
-			fecha_emision,
-			empresa_emisora,
-			empresa_receptora,
-			servicio,
+			invoice_number,
+			issue_date,
+			issuing_company,
+			receiving_company,
+			service,
 			subtotal,
-			descuento_porcentaje,
-			created_by: req.user.id
+			discount_percentage,
+			discount: (subtotal * discount_percentage) / 100,
+			subtotal_with_discount: subtotal - ((subtotal * discount_percentage) / 100),
+			vat: (subtotal - ((subtotal * discount_percentage) / 100)) * 0.15,
+			total: (subtotal - ((subtotal * discount_percentage) / 100)) * 1.15,
+			created_by: req.user.id,
+			status: 'Pending'
 		});
 
 		const savedInvoice = await newInvoice.save();
@@ -73,41 +78,37 @@ exports.updateInvoice = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const {
-			provider_ruc,
-			provider_name,
-			provider_address,
+			invoice_number,
 			issue_date,
-			details,
-			total,
-			invoice_documents,
+			issuing_company,
+			receiving_company,
+			service,
+			subtotal,
+			discount_percentage,
+			status
 		} = req.body;
 
 		if (!mongoose.Types.ObjectId.isValid(id)) {
 			return res.status(400).json({ error: 'ID de factura inválido' });
 		}
 
-		const calculatedTotal = details.reduce(
-			(acc, item) => acc + item.quantity * item.unit_price,
-			0,
-		);
-		if (calculatedTotal !== total) {
-			return res.status(400).json({
-				error: 'El total calculado no coincide con el total proporcionado',
-			});
-		}
-
 		const updatedInvoice = await Invoice.findByIdAndUpdate(
 			id,
 			{
-				provider_ruc,
-				provider_name,
-				provider_address,
+				invoice_number,
 				issue_date,
-				details,
-				total,
-				invoice_documents,
+				issuing_company,
+				receiving_company,
+				service,
+				subtotal,
+				discount_percentage,
+				discount: (subtotal * discount_percentage) / 100,
+				subtotal_with_discount: subtotal - ((subtotal * discount_percentage) / 100),
+				vat: (subtotal - ((subtotal * discount_percentage) / 100)) * 0.15,
+				total: (subtotal - ((subtotal * discount_percentage) / 100)) * 1.15,
+				status
 			},
-			{ new: true },
+			{ new: true }
 		);
 
 		if (!updatedInvoice) {
@@ -116,8 +117,7 @@ exports.updateInvoice = async (req, res) => {
 
 		res.status(200).json(updatedInvoice);
 	} catch (error) {
-		console.error('Error al actualizar la factura:', error);
-		res.status(500).json({ error: 'Error al actualizar la factura' });
+		res.status(500).json({ message: error.message });
 	}
 };
 

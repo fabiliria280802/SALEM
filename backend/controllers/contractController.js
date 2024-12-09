@@ -9,23 +9,23 @@ const mongoose = require('mongoose');
 exports.createContract = async (req, res) => {
     try {
         const {
-            contrato_number,
-            empresa_contratante,
-            empresa_contratada,
-            servicio,
-            fecha_inicio,
-            fecha_termino
+            contract_number,
+            contracting_company,
+            contracted_company,
+            service,
+            start_date,
+            end_date
         } = req.body;
 
         const newContract = new Contract({
-            contrato_number,
-            empresa_contratante,
-            empresa_contratada,
-            servicio,
-            fecha_inicio,
-            fecha_termino,
+            contract_number,
+            contracting_company,
+            contracted_company,
+            service,
+            start_date,
+            end_date,
             created_by: req.user.id,
-            status: 'Pendiente'
+            status: 'Pending'
         });
 
         const savedContract = await newContract.save();

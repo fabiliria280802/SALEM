@@ -6,27 +6,27 @@ const invoiceSchema = new mongoose.Schema({
 		ref: 'Document',
 		required: true,
 	},
-	factura_number: {
+	invoice_number: {
 		type: String,
 		required: [true, 'El número de factura es requerido'],
 		unique: true,
 		match: [/^invoice-\d{6}$/, 'El formato del número de factura debe ser invoice-XXXXXX']
 	},
-	fecha_emision: {
+	issue_date: {
 		type: Date,
 		required: [true, 'La fecha de emisión es requerida']
 	},
-	empresa_emisora: {
+	issuing_company: {
 		type: String,
 		required: [true, 'La empresa emisora es requerida'],
 		trim: true
 	},
-	empresa_receptora: {
+	receiving_company: {
 		type: String,
 		required: [true, 'La empresa receptora es requerida'],
 		trim: true
 	},
-	servicio: {
+	service: {
 		type: String,
 		required: [true, 'El servicio es requerido'],
 		trim: true
@@ -36,22 +36,22 @@ const invoiceSchema = new mongoose.Schema({
 		required: [true, 'El subtotal es requerido'],
 		min: [0, 'El subtotal no puede ser negativo']
 	},
-	descuento_porcentaje: {
+	discount_percentage: {
 		type: Number,
 		required: true,
 		enum: [0, 5, 10, 15, 20],
 		default: 0
 	},
-	descuento: {
+	discount: {
 		type: Number,
 		required: true,
 		default: 0
 	},
-	subtotal_con_descuento: {
+	subtotal_with_discount: {
 		type: Number,
 		required: true
 	},
-	iva: {
+	vat: {
 		type: Number,
 		required: true
 	},
@@ -70,8 +70,8 @@ const invoiceSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String,
-		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación'],
-		default: 'Pendiente'
+		enum: ['Accepted', 'Denied', 'Pending', 'Revalidation'],
+		default: 'Pending'
 	}
 });
 

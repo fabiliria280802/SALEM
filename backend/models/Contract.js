@@ -1,45 +1,45 @@
 const mongoose = require('mongoose');
 
 const contractSchema = new mongoose.Schema({
-	contrato_number: {
+	contract_number: {
 		type: String,
-		required: [true, 'El número de contrato es requerido'],
+		required: [true, 'The contract number is required'],
 		unique: true,
-		match: [/^contract-\d{4}$/, 'El formato del número de contrato debe ser contract-XXXX']
+		match: [/^contract-\d{4}$/, 'The format of the contract number must be contract-XXXX']
 	},
-	empresa_contratante: {
+	contracting_company: {
 		type: String,
-		required: [true, 'La empresa contratante es requerida'],
+		required: [true, 'The contracting company is required'],
 		trim: true
 	},
-	empresa_contratada: {
+	contracted_company: {
 		type: String,
-		required: [true, 'La empresa contratada es requerida'],
+		required: [true, 'The contracted company is required'],
 		trim: true
 	},
-	servicio: {
+	service: {
 		type: String,
-		required: [true, 'El servicio es requerido'],
+		required: [true, 'The service is required'],
 		trim: true
 	},
-	fecha_inicio: {
+	start_date: {
 		type: Date,
-		required: [true, 'La fecha de inicio es requerida']
+		required: [true, 'The start date is required']
 	},
-	fecha_termino: {
+	end_date: {
 		type: Date,
-		required: [true, 'La fecha de término es requerida'],
+		required: [true, 'The end date is required'],
 		validate: {
-			validator: function(fecha_termino) {
-				return fecha_termino >= this.fecha_inicio;
+			validator: function(end_date) {
+				return end_date >= this.start_date;
 			},
-			message: 'La fecha de término debe ser posterior o igual a la fecha de inicio'
+			message: 'The end date must be after or equal to the start date'
 		}
 	},
 	created_by: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		required: [true, 'El creador del contrato es requerido']
+		required: [true, 'The creator of the contract is required']
 	},
 	created_at: {
 		type: Date,
@@ -47,7 +47,7 @@ const contractSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String,
-		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación'],
+		enum: ['Accepted', 'Denied', 'Pending', 'Revalidation'],
 		required: true
 	}
 });

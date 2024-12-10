@@ -41,6 +41,12 @@ const Header = () => {
 		'/dashboard',
 		'/edit-user',
 		'/document-analizer',
+		'/upload-contract',
+		'/review-contract/:id',
+		'/upload-service-record',
+		'/review-service-record/:id',
+		'/upload-invoice',
+		'/review-invoice/:id',
 	];
 	const shouldShowMenuItems = !hideMenuItemsIn.includes(location.pathname);
 
@@ -49,6 +55,12 @@ const Header = () => {
 		'/dashboard': 'Dashboard Administrativo',
 		'/create-user': 'Crear Usuario',
 		'/upload-document': 'Carga de Documentos',
+		'/upload-contract': 'Carga de Contratos',
+		'/review-contract/:id': 'Revisión de Contratos',
+		'/upload-service-record': 'Carga de Registros de Servicios',
+		'/review-service-record/:id': 'Revisión de Registros de Servicios',
+		'/upload-invoice': 'Carga de Facturas',
+		'/review-invoice/:id': 'Revisión de Facturas',
 		'/documents': 'Documentos',
 		'/users-management': 'Gestión de Usuarios',
 		'/user-account': 'Cuenta de Usuario',
@@ -86,6 +98,10 @@ const Header = () => {
 				command: () => handleMenuItemClick('/users-management'),
 			},
 			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+			{
+				label: 'Cargar Contrato',
+				command: () => handleMenuItemClick('/upload-contract')
+			},
 		],
 		Proveedor: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
@@ -95,6 +111,10 @@ const Header = () => {
 				command: () => handleMenuItemClick('/documents'),
 			},
 			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+			{
+				label: 'Cargar Contrato',
+				command: () => handleMenuItemClick('/upload-contract')
+			},
 		],
 		Gestor: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
@@ -108,6 +128,10 @@ const Header = () => {
 				command: () => handleMenuItemClick('/training'),
 			},
 			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+			{
+				label: 'Cargar Contrato',
+				command: () => handleMenuItemClick('/upload-contract')
+			},
 		],
 	};
 

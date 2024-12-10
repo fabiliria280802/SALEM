@@ -3,43 +3,30 @@ const mongoose = require('mongoose');
 const contractSchema = new mongoose.Schema({
 	contract_number: {
 		type: String,
-		required: [true, 'The contract number is required'],
-		unique: true,
-		match: [/^contract-\d{4}$/, 'The format of the contract number must be contract-XXXX']
+		unique: true
 	},
 	contracting_company: {
 		type: String,
-		required: [true, 'The contracting company is required'],
 		trim: true
 	},
 	contracted_company: {
 		type: String,
-		required: [true, 'The contracted company is required'],
 		trim: true
 	},
 	service: {
 		type: String,
-		required: [true, 'The service is required'],
 		trim: true
 	},
 	start_date: {
-		type: Date,
-		required: [true, 'The start date is required']
+		type: Date
 	},
 	end_date: {
-		type: Date,
-		required: [true, 'The end date is required'],
-		validate: {
-			validator: function(end_date) {
-				return end_date >= this.start_date;
-			},
-			message: 'The end date must be after or equal to the start date'
-		}
+		type: Date
 	},
 	created_by: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		required: [true, 'The creator of the contract is required']
+		required: true
 	},
 	created_at: {
 		type: Date,
@@ -47,7 +34,17 @@ const contractSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String,
-		enum: ['Accepted', 'Denied', 'Pending', 'Revalidation'],
+		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación', 'Analizando'],
+		default: 'Pendiente'
+	},
+	ai_decision_explanation: {
+		type: String
+	},
+	validation_errors: [{
+		type: String
+	}],
+	file_path: {
+		type: String,
 		required: true
 	}
 });

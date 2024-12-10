@@ -26,6 +26,13 @@ import numpy as np
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+# Configurar Tesseract
+tesseract_path = r'C:\Program Files\Tesseract-OCR'
+pytesseract.pytesseract.tesseract_cmd = os.path.join(tesseract_path, 'tesseract.exe')
+
+# Configurar la variable de entorno TESSDATA_PREFIX
+os.environ['TESSDATA_PREFIX'] = os.path.join(tesseract_path, 'tessdata')
+
 class DocumentDataset(Dataset):
     def __init__(self, dataset_path, document_type, transforms=None):
         self.dataset_path = dataset_path
@@ -366,15 +373,23 @@ def process_contract_document(image, schema, text):
 
     contract_fields = schema["Contract"]["fields"]
     for field_name, field_info in contract_fields.items():
-        process_field(
-            field_name,
-            text,
-            field_info,
-            extracted_data,
-            confidence_scores,
-            validation_errors,
-            missing_fields
-        )
+        # Procesar el campo
+        try:
+            regex = field_info.get('regex')
+            if not regex:
+                continue
+            match = re.search(regex, text)
+            if match:
+                # Limpiar y sanitizar el valor extraído
+                value = match.group(1)
+                # Escapar caracteres especiales y comillas
+                value = value.replace('"', '\\"').replace(':', ' -')
+                extracted_data[field_name] = value
+                confidence_scores[field_name] = calculate_confidence(match)
+            else:
+                missing_fields.append(field_name)
+        except Exception as e:
+            validation_errors.append(f"Error procesando campo {field_name}: {str(e)}")
 
     return {
         "extracted_data": extracted_data,
@@ -415,6 +430,12 @@ def process_field(field_name, text, field_info, extracted_data, confidence_score
 
 def process_single_document(file_path, document_type):
     try:
+        # Debug info va a stderr
+        print("Debug Tesseract:", file=sys.stderr)
+        print(f"Tesseract CMD path: {pytesseract.pytesseract.tesseract_cmd}", file=sys.stderr)
+        print(f"TESSDATA_PREFIX: {os.environ.get('TESSDATA_PREFIX')}", file=sys.stderr)
+        print(f"Archivos en tessdata: {os.listdir(os.path.join(tesseract_path, 'tessdata'))}", file=sys.stderr)
+
         start_time = time.time()
         schema = load_document_schema()
 
@@ -423,7 +444,12 @@ def process_single_document(file_path, document_type):
         else:
             image = Image.open(file_path).convert('RGB')
 
-        text = pytesseract.image_to_string(image, lang='spa')
+        # Intentar primero con español, si falla usar inglés
+        try:
+            text = pytesseract.image_to_string(image, lang='spa')
+        except:
+            print("Warning: No se pudo usar el idioma español, usando inglés como alternativa", file=sys.stderr)
+            text = pytesseract.image_to_string(image, lang='eng')
 
         if document_type == "Invoice":
             result = process_invoice_document(image, schema, text)
@@ -445,6 +471,9 @@ def process_single_document(file_path, document_type):
             )
         })
 
+        # El resultado JSON va a stdout como una sola línea
+        result_json = json.dumps(result, ensure_ascii=False)
+        print(result_json, flush=True)
         return result
 
     except Exception as e:
@@ -455,7 +484,10 @@ def process_single_document(file_path, document_type):
             "ai_decision_explanation": f"Error en el procesamiento: {str(e)}",
             "validation_errors": [str(e)]
         }
-        print(json.dumps(error_result, indent=2))
+        # Error info va a stderr
+        print(f"Error en process_single_document: {str(e)}", file=sys.stderr)
+        # El JSON de error va a stdout
+        print(json.dumps(error_result), flush=True)
         return error_result
 
 if __name__ == "__main__":

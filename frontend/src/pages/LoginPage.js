@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import styles from '../styles/LoginPage.module.css';
 import { Toast } from 'primereact/toast';
+import publicService from '../services/publicService';
 import userService from '../services/userService';
 import { Dialog } from 'primereact/dialog';
 
@@ -70,7 +71,7 @@ const LoginPage = () => {
 
 			if (currentAttempts === 3) {
 				try {
-					const user = await userService.getUserByEmail(email);
+					const user = await publicService.getUserByEmail(email);
 					if (user) {
 						console.log('Usuario encontrado para reset:', user);
 						setShowPopup(true);

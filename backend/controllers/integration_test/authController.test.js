@@ -1,93 +1,158 @@
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const bcrypt = require('bcryptjs');
+const User = require('../../models/User');
 const authController = require('../authController');
-const { getSharePointFiles } = require('../../services/sharePointService');
 
-jest.mock('../../services/sharePointService');
+describe('AuthController - Pruebas de Integración', () => {
+	let mongoServer;
 
-describe('AuthController', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
+	beforeAll(async () => {
+		mongoServer = await MongoMemoryServer.create();
+		await mongoose.connect(mongoServer.getUri());
 	});
 
-	it('should return a token and user on successful login', async () => {
-		const req = {
-			body: {
-				username: 'testuser',
-				password: 'testpassword',
-			},
-		};
-		const res = {
-			json: jest.fn(),
-			status: jest.fn().mockReturnThis(),
-		};
+	afterAll(async () => {
+		await mongoose.disconnect();
+		await mongoServer.stop();
+	});
 
-		const hashedPassword = require('bcryptjs').hashSync('testpassword', 8);
+	beforeEach(async () => {
+		await User.deleteMany({});
+	});
 
-		getSharePointFiles.mockResolvedValue([
-			{
-				username: 'testuser',
-				password: hashedPassword,
-				id: '12345',
-			},
-		]);
+	describe('login', () => {
+		it('debería autenticar exitosamente un usuario y devolver un token', async () => {
+			const testUser = await User.create({
+				email: 'fabiliria@gmail.com',
+				password: 'ValidPass123',
+				name: 'Test',
+				last_name: 'User',
+				role: 'Administrador',
+				company_name: 'Empresa Ejemplo',
+				ruc: '1757797202001',
+				phone: '0987654321',
+				status: 'Activo'
+			});
 
-		await authController.login(req, res);
+			const req = {
+				body: {
+					email: 'fabiliria@gmail.com',
+					password: 'ValidPass123'
+				}
+			};
 
-		expect(res.json).toHaveBeenCalledWith({
-			token: expect.any(String),
-			user: { id: '12345', username: 'testuser' },
+			const res = {
+				json: jest.fn()
+			};
+
+			const next = jest.fn();
+
+			await authController.login(req, res, next);
+
+			expect(res.json).toHaveBeenCalled();
+			const response = res.json.mock.calls[0][0];
+			expect(response).toHaveProperty('token');
+			expect(response).toHaveProperty('user');
+			expect(response.user).toHaveProperty('email', 'fabiliria@gmail.com');
+			expect(response.user).toHaveProperty('role', 'Administrador');
+			expect(next).not.toHaveBeenCalled();
 		});
-	}, 10000);
 
-	it('should return 401 if credentials are incorrect', async () => {
-		const req = {
-			body: {
-				username: 'wronguser',
-				password: 'wrongpassword',
-			},
-		};
-		const res = {
-			status: jest.fn().mockReturnThis(),
-			json: jest.fn(),
-		};
+		it('debería rechazar el login con email inválido', async () => {
+			const req = {
+				body: {
+					email: 'invalidemail',
+					password: 'ValidPass123'
+				}
+			};
 
-		getSharePointFiles.mockResolvedValue([
-			{
-				username: 'testuser',
-				password: 'hashedpassword',
-				id: '12345',
-			},
-		]);
+			const res = {};
+			const next = jest.fn();
 
-		await authController.login(req, res);
+			await authController.login(req, res, next);
 
-		expect(res.status).toHaveBeenCalledWith(401);
-		expect(res.json).toHaveBeenCalledWith({
-			message: 'Credenciales incorrectas',
+			expect(next).toHaveBeenCalled();
+			expect(next.mock.calls[0][0].statusCode).toBe(406);
+			expect(next.mock.calls[0][0].message).toBe('El correo electrónico ingresado no es válido');
 		});
-	}, 10000);
 
-	it('should return 500 if there is an error during authentication', async () => {
-		const req = {
-			body: {
-				username: 'testuser',
-				password: 'testpassword',
-			},
-		};
-		const res = {
-			status: jest.fn().mockReturnThis(),
-			json: jest.fn(),
-		};
+		it('debería rechazar el login para usuario inactivo', async () => {
+			await User.create({
+				email: 'inactive@example.com',
+				password: 'ValidPass123',
+				name: 'Inactive',
+				last_name: 'User',
+				role: 'Administrador',
+				company_name: 'Empresa Ejemplo',
+				ruc: '1757797202001',
+				phone: '0987654321',
+				status: 'Inactivo'
+			});
 
-		getSharePointFiles.mockRejectedValue(
-			new Error('Error fetching data from SharePoint'),
-		);
+			const req = {
+				body: {
+					email: 'inactive@example.com',
+					password: 'ValidPass123'
+				}
+			};
 
-		await authController.login(req, res);
+			const res = {};
+			const next = jest.fn();
 
-		expect(res.status).toHaveBeenCalledWith(500);
-		expect(res.json).toHaveBeenCalledWith({
-			message: 'Error al autenticar',
-			error: 'Error fetching data from SharePoint',
+			await authController.login(req, res, next);
+
+			expect(next).toHaveBeenCalled();
+			expect(next.mock.calls[0][0].statusCode).toBe(403);
+			expect(next.mock.calls[0][0].message).toBe('El usuario está desactivado y no puede acceder al sistema');
 		});
-	}, 10000);
+
+		it('debería rechazar el login con contraseña incorrecta', async () => {
+			await User.create({
+				email: 'test@example.com',
+				password: 'ValidPass123',
+				name: 'Test',
+				last_name: 'User',
+				role: 'Administrador',
+				company_name: 'Empresa Ejemplo',
+				ruc: '1757797202001',
+				phone: '0987654321',
+				status: 'Activo'
+			});
+
+			const req = {
+				body: {
+					email: 'test@example.com',
+					password: 'WrongPass123'
+				}
+			};
+
+			const res = {};
+			const next = jest.fn();
+
+			await authController.login(req, res, next);
+
+			expect(next).toHaveBeenCalled();
+			expect(next.mock.calls[0][0].statusCode).toBe(401);
+			expect(next.mock.calls[0][0].message).toBe('Contraseña incorrecta');
+		});
+
+		it('debería rechazar el login con usuario no encontrado', async () => {
+			const req = {
+				body: {
+					email: 'nonexistent@example.com',
+					password: 'ValidPass123'
+				}
+			};
+
+			const res = {};
+			const next = jest.fn();
+
+			await authController.login(req, res, next);
+
+			expect(next).toHaveBeenCalled();
+			expect(next.mock.calls[0][0].statusCode).toBe(404);
+			expect(next.mock.calls[0][0].message).toBe('El correo electrónico ingresado no esta registrado en el sistema');
+		});
+	});
 });

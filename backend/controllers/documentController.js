@@ -1,7 +1,5 @@
 const Document = require('../models/Document');
 const Invoice = require('../models/Invoice');
-const HES = require('../models/Hes');
-const MIGO = require('../models/Migo');
 const { spawn } = require('child_process');
 const path = require('path');
 

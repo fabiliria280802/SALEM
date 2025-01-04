@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/process-document/';
+const API_URL = 'http://localhost:8080/api/process-document/';
 
 const addADocument = formData => {
 	return axios.post(API_URL, formData, {

@@ -1,4 +1,232 @@
-.popup {
+.usersManagementPage {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	background-color: #f5f6fa;
+  }
+  
+  .container {
+	flex-grow: 1;
+	padding: 20px;
+	max-width: 1400px;
+	margin: 0 auto;
+	width: 100%;
+  }
+  
+  .formTitle {
+	font-size: 32px;
+	font-weight: bold;
+	text-align: left;
+	margin-bottom: 20px;
+	color: #2c3e50;
+  }
+  
+  .searchNote {
+	color: #666;
+	margin-bottom: 1rem;
+  }
+  
+  .filterContainer {
+	background: white;
+	padding: 1rem;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	margin-bottom: 1.5rem;
+  }
+  
+  .searchWrapper {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 1rem;
+  }
+  
+  .searchIcon {
+	color: #666;
+	cursor: pointer;
+	font-size: 1.2rem;
+  }
+  
+  .searchInput {
+	flex: 1;
+	padding: 0.75rem;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	font-size: 1rem;
+	transition: border-color 0.2s ease;
+  }
+  
+  .searchInput:focus {
+	border-color: #3498db;
+	outline: none;
+  }
+  
+  .appliedFiltersContainer {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+  }
+  
+  .filteredTag {
+	display: inline-flex;
+	align-items: center;
+	background-color: #f1f5f9;
+	color: #334155;
+	padding: 0.4rem 0.8rem;
+	border-radius: 999px;
+	font-size: 0.875rem;
+	transition: background-color 0.2s ease;
+  }
+  
+  .clearButton {
+	margin-left: 0.5rem;
+	cursor: pointer;
+	color: #64748b;
+	font-weight: bold;
+  }
+  
+  .clearButton:hover {
+	color: #334155;
+  }
+  
+  .buttonContainer {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+  }
+  
+  .newButton,
+  .exitButton {
+	padding: 0.75rem 1.5rem;
+	border-radius: 6px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+  }
+  
+  .newButton {
+	background-color: black;
+	color: white;
+	border: none;
+  }
+  
+  .exitButton {
+	background-color: white;
+	color: black;
+	border: 1px solid black;
+  }
+  
+  .newButton:hover,
+  .exitButton:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Tabla y contenedor responsivo */
+  .tableContainer {
+	display: block;
+  }
+  
+  .cardContainer {
+	display: none;
+  }
+  
+  .usersTable {
+	width: 100%;
+	border-collapse: collapse;
+	background: white;
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .usersTable th,
+  .usersTable td {
+	padding: 1rem;
+	text-align: left;
+  }
+  
+  .usersTable th {
+	background-color: #2c3e50;
+	color: white;
+	font-weight: 500;
+	text-transform: uppercase;
+	font-size: 0.875rem;
+  }
+  
+  .usersTable tr:nth-child(even) {
+	background-color: #f8fafc;
+  }
+  
+  .usersTable tr:hover {
+	background-color: #f1f5f9;
+  }
+  
+  /* Estilos de botones en la tabla */
+  .usersTable td:last-child {
+	display: flex;
+	gap: 0.5rem;
+  }
+  
+  .usersTable .editButton,
+  .usersTable .deleteButton,
+  .usersTable .resumeButton {
+	padding: 0.5rem 1rem;
+	border: none;
+	border-radius: 6px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-width: 100px;
+  }
+  
+  .usersTable .editButton {
+	background-color: #3498db;
+	color: white;
+  }
+  
+  .usersTable .deleteButton {
+	background-color: #e74c3c;
+	color: white;
+  }
+  
+  .usersTable .resumeButton {
+	background-color: #138804;
+	color: white;
+  }
+  
+  .usersTable .editButton:hover,
+  .usersTable .deleteButton:hover,
+  .usersTable .resumeButton:hover {
+	opacity: 0.9;
+	transform: translateY(-1px);
+  }
+  
+  /* Media queries */
+  @media screen and (max-width: 1400px) {
+	.container {
+	  padding: 15px;
+	}
+	
+	.formTitle {
+	  font-size: 28px;
+	}
+	
+	.searchInput {
+	  width: 100%;
+	}
+  
+	.tableContainer {
+	  display: none;
+	}
+  
+	.cardContainer {
+	  display: block;
+	}
+  }
+  
+  /* Popup styles */
+  .popup {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -8,257 +236,59 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-}
-
-.popupContent {
+	z-index: 1000;
+  }
+  
+  .popupContent {
 	background: white;
-	padding: 20px;
-	border-radius: 8px;
+	padding: 2rem;
+	border-radius: 12px;
 	text-align: center;
-	width: 350px;
-}
-
-.popupContent h2 {
-	margin-bottom: 10px;
-}
-
-.popupActions {
-	display: flex;
-	justify-content: space-around;
-	margin-top: 20px;
-}
-
-.confirmButton {
-	background-color: black;
-	color: white;
-	border: none;
-	padding: 10px 20px;
-	border-radius: 5px;
-	cursor: pointer;
-	width: 125px;
-}
-
-.confirmButton:hover {
-	background-color: black;
-}
-
-.cancelButton {
-	background-color: #bdc3c7;
-	color: black;
-	border: none;
-	padding: 10px 20px;
-	border-radius: 5px;
-	cursor: pointer;
-	width: 125px;
-}
-
-.cancelButton:hover {
-	background-color: #95a5a6;
-}
-
-.usersManagementPage {
-	display: flex;
-	flex-direction: column;
-}
-
-.container {
-	flex-grow: 1;
-	padding: 20px;
-}
-
-.formTitle {
-	font-size: 32px;
-	font-weight: bold;
-	text-align: left;
-	margin-bottom: 20px;
-}
-
-.buttonContainer {
-	display: flex;
-	gap: 20px;
-	margin-bottom: 20px;
-}
-
-.newButton,
-.exitButton {
-	background-color: black;
-	color: white;
-	padding: 10px 20px;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-	text-align: center;
-}
-
-.exitButton {
-	background-color: white;
-	color: black;
-	border: 1px solid black;
-}
-
-.usersTable {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 20px;
-	overflow-x: auto;
-}
-
-.usersTable th,
-.usersTable td {
-	border: 1px solid #ccc;
-	padding: 10px;
-	text-align: left;
-	white-space: nowrap;
-}
-
-.usersTable th {
-	background-color: #2c3e50;
-	color: white;
-	text-transform: uppercase;
-}
-
-.editButton,
-.resumeButton,
-.deleteButton {
-	margin-right: 10px;
-	cursor: pointer;
-	padding: 5px 10px;
-	border-radius: 3px;
-}
-
-.editButton {
-	background-color: #3498db;
-	color: white;
-	border: none;
-}
-
-.deleteButton {
-	background-color: #e74c3c;
-	color: white;
-	border: none;
-}
-
-.resumeButton {
-	background-color: #138804;
-	color: white;
-	border: none;
-}
-
-.editButton:hover,
-.resumeButton:hover,
-.deleteButton:hover {
-	opacity: 0.8;
-}
-
-.filterContainer {
-	display: flex;
-	align-items: center;
+	width: 90%;
+	max-width: 400px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .popupContent h2 {
 	margin-bottom: 1rem;
-}
-
-.searchInput {
-	padding: 0.5rem;
-	margin: 0 0 0 10px;
-	width: 400px;
-	font-size: 1rem;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-}
-
-.filteredTag {
-	display: inline-flex;
-	align-items: center;
-	background-color: #e0e0e0;
-	color: #333;
-	padding: 0.3rem 0.5rem;
-	border-radius: 20px;
-	margin-left: 0.5rem;
-	font-size: 0.9rem;
-}
-
-.clearButton {
-	margin-left: 0.5rem;
+	color: #2c3e50;
+	font-size: 1.25rem;
+  }
+  
+  .popupContent p {
+	color: #666;
+	margin-bottom: 1.5rem;
+  }
+  
+  .popupActions {
+	display: flex;
+	justify-content: center;
+	gap: 1rem;
+  }
+  
+  .confirmButton,
+  .cancelButton {
+	padding: 0.75rem 1.5rem;
+	border-radius: 6px;
+	font-weight: 500;
 	cursor: pointer;
-	color: #333;
-	font-weight: bold;
-}
-
-/* Media queries para hacer la pantalla responsive */
-@media screen and (max-width: 768px) {
-	.formTitle {
-		font-size: 24px;
-		text-align: center;
-	}
-
-	.buttonContainer {
-		flex-direction: column;
-		align-items: center;
-	}
-
-	.newButton,
-	.exitButton {
-		width: 100%;
-		padding: 10px;
-		margin-bottom: 10px;
-	}
-
-	.usersTable {
-		display: block;
-		width: 100%;
-		overflow-x: auto;
-	}
-
-	.usersTable th,
-	.usersTable td {
-		font-size: 14px;
-		padding: 8px;
-	}
-
-	.editButton,
-	.resumeButton,
-	.deleteButton {
-		padding: 5px;
-		font-size: 12px;
-	}
-}
-
-@media screen and (max-width: 480px) {
-	.formTitle {
-		font-size: 20px;
-	}
-
-	.newButton,
-	.exitButton {
-		font-size: 14px;
-		padding: 8px;
-	}
-
-	.usersTable th,
-	.usersTable td {
-		font-size: 12px;
-		padding: 6px;
-	}
-}
-
-.revalidateButton {
-	background-color: #f39c12;
+	transition: opacity 0.2s ease;
+	min-width: 120px;
+  }
+  
+  .confirmButton {
+	background-color: black;
 	color: white;
 	border: none;
-	padding: 5px 10px;
-	border-radius: 3px;
-	cursor: pointer;
-}
-
-.viewButton {
-	background-color: #2980b9;
-	color: white;
+  }
+  
+  .cancelButton {
+	background-color: #e2e8f0;
+	color: #475569;
 	border: none;
-	padding: 5px 10px;
-	border-radius: 3px;
-	cursor: pointer;
-}
-
-.revalidateButton:hover,
-.viewButton:hover {
-	opacity: 0.8;
-}
+  }
+  
+  .confirmButton:hover,
+  .cancelButton:hover {
+	opacity: 0.9;
+  }

@@ -3,7 +3,7 @@ import { Button } from 'primereact/button';
 import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import styles from '../styles/HomePage.module.css';
-import homePageImage from '../assets/homePage.png';
+import homePageImage from '../assets/Recurso6.png';
 
 const HomePage = () => {
 	const { user } = useAuth();

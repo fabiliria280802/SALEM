@@ -168,25 +168,27 @@ const UserAccountPage = () => {
 				</div>
 				<p>
 					{' '}
-					* Si deseas actualizar la información de tu perfil, especificamente
-					correo y/o telefono, comunícate con el{' '}
+					* Si deseas actualizar la información de tu perfil, específicamente
+					correo y/o teléfono, comunícate con el{' '}
 					<a href="mailto:mateo.avila@udla.edu.ec">administrador</a>.
 				</p>
-				<Button
-					label="Actualizar"
-					className={styles.saveButton}
-					onClick={handleSave}
-				/>
-				<Button
-					label="Regresar"
-					className={styles.cancelButton}
-					onClick={handleCancel}
-				/>
-				<Button
-					label="Restablecer Contraseña"
-					className={styles.resetButton}
-					onClick={handleResetPassword}
-				/>
+				<div className={styles.userAccountButtonContainer}>
+					<Button
+						label="Actualizar"
+						className={styles.saveButton}
+						onClick={handleSave}
+					/>
+					<Button
+						label="Regresar"
+						className={styles.cancelButton}
+						onClick={handleCancel}
+					/>
+					<Button
+						label="Restablecer Contraseña"
+						className={styles.resetButton}
+						onClick={handleResetPassword}
+					/>
+				</div>
 			</div>
 		</div>
 	);

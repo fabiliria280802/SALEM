@@ -5,6 +5,18 @@ The choice of CNNs, specifically ResNet50, allows the application to benefit fro
 
 SALEM's architecture is built on the MVC (Model-View-Controller) pattern, ensuring a clean separation of concerns and facilitating maintainability. The integration of Tesseract OCR further enhances the system's ability to extract textual information from images, making it a comprehensive solution for document validation.
 
+## What does SALEM mean?
+
+- **S** for **Smart Recognition**: Implementing advanced AI algorithms for the automatic recognition of invoices, contracts, and reception reports, ensuring high accuracy in data extraction.
+
+- **A** for **Automated Processing**: Streamlining document processing workflows by automating data validation and classification, reducing manual effort and errors.
+
+- **L** for **Learning Adaptability**: Utilizing machine learning to improve recognition models over time, adapting to different document formats and languages.
+
+- **E** for **Efficient Validation**: Ensuring data consistency and correctness through intelligent validation mechanisms and error detection.
+
+- **M** for **Management Integration**: Seamlessly integrating with enterprise management systems to facilitate data synchronization and actionable insights.
+
 By: Fabiana Liria & Mateo Ávila
 
 ## Prerequisites

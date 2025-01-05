@@ -1,77 +1,51 @@
 const mongoose = require('mongoose');
 
-const firmaSchema = new mongoose.Schema({
-	nombre: {
-		type: String,
-		required: [true, 'El nombre es requerido'],
-		match: [/^[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+$/, 'El nombre solo debe contener letras y espacios']
+const signatureSchema = new mongoose.Schema({
+	name: {
+		type: String
 	},
-	cargo: {
-		type: String,
-		required: [true, 'El cargo es requerido'],
-		match: [/^[A-Za-zÁáÉéÍíÓóÚúÑñ\s]+$/, 'El cargo solo debe contener letras y espacios']
+	position: {
+		type: String
 	},
-	tipo: {
+	type: {
 		type: String,
-		required: [true, 'El tipo de firma es requerido'],
-		enum: ['Proveedor', 'Receptor']
+		enum: ['Provider', 'Receiver']
 	}
 });
 
 const serviceDeliveryRecordSchema = new mongoose.Schema({
 	hes_number: {
 		type: String,
-		required: [true, 'El número de HES es requerido'],
-		unique: true,
-		match: [/^record-\d{3}$/, 'El formato del número de HES debe ser record-XXX']
+		unique: true
 	},
-	empresa_receptora: {
+	receiving_company: {
 		type: String,
-		required: [true, 'La empresa receptora es requerida'],
 		trim: true
 	},
-	servicio: {
+	service: {
 		type: String,
-		required: [true, 'El servicio es requerido'],
 		trim: true
 	},
-	ubicacion: {
+	location: {
 		type: String,
-		required: [true, 'La ubicación del servicio es requerida'],
 		trim: true
 	},
-	firmas: {
-		type: [firmaSchema],
-		validate: {
-			validator: function(firmas) {
-				return firmas.length === 2;
-			},
-			message: 'Se requieren exactamente dos firmas (Proveedor y Receptor)'
-		}
+	signatures: {
+		type: [signatureSchema]
 	},
-	contrato: {
-		type: String,
-		required: [true, 'El número de contrato es requerido'],
-		match: [/^contract-\d{4}$/, 'El formato del número de contrato debe ser contract-XXXX']
+	contract: {
+		type: String
 	},
-	fecha_inicio: {
-		type: Date,
-		required: [true, 'La fecha de inicio es requerida']
+	start_date: {
+		type: Date
 	},
-	fecha_termino: {
-		type: Date,
-		required: [true, 'La fecha de término es requerida'],
-		validate: {
-			validator: function(fecha_termino) {
-				return fecha_termino >= this.fecha_inicio;
-			},
-			message: 'La fecha de término debe ser posterior o igual a la fecha de inicio'
-		}
+	end_date: {
+		type: Date
 	},
 	created_by: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		required: [true, 'El creador del registro es requerido']
+		required: true
 	},
 	created_at: {
 		type: Date,
@@ -79,9 +53,19 @@ const serviceDeliveryRecordSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String,
-		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación'],
-		required: true,
+		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación', 'Analizando'],
+		default: 'Pendiente'
 	},
+	ai_decision_explanation: {
+		type: String
+	},
+	validation_errors: [{
+		type: String
+	}],
+	file_path: {
+		type: String,
+		required: true
+	}
 });
 
 module.exports = mongoose.model('ServiceDeliveryRecord', serviceDeliveryRecordSchema);

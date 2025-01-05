@@ -6,6 +6,11 @@ import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import styles from '../styles/LoginPage.module.css';
 
+import { Toast } from 'primereact/toast';
+import publicService from '../services/publicService';
+import userService from '../services/userService';
+import { Dialog } from 'primereact/dialog';
+
 const LoginPage = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
@@ -123,6 +128,24 @@ const LoginPage = () => {
 export default LoginPage;
 
 
+			if (currentAttempts === 3) {
+				try {
+					const user = await publicService.getUserByEmail(email);
+					if (user) {
+						console.log('Usuario encontrado para reset:', user);
+						setShowPopup(true);
+					}
+				} catch (err) {
+					toast.current.show({
+						severity: 'error',
+						summary: 'Error',
+						detail: err.message || 'Error al enviar correo de restablecimiento',
+						life: 3000,
+					});
+				}
+			}
+		}
+	};
 
 
 

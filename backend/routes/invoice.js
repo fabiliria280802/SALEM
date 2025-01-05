@@ -8,13 +8,13 @@ const {
 	getInvoiceByNumber,
 } = require('../controllers/invoiceController');
 
-const { isAdmin } = require('../helpers/roleHelper');
+const { upload } = require('../middleware/uploadMiddleware');
 const router = express.Router();
 
+router.post('/', upload.single('file'), createInvoice);
 router.get('/', getAllInvoices);
 router.get('/:id', getInvoiceById);
 router.get('/number/:invoice_number', getInvoiceByNumber);
-router.post('/', createInvoice);
-router.put('/:id', isAdmin, updateInvoice);
-router.delete('/:id', isAdmin, deleteInvoice);
+router.put('/:id', updateInvoice);
+router.delete('/:id', deleteInvoice);
 module.exports = router;

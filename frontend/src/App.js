@@ -23,6 +23,12 @@ import TrainingPage from './pages/TrainingPage';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import UnauthorizedPage from './pages/UnauthorizedPage';
+import ReviewContractPage from './pages/ReviewContractPage';
+import ReviewServiceRecordPage from './pages/ReviewServiceRecordPage';
+import ReviewInvoicePage from './pages/ReviewInvoicePage';
+import UploadContractPage from './pages/UploadContractPage';
+import UploadServiceDeliveryRecordPage from './pages/UploadServiceDeliveryRecordPage';
+import UploadInvoicePage from './pages/UploadInvoicePage';
 import './App.css';
 
 const AppContent = () => {
@@ -33,12 +39,44 @@ const AppContent = () => {
 			<Header />
 			<div className="content">
 				<Switch>
-					{/* Rutas públicas */}
 					<Route path="/login" component={LoginPage} />
+					<PrivateRoute
+						path="/upload-contract"
+						component={UploadContractPage}
+						roles={['Administrador', 'Gestor', 'Proveedor']}
+					/>
+					<PrivateRoute
+						path="/review-contract/:id"
+						component={ReviewContractPage}
+						roles={['Administrador', 'Gestor', 'Proveedor']}
+					/>
+					<PrivateRoute
+						path="/upload-service-record"
+						component={UploadServiceDeliveryRecordPage}
+						roles={['Administrador', 'Gestor', 'Proveedor']}
+					/>
+					<PrivateRoute
+						path="/review-service-record/:id"
+						component={ReviewServiceRecordPage}
+						roles={['Administrador', 'Gestor', 'Proveedor']}
+					/>
+					<PrivateRoute
+						path="/upload-invoice"
+						component={UploadInvoicePage}
+						roles={['Administrador', 'Gestor', 'Proveedor']}
+					/>
+					<PrivateRoute
+						path="/review-invoice/:id"
+						component={ReviewInvoicePage}
+						roles={['Administrador', 'Gestor', 'Proveedor']}
+					/>
 
-					{/**/}
+					<PrivateRoute
+						path="/upload-document"
+						component={UploadDocumentsPage}
+						roles={['Administrador', 'Gestor', 'Proveedor']}
+					/>
 
-					{/* Rutas protegidas con los roles*/}
 					<PrivateRoute
 						path="/dashboard"
 						component={DashboardPage}
@@ -49,11 +87,6 @@ const AppContent = () => {
 						path="/create-user"
 						component={CreateUserPage}
 						roles={['Administrador']}
-					/>
-					<PrivateRoute
-						path="/upload-document"
-						component={UploadDocumentsPage}
-						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
 					<PrivateRoute
 						path="/documents"

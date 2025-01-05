@@ -49,20 +49,6 @@ const getAUser = async userId => {
 	return response.data;
 };
 
-const getUserByEmail = async email => {
-	try {
-		const response = await axios.get(
-			`http://localhost:5000/api/users-mail/email/${email}`,
-		);
-		return response.data;
-	} catch (error) {
-		if (error.response && error.response.data.errors) {
-			throw error.response.data.errors;
-		}
-		throw error;
-	}
-};
-
 const suspendUser = async userId => {
 	const token = authService.getToken();
 	const config = {
@@ -116,17 +102,6 @@ const updateUser = async (userId, userData) => {
 	}
 };
 
-const getUserByRuc = async (ruc) => {
-	try {
-		const response = await axios.get(`http://localhost:5000/api/users-mail/ruc/${ruc}`);
-		return response.data;
-	} catch (error) {
-		if (error.response && error.response.data.errors) {
-			throw error.response.data.errors;
-		}
-		throw error;
-	}
-};
 
 const userService = {
 	createUser,
@@ -135,8 +110,6 @@ const userService = {
 	suspendUser,
 	resumeUser,
 	updateUser,
-	getUserByEmail,
-	getUserByRuc,
 };
 
 export default userService;

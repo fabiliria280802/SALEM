@@ -4,7 +4,7 @@ import { Dropdown } from 'primereact/dropdown';
 import React, { useState, useRef, useEffect } from 'react';
 import styles from '../styles/EditUserPage.module.css';
 import documentService from '../services/documentService';
-import userService from '../services/userService';
+import publicService from '../services/publicService';
 import { Toast } from 'primereact/toast';
 import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
@@ -66,7 +66,7 @@ const UploadDocumentsPage = () => {
 	const handleRucBlur = async () => {
 		if (user.role !== 'Proveedor' && documentData.ruc.trim().length === 13) {
 			try {
-				const rucUser = await userService.getUserByRuc(documentData.ruc);
+				const rucUser = await publicService.getUserByRuc(documentData.ruc);
 				if (rucUser) {
 					if (rucUser.role !== 'Proveedor') {
 						toast.current.show({

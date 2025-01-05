@@ -1,45 +1,32 @@
 const mongoose = require('mongoose');
 
 const contractSchema = new mongoose.Schema({
-	contrato_number: {
+	contract_number: {
 		type: String,
-		required: [true, 'El número de contrato es requerido'],
-		unique: true,
-		match: [/^contract-\d{4}$/, 'El formato del número de contrato debe ser contract-XXXX']
+		unique: true
 	},
-	empresa_contratante: {
+	contracting_company: {
 		type: String,
-		required: [true, 'La empresa contratante es requerida'],
 		trim: true
 	},
-	empresa_contratada: {
+	contracted_company: {
 		type: String,
-		required: [true, 'La empresa contratada es requerida'],
 		trim: true
 	},
-	servicio: {
+	service: {
 		type: String,
-		required: [true, 'El servicio es requerido'],
 		trim: true
 	},
-	fecha_inicio: {
-		type: Date,
-		required: [true, 'La fecha de inicio es requerida']
+	start_date: {
+		type: Date
 	},
-	fecha_termino: {
-		type: Date,
-		required: [true, 'La fecha de término es requerida'],
-		validate: {
-			validator: function(fecha_termino) {
-				return fecha_termino >= this.fecha_inicio;
-			},
-			message: 'La fecha de término debe ser posterior o igual a la fecha de inicio'
-		}
+	end_date: {
+		type: Date
 	},
 	created_by: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		required: [true, 'El creador del contrato es requerido']
+		required: true
 	},
 	created_at: {
 		type: Date,
@@ -47,7 +34,17 @@ const contractSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String,
-		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación'],
+		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación', 'Analizando'],
+		default: 'Pendiente'
+	},
+	ai_decision_explanation: {
+		type: String
+	},
+	validation_errors: [{
+		type: String
+	}],
+	file_path: {
+		type: String,
 		required: true
 	}
 });

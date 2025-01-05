@@ -1,12 +1,11 @@
 import { Button } from 'primereact/button';
-import React, { useState, useRef } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import styles from '../styles/LoginPage.module.css';
 import useAuth from '../hooks/useAuth';
 const UnauthorizedPage = () => {
 	const { logout } = useAuth();
 	const history = useHistory();
-	const toast = useRef(null);
 	const handleLogout = () => {
 		logout();
 		history.push('/login');

@@ -6,3 +6,5 @@ pytesseract>=0.3.8
 PyMuPDF>=1.18.14
 python-dotenv>=0.19.0
 numpy>=1.21.2
+opencv-python>=4.5.1.48
+

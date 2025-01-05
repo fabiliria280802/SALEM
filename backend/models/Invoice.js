@@ -3,66 +3,51 @@ const mongoose = require('mongoose');
 const invoiceSchema = new mongoose.Schema({
 	document_id: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Document',
-		required: true,
+		ref: 'Document'
 	},
-	factura_number: {
+	invoice_number: {
 		type: String,
-		required: [true, 'El número de factura es requerido'],
-		unique: true,
-		match: [/^invoice-\d{6}$/, 'El formato del número de factura debe ser invoice-XXXXXX']
+		unique: true
 	},
-	fecha_emision: {
-		type: Date,
-		required: [true, 'La fecha de emisión es requerida']
+	issue_date: {
+		type: Date
 	},
-	empresa_emisora: {
+	issuing_company: {
 		type: String,
-		required: [true, 'La empresa emisora es requerida'],
 		trim: true
 	},
-	empresa_receptora: {
+	receiving_company: {
 		type: String,
-		required: [true, 'La empresa receptora es requerida'],
 		trim: true
 	},
-	servicio: {
+	service: {
 		type: String,
-		required: [true, 'El servicio es requerido'],
 		trim: true
 	},
 	subtotal: {
-		type: Number,
-		required: [true, 'El subtotal es requerido'],
-		min: [0, 'El subtotal no puede ser negativo']
+		type: Number
 	},
-	descuento_porcentaje: {
+	discount_percentage: {
 		type: Number,
-		required: true,
-		enum: [0, 5, 10, 15, 20],
 		default: 0
 	},
-	descuento: {
+	discount: {
 		type: Number,
-		required: true,
 		default: 0
 	},
-	subtotal_con_descuento: {
-		type: Number,
-		required: true
+	subtotal_with_discount: {
+		type: Number
 	},
 	iva: {
-		type: Number,
-		required: true
+		type: Number
 	},
 	total: {
-		type: Number,
-		required: true
+		type: Number
 	},
 	created_by: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		required: [true, 'El creador de la factura es requerido']
+		required: true
 	},
 	created_at: {
 		type: Date,
@@ -70,8 +55,18 @@ const invoiceSchema = new mongoose.Schema({
 	},
 	status: {
 		type: String,
-		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación'],
+		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación', 'Analizando'],
 		default: 'Pendiente'
+	},
+	ai_decision_explanation: {
+		type: String
+	},
+	validation_errors: [{
+		type: String
+	}],
+	file_path: {
+		type: String,
+		required: true
 	}
 });
 

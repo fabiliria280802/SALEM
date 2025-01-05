@@ -50,6 +50,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', authMiddleware, userRoutes);
 app.use('/api/new-user', createPasswordRoutes);
 app.use('/api/mail', mailRoutes);
+
+app.use('/api/public', userPublicRoutes);
+
+app.use('/api/invoice', authMiddleware, invoiceRoutes);
+app.use('/api/contract', authMiddleware, contractRoutes);
+app.use('/api/service-record', authMiddleware, serviceDeliveryRecordRoutes);
+app.use('/api/documents', authMiddleware, documentRoutes);
+
 app.use('/api/report/ia-metrics', authMiddleware, iaMetricsRoutes);
 
 app.use(errorMiddleware);

@@ -48,7 +48,7 @@ const CreatePasswordPage = () => {
 
 		try {
 			await axios.post(
-				`http://localhost:5000/api/new-user/create-password/${userId}`,
+				`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/api/new-user/create-password/${userId}`,
 				{
 					password: newPassword,
 				},

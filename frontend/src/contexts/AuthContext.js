@@ -8,24 +8,27 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [loading, setLoading] = useState(true); // Nuevo estado para cargar
+	const [loading, setLoading] = useState(true); 
 
-	useEffect(() => {
-		const token = localStorage.getItem('token');
-		if (token) {
-			try {
-				const decodedUser = jwtDecode(token);
-				console.log('Datos del token:', decodedUser);
-				setUser(decodedUser);
-				setIsAuthenticated(true);
-			} catch (error) {
-				console.error('Error decodificando el token:', error);
-				authService.logout();
-				setIsAuthenticated(false);
-			}
-		}
-		setLoading(false); // Cambia el estado de carga cuando termina la verificación
-	}, []);
+    useEffect(() => {
+        const initializeAuth = () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const decodedUser = jwtDecode(token);
+                    console.log('Datos del token:', decodedUser);
+                    setUser(decodedUser);
+                    setIsAuthenticated(true);
+                } catch (error) {
+                    console.error('Error decodificando el token:', error);
+                    authService.logout();
+                }
+            }
+            setLoading(false); // Asegúrate de que siempre cambie a false
+        };
+
+        initializeAuth();
+    }, []);
 
 	const login = async (email, password) => {
 		try {
@@ -54,12 +57,10 @@ const AuthProvider = ({ children }) => {
 	};
 
 	return (
-		<AuthContext.Provider
-			value={{ user, isAuthenticated, login, logout, loading }}
-		>
-			{children}
-		</AuthContext.Provider>
-	);
+        <AuthContext.Provider value={{ user, isAuthenticated, login, logout, loading }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 AuthProvider.propTypes = {

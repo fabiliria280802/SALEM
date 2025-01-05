@@ -3,7 +3,7 @@
     By: Fabiana Liria
     version: 1.0
 */
-const ServiceDeliveryRecord = require('../models/serviceDeliveryRecord');
+const ServiceDeliveryRecord = require('../models/ServiceDeliveryRecord');
 const { spawn } = require('child_process');
 const path = require('path');
 const authMiddleware = require('../middleware/authMiddleware');

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import authService from './authService';
 
+const API_URL = `${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/api`;
+/*
 const API_URL = 'http://localhost:5000/api';
-
+*/
 const documentService = {
 	// Métodos para Contratos
 	uploadContract: async (formData) => {

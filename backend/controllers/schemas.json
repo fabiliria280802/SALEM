@@ -1,98 +1,122 @@
 {
 	"Invoice": {
-		"fields": {
-			"invoice_number": {
-				"label": "Número de Factura",
-				"regex": "(?i)\\b(?:factura n°|factura no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(invoice-\\d{6})\\b"
-			},
-			"issue_date": {
-				"label": "Fecha de Emisión",
-				"regex": "(?i)\\b(?:fecha de emisión|fecha)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
-			},
-			"issuing_company": {
-				"label": "Empresa Emisora",
-				"regex": "(?i)\\b(?:empresa emisora)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"receiving_company": {
-				"label": "Empresa Receptora",
-				"regex": "(?i)\\b(?:empresa receptora)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"service": {
-				"label": "Servicio",
-				"regex": "(?i)\\b(?:servicio|detalle)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"subtotal": {
-				"label": "Subtotal",
-				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
-			},
-			"discount": {
-				"label": "Descuento",
-				"regex": "(?i)\\b(?:descuento\\s*\\(?\\d+%\\)?|descuento)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
-			},
-			"subtotal_with_discount": {
-				"label": "Subtotal con descuento",
-				"regex": "(?i)\\b(?:subtotal con descuento)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
-			},
-			"vat": {
-				"label": "IVA (15%)",
-				"regex": "(?i)\\b(?:iva\\s*\\(?15%\\)?|iva)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
-			},
-			"total": {
-				"label": "Total a pagar",
-				"regex": "(?i)\\b(?:total a pagar|total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)\\b"
-			}
+	  "fields": {
+		"company_name": {
+		  "label": "Nombre de la Empresa",
+		  "regex": "(?i)\\b(?:nombre de la empresa|company name)\\s*[:\\-]?\\s*([^\\n]+)"
+		},
+		"company_address": {
+		  "label": "Dirección de la Empresa",
+		  "regex": "(?i)\\b(?:dirección de la empresa|company address)\\s*[:\\-]?\\s*([^\\n]+)"
+		},
+		"company_phone": {
+        "label": "Teléfono de la Empresa",
+        "regex": "(?i)\\b(?:teléfono|phone)\\s*[:\\-]?\\s*(\\+?\\d[\\d\\-\\s]+)"
+      	},
+		"company_email": {
+		  "label": "Email de la Empresa",
+		  "regex": "(?i)\\b(?:email)\\s*[:\\-]?\\s*([^\\s]+@[\\w\\.-]+)"
+		},
+		"company_tax_id": {
+		  "label": "ID Fiscal",
+		  "regex": "(?i)\\b(?:id fiscal|tax id)\\s*[:\\-]?\\s*([^\\n]+)"
+		},
+		"invoice_number": {
+		  "label": "Número de Factura",
+		  "regex": "(?i)\\b(?:factura n°|invoice no)\\s*[:\\-]?\\s*(\\d+)"
+		},
+		"invoice_date": {
+		  "label": "Fecha de Factura",
+		  "regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+		},
+		"payable_at": {
+		  "label": "Fecha de Vencimiento",
+		  "regex": "(?i)\\b(?:vencimiento|payable at)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+		},
+		"order_number": {
+		  "label": "Número de Orden",
+		  "regex": "(?i)\\b(?:orden n°|order no)\\s*[:\\-]?\\s*(\\d+)"
+		},
+		"client_name": {
+		  "label": "Nombre del Cliente",
+		  "regex": "(?i)\\b(?:cliente|client name)\\s*[:\\-]?\\s*([^\\n]+)"
+		},
+		"client_ruc": {
+		  "label": "RUC del Cliente",
+		  "regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d+)"
+		},
+		"client_address": {
+		  "label": "Dirección del Cliente",
+		  "regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)"
+		},
+		"items": {
+		  "label": "Artículos",
+		  "regex": "(?i)\\b(?:código|code)\\s*[:\\-]?\\s*([^\\n]+)"
+		},
+		"subtotal": {
+		  "label": "Subtotal",
+		  "regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
+		},
+		"tax": {
+		  "label": "Impuesto",
+		  "regex": "(?i)\\b(?:impuesto|tax)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
+		},
+		"total_due": {
+		  "label": "Total a Pagar",
+		  "regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
 		}
+	  }
 	},
 	"ServiceDeliveryRecord": {
 		"fields": {
-			"hes_number": {
-				"label": "Número de HES",
-				"regex": "(?i)\\b(?:número de hes|hes no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(record-\\d{3})\\b"
-			},
-			"receiving_company": {
-				"label": "Empresa que recibe el servicio",
-				"regex": "(?i)\\b(?:empresa que recibe el servicio|empresa receptora)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"service": {
-				"label": "Servicio",
-				"regex": "(?i)\\b(?:servicio)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"location": {
-				"label": "Ubicación del servicio",
-				"regex": "(?i)\\b(?:ubicación del servicio|ubicación)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"contract": {
-				"label": "Contrato N°",
-				"regex": "(?i)\\b(?:contrato n°|contrato no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(contract-\\d{4})\\b"
-			},
-			"start_date": {
-				"label": "Fecha de inicio",
-				"regex": "(?i)\\b(?:fecha de inicio)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
-			},
-			"end_date": {
-				"label": "Fecha de término",
-				"regex": "(?i)\\b(?:fecha de término|fecha de termino)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})\\b"
-			},
-			"signatures": {
-				"label": "Firmas",
-				"type": "array",
-				"structure": [
-					{
-						"name": {
-							"label": "Nombre",
-							"regex": "(?i)^[A-Za-zÁáÉéÍíÓóÚúÑñ\\s]+$"
-						},
-						"position": {
-							"label": "Cargo",
-							"regex": "(?i)^[A-Za-zÁáÉéÍíÓóÚúÑñ\\s]+$"
-						},
-						"type": {
-							"label": "Tipo de firma",
-							"regex": "(?i)^(Provider|Receiver)$"
-						}
-					}
-				]
-			}
+		  "delivery_title": {
+			"label": "Título del Acta",
+			"regex": "(?i)\\b(?:acta de recepción|delivery receipt)\\b"
+		  },
+		  "receiver_date": {
+			"label": "Fecha de Recepción",
+			"regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+		  },
+		  "receiving_company": {
+			"label": "Empresa Receptora",
+			"regex": "(?i)\\b(?:empresa|company)\\s*[:\\-]?\\s*([^\\n]+)"
+		  },
+		  "provider": {
+			"label": "Proveedor",
+			"regex": "(?i)\\b(?:proporcionados por|provided by)\\s*[:\\-]?\\s*([^\\n]+)"
+		  },
+		  "order_number": {
+			"label": "Número de Orden",
+			"regex": "(?i)\\b(?:pedido identificado con el número|order identified with number)\\s*[:\\-]?\\s*(\\d+)"
+		  },
+		  "invoice_number": {
+			"label": "Número de Factura",
+			"regex": "(?i)\\b(?:factura número|invoice number)\\s*[:\\-]?\\s*(\\d+)"
+		  },
+		  "hes_number": {
+			"label": "Número de HES",
+			"regex": "(?i)\\b(?:hes asociado con el número|hes associated with the number)\\s*[:\\-]?\\s*(\\d+)"
+		  },
+		  "total_value": {
+			"label": "Valor Total",
+			"regex": "(?i)\\b(?:valor total de|total value of)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
+		  },
+		  "end_date": {
+			"label": "Fecha de Término",
+			"regex": "(?i)\\b(?:finalizó el día|ended on)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+		  },
+		  "employee_name": {
+			"label": "Nombre del Empleado",
+			"regex": "(?i)\\b(?:empleado|employee)\\s*[:\\-]?\\s*([^\\n]+)"
+		  },
+		  "employee_signature": {
+			"label": "Firma del Empleado",
+			"regex": "(?i)\\b(?:firma|signature)\\s*[:\\-]?\\s*([^\\n]+)"
+		  },
+		  "employee_position": {
+			"label": "Cargo del Empleado",
+			"regex": "(?i)\\b(?:cargo|position)\\s*[:\\-]?\\s*([^\\n]+)"
+		  }
 		}
 	},
 	"Contract": {

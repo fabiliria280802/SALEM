@@ -1,7 +1,7 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const app = require('../../index');
+const app = require('../../../index');
 const Invoice = require('../../models/Invoice');
 const User = require('../../models/User');
 const path = require('path');

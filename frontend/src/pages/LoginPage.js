@@ -6,13 +6,14 @@ import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import styles from '../styles/LoginPage.module.css';
 import publicService from '../services/publicService';
-import userService from '../services/userService';
 
 const LoginPage = () => {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
   const toast = useRef(null);
   const history = useHistory();
 
@@ -37,24 +38,66 @@ const LoginPage = () => {
         detail: 'Sesión iniciada correctamente',
         life: 3000,
       });
+      setFailedAttempts(0);
       history.push('/');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Error al iniciar sesión';
+      const statusCode = error.response?.status;
+
+      if (statusCode === 403 || statusCode === 406 || statusCode === 404) {
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: errorMessage,
+          life: 5000,
+        });
+        return;
+      }
+
+      const currentAttempts = failedAttempts + 1;
+      setFailedAttempts(currentAttempts);
+
       toast.current.show({
         severity: 'error',
         summary: 'Error',
-        detail: errorMessage,
+        detail: `Credenciales incorrectas. Intentos restantes: ${3 - currentAttempts}`,
         life: 3000,
       });
+
+      if (currentAttempts === 3) {
+        try {
+          const user = await publicService.getUserByEmail(email);
+          if (user) {
+            console.log('Usuario encontrado para reset:', user);
+            setShowPopup(true);
+          }
+        } catch (err) {
+          toast.current.show({
+            severity: 'error',
+            summary: 'Error',
+            detail: err.message || 'Error al enviar correo de restablecimiento',
+            life: 3000,
+          });
+        }
+      }
     }
   };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
+  const handlePopupConfirm = () => {
+    setShowPopup(false);
+    history.push('/reset-password');
+  };
+
+  const handlePopupCancel = () => {
+    setShowPopup(false);
+  };
+
   return (
     <div className={styles.container}>
       <img
-        src={require('../assets/White-Logo.png')} 
+        src={require('../assets/White-Logo.png')}
         alt="Logo"
         className={styles.logo}
       />
@@ -99,7 +142,8 @@ const LoginPage = () => {
           <Button
             type="submit"
             label="Iniciar sesión"
-            className={styles.loginButton}
+            className={`${styles.loginButton} ${failedAttempts >= 3 ? styles.disabledButton : ''}`}
+            disabled={failedAttempts >= 3}
           />
         </form>
         <div className={styles.separator}>
@@ -118,9 +162,23 @@ const LoginPage = () => {
           colaboradores de ENAP.
         </p>
       </div>
+
+      <Dialog
+        visible={showPopup}
+        header="Verificación de correo"
+        modal
+        onHide={() => setShowPopup(false)}
+        footer={
+          <div>
+            <Button label="Sí" icon="pi pi-check" onClick={handlePopupConfirm} />
+            <Button label="No" icon="pi pi-times" onClick={handlePopupCancel} />
+          </div>
+        }
+      >
+        <p>¿Te llegó el correo de restablecimiento de contraseña?</p>
+      </Dialog>
     </div>
   );
 };
 
 export default LoginPage;
-

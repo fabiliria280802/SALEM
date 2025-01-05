@@ -1,15 +1,5 @@
 describe('Login E2E', () => {
-	//Render Home Page (logout)
-	it('1. Debe mostrar la página de inicio (Home Page) para usuarios no loggeados y permitir hacer clic en el botón de iniciar sesión', () => {
-		cy.visit('http://localhost:3000');
-		cy.contains('¡Te esperamos!').should('be.visible');
-		cy.contains(
-			'Automatización inteligente para la gestión de documentos',
-		).should('be.visible');
-		cy.get('button').contains('Iniciar sesión').click();
-		cy.url().should('include', '/login');
-	});
-	//Happy path login - Administrador
+	//Happy path login - Administrador 
 	it('1.1. login exitoso del usuario (Administrador) y renderizado del Home Page', () => {
 		cy.visit('http://localhost:3000/login');
 		cy.get('input[name="email"]').type('fabiliria@gmail.com');

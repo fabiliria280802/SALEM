@@ -36,7 +36,7 @@ const ResetPasswordPage = () => {
 			console.log('Code:', encryptedCode);
 
 			const response = await axios.post(
-				`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/api/users-mail/verify-reset-code`,
+				`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/api/public/verify-reset-code`,
 				{
 					email: userEmail,
 					code: encryptedCode,

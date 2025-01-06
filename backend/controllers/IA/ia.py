@@ -34,7 +34,7 @@ pytesseract.pytesseract.tesseract_cmd = os.path.join(tesseract_path, 'tesseract.
 
 # Configurar la variable de entorno TESSDATA_PREFIX
 os.environ['TESSDATA_PREFIX'] = os.path.join(tesseract_path, 'tessdata')
-
+"""
 class DocumentDataset(Dataset):
     def __init__(self, dataset_path, document_type, transforms=None):
         self.dataset_path = dataset_path
@@ -50,14 +50,19 @@ class DocumentDataset(Dataset):
         print(f"Número de clases: {self.num_classes}")
 
         self.files = []
-        for f in sorted(os.listdir(dataset_path)):
-            if f.endswith((".pdf", ".png", ".xml")):
-                if document_type == "Invoice" and f.startswith("invoice"):
-                    self.files.append(f)
-                elif document_type == "Contract" and f.startswith("contract"):
-                    self.files.append(f)
-                elif document_type == "ServiceDeliveryRecord" and f.startswith("record"):
-                    self.files.append(f)
+        for subdir in ["pdf", "png", "xml"]:
+            subdir_path = os.path.join(dataset_path, subdir)
+            if not os.path.exists(subdir_path):
+                continue
+            for f in sorted(os.listdir(subdir_path)):
+                if f.endswith((".pdf", ".png", ".xml")):
+                    if document_type == "Invoice" and f.startswith("invoice"):
+                        self.files.append(os.path.join(subdir, f))
+                    elif document_type == "Contract" and f.startswith("contract"):
+                        self.files.append(os.path.join(subdir, f))
+                    elif document_type == "ServiceDeliveryRecord" and f.startswith("delivery"):
+                        self.files.append(os.path.join(subdir, f))
+
 
         if len(self.files) == 0:
             raise ValueError(f"No se encontraron archivos válidos para {document_type}")
@@ -84,6 +89,72 @@ class DocumentDataset(Dataset):
 
             image = image.resize((400, 400), Image.Resampling.LANCZOS)
 
+            if self.transforms:
+                image = self.transforms(image)
+            else:
+                image = T.ToTensor()(image)
+
+            return image, torch.tensor(self.label, dtype=torch.long)
+
+        except Exception as e:
+            print(f"Error procesando archivo {file_path}: {str(e)}")
+            return torch.zeros((3, 400, 400)), torch.tensor(self.label, dtype=torch.long)
+"""
+class DocumentDataset(Dataset):
+    def __init__(self, file_paths, document_type, transforms=None):
+        self.file_paths = file_paths
+        self.transforms = transforms
+        self.document_type = document_type
+        self.schema = load_document_schema()[document_type]["fields"]
+
+        self.num_classes = 3
+        self.field_names = list(self.schema.keys())
+
+        print(f"Inicializando Dataset para {document_type}")
+        print(f"Campos del schema: {self.field_names}")
+        print(f"Número de clases: {self.num_classes}")
+
+        if len(self.file_paths) == 0:
+            raise ValueError(f"No se encontraron archivos válidos para {document_type}")
+
+        print(f"Cargados {len(self.file_paths)} documentos de tipo {document_type} para entrenamiento")
+
+        if document_type == "Invoice":
+            self.label = 0
+        elif document_type == "ServiceDeliveryRecord":
+            self.label = 1
+        elif document_type == "Contract":
+            self.label = 2
+
+    def __len__(self):
+        return len(self.file_paths)
+
+    def __getitem__(self, idx):
+        file_path = self.file_paths[idx]
+        try:
+            if file_path.endswith('.pdf'):
+                image = convert_pdf_to_images(file_path)[0]  # Convierte PDF a imagen
+            elif file_path.endswith('.png'):
+                image = Image.open(file_path).convert('RGB')  # Abre la imagen PNG
+            elif file_path.endswith('.xml'):
+                import xml.etree.ElementTree as ET
+                tree = ET.parse(file_path)
+                root = tree.getroot()
+                # Asume un tamaño fijo para los vectores (rellenados con ceros si es necesario)
+                data_vector = torch.zeros(10)  # Longitud fija de 10
+                for i, field in enumerate(self.field_names[:10]):  # Limita a los primeros 10 campos
+                    value = root.find(field).text if root.find(field) is not None else 0
+                    try:
+                        data_vector[i] = float(value)
+                    except ValueError:
+                        data_vector[i] = 0
+                return data_vector, torch.tensor(self.label, dtype=torch.long)
+
+
+            # Redimensiona la imagen
+            image = image.resize((400, 400), Image.Resampling.LANCZOS)
+
+            # Aplica transformaciones, si existen
             if self.transforms:
                 image = self.transforms(image)
             else:
@@ -157,6 +228,28 @@ class DocumentCNN(nn.Module):
         if isinstance(self.backbone, torchvision.models.ResNet):
             x = x.view(x.size(0), -1)
         return self.classifier(x)
+
+def custom_collate(batch):
+    images = []
+    labels = []
+
+    for data, label in batch:
+        if isinstance(data, torch.Tensor) and len(data.shape) == 1:  # Es un vector (XML)
+            # Convierte el vector a una imagen simulada (3 canales, 400x400)
+            # Asume que el vector tiene longitud fija (por ejemplo, 10)
+            vector_as_image = data.unsqueeze(0).repeat(3, 1, 1)  # Crea un "mapa" 3x10x10
+            padded_image = torch.zeros(3, 400, 400)  # Imagen simulada con ceros
+            padded_image[:, :10, :10] = vector_as_image  # Coloca el vector en la esquina superior izquierda
+            images.append(padded_image)
+        elif len(data.shape) == 3 and data.shape[1:] == (400, 400):  # Es una imagen válida
+            images.append(data)
+        else:
+            print(f"Datos inesperados: {data.shape}")
+            continue
+        labels.append(label)
+
+    # Apilar los tensores
+    return torch.stack(images), torch.tensor(labels)
 
 def train_model(model, train_loader, val_loader, criterion, optimizer, scheduler,
                 device, num_epochs, model_path, patience=15):
@@ -236,7 +329,8 @@ def train_single_fold(dataset, learning_dir, doc_type, current_fold, device):
         pin_memory=True,  # Si tienes GPU esto acelera la transferencia
         persistent_workers=True,
         prefetch_factor=2,
-        drop_last=True
+        drop_last=True,
+        collate_fn=custom_collate
     )
 
     val_loader = DataLoader(
@@ -247,7 +341,8 @@ def train_single_fold(dataset, learning_dir, doc_type, current_fold, device):
         pin_memory=True,
         persistent_workers=True,
         prefetch_factor=2,
-        drop_last=True
+        drop_last=True,
+        collate_fn=custom_collate
     )
 
     model = DocumentCNN(num_classes=dataset.num_classes).to(device)
@@ -733,8 +828,22 @@ if __name__ == "__main__":
                     # Ajusta el dataset_path según el tipo de documento
                     dataset_path = os.path.join(data_dir, doc_type.lower())
 
-                    print(f"Cargando documentos desde: {dataset_path}")
-                    dataset = DocumentDataset(dataset_path=dataset_path, document_type=doc_type)
+                    # Listar todos los subdirectorios y validar archivos
+                    valid_files = []
+                    for root, dirs, files in os.walk(dataset_path):
+                        for file in files:
+                            if doc_type == "Invoice" and file.startswith("invoice_") and file.endswith((".pdf", ".png", ".xml")):
+                                valid_files.append(os.path.join(root, file))
+                            elif doc_type == "ServiceDeliveryRecord" and file.startswith("delivery_") and file.endswith((".pdf", ".png", ".xml")):
+                                valid_files.append(os.path.join(root, file))
+                            elif doc_type == "Contract" and file.startswith("contract_") and file.endswith((".pdf", ".xml")):
+                                valid_files.append(os.path.join(root, file))
+
+                    if not valid_files:
+                        raise ValueError(f"No se encontraron archivos válidos para {doc_type} en {dataset_path}")
+
+                    print(f"Cargando {len(valid_files)} documentos desde: {dataset_path}")
+                    dataset = DocumentDataset(file_paths=valid_files, document_type=doc_type)
 
                     print(f"Iniciando entrenamiento con {len(dataset)} documentos de tipo {doc_type}")
                     train_single_fold(dataset, learning_dir, doc_type, current_fold, device)
@@ -751,4 +860,5 @@ if __name__ == "__main__":
                 break
 
         print("\nEntrenamiento finalizado!")
+
 

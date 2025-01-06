@@ -1,4 +1,6 @@
 # How to run it locally?
+You must cd /IA folder.
+
 1. Activar un entorno virtual
 Si ya tienes un entorno virtual creado (por ejemplo, pytorch-env), puedes activarlo con el siguiente comando:
    - En Linux/macOS:

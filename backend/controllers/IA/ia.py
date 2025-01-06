@@ -27,7 +27,9 @@ warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Configurar Tesseract
-tesseract_path = r'C:\Program Files\Tesseract-OCR'
+"""tesseract_path = r'C:\Program Files\Tesseract-OCR' for windows"""
+tesseract_path = r'/usr/bin/tesseract'
+
 pytesseract.pytesseract.tesseract_cmd = os.path.join(tesseract_path, 'tesseract.exe')
 
 # Configurar la variable de entorno TESSDATA_PREFIX

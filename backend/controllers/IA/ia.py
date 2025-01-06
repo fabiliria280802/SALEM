@@ -702,8 +702,6 @@ def process_service_delivery_record(image, schema, text):
         "missing_fields": missing_fields
     }
 
-
-
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

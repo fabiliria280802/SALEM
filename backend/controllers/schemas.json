@@ -199,15 +199,33 @@
 			},
 			"subtotal": {
 				"label": "Subtotal",
-				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
+				"region": {
+    			    "top": 582.8453979492188,
+    			    "left": 177.9153594970703,
+    			    "width": 200,
+    			    "height": 20
+    			}
 			},
 			"tax": {
 				"label": "Impuesto",
-				"regex": "(?i)\\b(?:impuesto|tax)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:impuesto|tax)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
+				"region": {
+    			    "top": 582.8453979492188,
+    			    "left": 177.9153594970703,
+    			    "width": 200,
+    			    "height": 20
+    			}
 			},
 			"total_due": {
 				"label": "Total a Pagar",
-				"regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
+				"region": {
+    			    "top": 582.8453979492188,
+    			    "left": 177.9153594970703,
+    			    "width": 200,
+    			    "height": 20
+    			}
 			}
 		}
 	},

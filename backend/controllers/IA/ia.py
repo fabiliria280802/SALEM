@@ -93,7 +93,6 @@ class DocumentDataset(Dataset):
             print(f"Error procesando archivo {file_path}: {str(e)}")
             return torch.zeros((3, 400, 400)), torch.tensor(self.label, dtype=torch.long)
 
-
 class EarlyStopping:
     def __init__(self, patience=15, min_delta=0, verbose=True):
         self.patience = patience
@@ -602,8 +601,7 @@ def process_invoice_document(file_path, schema):
             extracted_data[field_name] = extract_field_from_xml(tree, field_info)
     return extracted_data
 
-
-#Holi 
+# validations 
 def validate_order_number(order_number):
     """Valida que el número de orden inicie con '34' y tenga 5 cifras más."""
     if re.fullmatch(r"34\d{5}", order_number):
@@ -707,7 +705,6 @@ def process_service_delivery_record(image, schema, text):
 
 
 if __name__ == "__main__":
-    # Verificar si tenemos GPU
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     if len(sys.argv) == 3:
@@ -746,4 +743,3 @@ if __name__ == "__main__":
                 break
 
         print("\nEntrenamiento finalizado!")
-

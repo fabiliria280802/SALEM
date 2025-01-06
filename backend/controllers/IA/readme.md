@@ -28,3 +28,9 @@ Si aún no tienes un entorno virtual y necesitas crearl
 python -m venv pytorch-env
 ```
 Actívalo siguiendo el paso 1.
+
+## How to list dependencies?
+En lugar de pip freeze, utiliza pip list para obtener solo los nombres y versiones de los paquetes instalados:
+```bash
+pip list --format=freeze > requirements.txt
+```

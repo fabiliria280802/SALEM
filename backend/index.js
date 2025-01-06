@@ -34,10 +34,10 @@ const dataDir = path.join(process.cwd(), 'data');
 const docsDir = path.join(dataDir, 'docs');
 
 if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir);
+	fs.mkdirSync(dataDir);
 }
 if (!fs.existsSync(docsDir)) {
-    fs.mkdirSync(docsDir);
+	fs.mkdirSync(docsDir);
 }
 
 app.get('/', (req, res) => {

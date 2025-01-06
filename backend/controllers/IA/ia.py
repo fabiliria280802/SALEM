@@ -49,7 +49,7 @@ class DocumentDataset(Dataset):
 
         self.files = []
         for f in sorted(os.listdir(dataset_path)):
-            if f.endswith((".pdf", ".png", ".jpg")):
+            if f.endswith((".pdf", ".png", ".xml")):
                 if document_type == "Invoice" and f.startswith("invoice"):
                     self.files.append(f)
                 elif document_type == "Contract" and f.startswith("contract"):
@@ -398,9 +398,6 @@ def process_contract_document(image, schema, text):
         "missing_fields": missing_fields
     }
 
-def get_field_region(model_outputs, field_name, document_type):
-    return None
-
 def calculate_confidence(regex_match):
     if regex_match is None:
         return 0.0
@@ -490,6 +487,225 @@ def process_single_document(file_path, document_type):
         print(json.dumps(error_result), flush=True)
         return error_result
 
+def extract_table_data(text, schema):
+    table_data = []
+    lines = text.split('\n')
+    for i in range(len(lines)):
+        if re.search(schema['code']['regex'], lines[i], re.IGNORECASE):
+            code = re.search(schema['code']['regex'], lines[i], re.IGNORECASE).group(1)
+            description = re.search(schema['description']['regex'], lines[i+1], re.IGNORECASE).group(1)
+            quantity = re.search(schema['quantity']['regex'], lines[i+2], re.IGNORECASE).group(1)
+            unit_cost = re.search(schema['unit_cost']['regex'], lines[i+3], re.IGNORECASE).group(1)
+            total_cost = re.search(schema['total_cost']['regex'], lines[i+4], re.IGNORECASE).group(1)
+            table_data.append({
+                'code': code,
+                'description': description,
+                'quantity': quantity,
+                'unit_cost': unit_cost,
+                'total_cost': total_cost
+            })
+    return table_data
+
+# solo para service receipt + contract
+def validate_signatures_and_positions(document_path, schema, field_key):
+    text = extract_text_from_document(document_path)
+    extracted_data = {}
+    missing_fields = []
+
+    # Validar nombres, posiciones y empresa
+    for field, info in schema[field_key]["fields"].items():
+        if "regex" in info:
+            match = re.search(info["regex"], text)
+            if match:
+                extracted_data[field] = match.group(0)
+            else:
+                missing_fields.append(field)
+        elif "values" in info:  # Validar posiciones en base a lista
+            match = re.search(r"\b" + r"\b|\b".join(info["values"]) + r"\b", text)
+            if match:
+                extracted_data[field] = match.group(0)
+            else:
+                missing_fields.append(field)
+
+    # Verificar imágenes de firmas
+    if document_path.endswith(".pdf"):
+        images = convert_pdf_to_images(document_path)
+        for idx, field in enumerate(["person_signature"]):  # Cambiar si hay múltiples firmas
+            if not verify_signature_in_image(images[-1], idx):
+                missing_fields.append(field)
+
+    return extracted_data, missing_fields
+
+def verify_signature_in_image(image, position_index):
+    signature_regions = [
+        (50, 700, 400, 750),  
+        (450, 700, 800, 750) 
+    ]
+    region = signature_regions[position_index]
+    cropped_region = image.crop(region)
+    return not cropped_region.getbbox() is None 
+
+# validar por region
+def extract_field_from_region(image, field_info):
+    if "region" in field_info:
+        region = field_info["region"]
+        cropped_image = image.crop((
+            region["left"],
+            region["top"],
+            region["left"] + region["width"],
+            region["top"] + region["height"]
+        ))
+        text = pytesseract.image_to_string(cropped_image, lang="eng").strip()
+        return text
+    return None
+
+def extract_relative_field(image, base_field, field_info):
+    if "relative_to" in field_info and "offset" in field_info:
+        base_region = field_info["relative_to"]["region"]
+        offset = field_info["offset"]
+        region = {
+            "left": base_region["left"] + offset["x"],
+            "top": base_region["top"] + offset["y"],
+            "width": base_region["width"],
+            "height": base_region["height"]
+        }
+        cropped_image = image.crop((
+            region["left"],
+            region["top"],
+            region["left"] + region["width"],
+            region["top"] + region["height"]
+        ))
+        text = pytesseract.image_to_string(cropped_image, lang="eng").strip()
+        return text
+    return None
+
+def extract_field_from_xml(xml_tree, field_info):
+    xpath_query = field_info.get("xpath")
+    if xpath_query:
+        element = xml_tree.find(xpath_query)
+        return element.text if element is not None else None
+    return None
+
+def process_invoice_document(file_path, schema):
+    extracted_data = {}
+    if file_path.endswith(".pdf") or file_path.endswith(".png"):
+        image = convert_pdf_to_images(file_path)[0]  # Primera página del PDF
+        for field_name, field_info in schema["Invoice"]["fields"].items():
+            if "region" in field_info:
+                extracted_data[field_name] = extract_field_from_region(image, field_info)
+            elif "relative_to" in field_info:
+                extracted_data[field_name] = extract_relative_field(image, extracted_data, field_info)
+    elif file_path.endswith(".xml"):
+        import xml.etree.ElementTree as ET
+        tree = ET.parse(file_path)
+        for field_name, field_info in schema["Invoice"]["fields"].items():
+            extracted_data[field_name] = extract_field_from_xml(tree, field_info)
+    return extracted_data
+
+
+#Holi 
+def validate_order_number(order_number):
+    """Valida que el número de orden inicie con '34' y tenga 5 cifras más."""
+    if re.fullmatch(r"34\d{5}", order_number):
+        return True, None
+    return False, f"order_number '{order_number}' no cumple con el formato."
+
+def validate_invoice_number(invoice_number):
+    """Valida que el número de factura inicie con '11' y tenga 5 cifras más."""
+    if re.fullmatch(r"11\d{5}", invoice_number):
+        return True, None
+    return False, f"invoice_number '{invoice_number}' no cumple con el formato."
+
+def validate_hes_number(hes_number):
+    """Valida que el número HES inicie con '812' y tenga 5 cifras más."""
+    if re.fullmatch(r"812\d{5}", hes_number):
+        return True, None
+    return False, f"hes_number '{hes_number}' no cumple con el formato."
+
+def validate_company_name(company_name):
+    """Valida que el nombre de la empresa sea exactamente 'ENAP SIPETROL S.A. ENAP SIPEC'."""
+    expected_name = "ENAP SIPETROL S.A. ENAP SIPEC"
+    if company_name.strip() == expected_name:
+        return True, None
+    return False, f"company_name '{company_name}' no coincide con '{expected_name}'."
+
+def validate_dates(receiver_date, end_date):
+    """Valida que las fechas estén en formato correcto y sean cronológicamente coherentes."""
+    errors = []
+    date_format = "%d/%m/%Y"
+    
+    try:
+        receiver_date_obj = datetime.strptime(receiver_date, date_format)
+    except ValueError:
+        errors.append(f"receiver_date '{receiver_date}' no tiene el formato correcto ({date_format}).")
+        receiver_date_obj = None
+    
+    try:
+        end_date_obj = datetime.strptime(end_date, date_format)
+    except ValueError:
+        errors.append(f"end_date '{end_date}' no tiene el formato correcto ({date_format}).")
+        end_date_obj = None
+    
+    if receiver_date_obj and end_date_obj:
+        if end_date_obj < receiver_date_obj:
+            errors.append("end_date no puede ser anterior a receiver_date.")
+    
+    return len(errors) == 0, errors
+
+def process_service_delivery_record(image, schema, text):
+    """Procesa un documento de acta de recepción y valida sus campos."""
+    extracted_data = {}
+    confidence_scores = {}
+    validation_errors = []
+    missing_fields = []
+
+    record_fields = schema["ServiceDeliveryRecord"]["fields"]
+    for field_name, field_info in record_fields.items():
+        process_field(
+            field_name,
+            text,
+            field_info,
+            extracted_data,
+            confidence_scores,
+            validation_errors,
+            missing_fields
+        )
+
+    # Validaciones específicas
+    if "order_number" in extracted_data:
+        valid, error = validate_order_number(extracted_data["order_number"])
+        if not valid:
+            validation_errors.append(error)
+    
+    if "invoice_number" in extracted_data:
+        valid, error = validate_invoice_number(extracted_data["invoice_number"])
+        if not valid:
+            validation_errors.append(error)
+    
+    if "hes_number" in extracted_data:
+        valid, error = validate_hes_number(extracted_data["hes_number"])
+        if not valid:
+            validation_errors.append(error)
+    
+    if "receiving_company" in extracted_data:
+        valid, error = validate_company_name(extracted_data["receiving_company"])
+        if not valid:
+            validation_errors.append(error)
+    
+    if "receiver_date" in extracted_data and "end_date" in extracted_data:
+        valid, errors = validate_dates(extracted_data["receiver_date"], extracted_data["end_date"])
+        if not valid:
+            validation_errors.extend(errors)
+
+    return {
+        "extracted_data": extracted_data,
+        "confidence_scores": confidence_scores,
+        "validation_errors": validation_errors,
+        "missing_fields": missing_fields
+    }
+
+
+
 if __name__ == "__main__":
     # Verificar si tenemos GPU
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -530,3 +746,4 @@ if __name__ == "__main__":
                 break
 
         print("\nEntrenamiento finalizado!")
+

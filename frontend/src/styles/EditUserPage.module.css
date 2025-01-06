@@ -73,7 +73,9 @@
 	font-size: 16px;
 	border-radius: 8px;
 	cursor: pointer;
-	transition: background-color 0.3s ease, box-shadow 0.2s ease;
+	transition:
+		background-color 0.3s ease,
+		box-shadow 0.2s ease;
 }
 
 .saveButton {
@@ -176,6 +178,3 @@
 		justify-content: center; /* Centra los botones en móvil */
 	}
 }
-
-
-

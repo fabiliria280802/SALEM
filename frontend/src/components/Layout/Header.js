@@ -6,124 +6,137 @@ import { useHistory } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
 
 const Header = () => {
-    const { isAuthenticated, logout, user } = useAuth();
-    const [isMobile, setIsMobile] = useState(false);
-    const history = useHistory();
+	const { isAuthenticated, logout, user } = useAuth();
+	const [isMobile, setIsMobile] = useState(false);
+	const history = useHistory();
 
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth <= 1200); // Cambiamos el punto de quiebre a 1200px
-        };
+	useEffect(() => {
+		const handleResize = () => {
+			setIsMobile(window.innerWidth <= 1200); // Cambiamos el punto de quiebre a 1200px
+		};
 
-        window.addEventListener('resize', handleResize);
-        handleResize();
+		window.addEventListener('resize', handleResize);
+		handleResize();
 
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
 
-    const handleLogout = () => {
-        logout();
-        history.push('/login');
-    };
+	const handleLogout = () => {
+		logout();
+		history.push('/login');
+	};
 
-    const handleMenuItemClick = (path) => {
-        history.push(path);
-    };
+	const handleMenuItemClick = path => {
+		history.push(path);
+	};
 
-    const menuOptionsByRole = {
-        Administrador: [
-            { label: 'Inicio', command: () => handleMenuItemClick('/') },
-            { label: 'Estatus', command: () => handleMenuItemClick('/status') },
-            { label: 'Documentos', command: () => handleMenuItemClick('/documents') },
-            { label: 'Entrenamiento', command: () => handleMenuItemClick('/training') },
-            { label: 'Permisos', command: () => handleMenuItemClick('/permissions') },
-            { label: 'Gestión de usuarios', command: () => handleMenuItemClick('/users-management') },
-            { label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
-        ],
-        Proveedor: [
-            { label: 'Inicio', command: () => handleMenuItemClick('/') },
-            { label: 'Estatus', command: () => handleMenuItemClick('/status') },
-            { label: 'Mis documentos', command: () => handleMenuItemClick('/documents') },
-            { label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
-        ],
-        Gestor: [
-            { label: 'Inicio', command: () => handleMenuItemClick('/') },
-            { label: 'Estatus', command: () => handleMenuItemClick('/status') },
-            { label: 'Documentos', command: () => handleMenuItemClick('/documents') },
-            { label: 'Entrenamiento', command: () => handleMenuItemClick('/training') },
-            { label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
-        ],
-    };
+	const menuOptionsByRole = {
+		Administrador: [
+			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
+			{ label: 'Estatus', command: () => handleMenuItemClick('/status') },
+			{ label: 'Documentos', command: () => handleMenuItemClick('/documents') },
+			{
+				label: 'Entrenamiento',
+				command: () => handleMenuItemClick('/training'),
+			},
+			{ label: 'Permisos', command: () => handleMenuItemClick('/permissions') },
+			{
+				label: 'Gestión de usuarios',
+				command: () => handleMenuItemClick('/users-management'),
+			},
+			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+		],
+		Proveedor: [
+			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
+			{ label: 'Estatus', command: () => handleMenuItemClick('/status') },
+			{
+				label: 'Mis documentos',
+				command: () => handleMenuItemClick('/documents'),
+			},
+			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+		],
+		Gestor: [
+			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
+			{ label: 'Estatus', command: () => handleMenuItemClick('/status') },
+			{ label: 'Documentos', command: () => handleMenuItemClick('/documents') },
+			{
+				label: 'Entrenamiento',
+				command: () => handleMenuItemClick('/training'),
+			},
+			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+		],
+	};
 
-    const menuItems = isAuthenticated && user ? menuOptionsByRole[user.role] || [] : [];
+	const menuItems =
+		isAuthenticated && user ? menuOptionsByRole[user.role] || [] : [];
 
-    const renderEndButton = () => {
-        if (isAuthenticated) {
-            if (isMobile) {
-                return (
-                    <div className={styles.dropdown}>
-                        <button className={styles.dropdownButton}>
-                            <i className="pi pi-bars" /> {/* Ícono de las tres rayas */}
-                        </button>
-                        <div className={styles.dropdownContent}>
-                            {menuItems.map((item, index) => (
-                                <div
-                                    key={index}
-                                    className={styles.dropdownItem}
-                                    onClick={item.command}
-                                >
-                                    {item.label}
-                                </div>
-                            ))}
-                            <div className={styles.dropdownItem} onClick={handleLogout}>
-                                Cerrar sesión
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-            return (
-                <div className={styles.desktopButtons}>
-                    <button
-                        className={`p-button ${styles.sessionButton}`}
-                        onClick={handleLogout}
-                    >
-                        Cerrar sesión
-                    </button>
-                </div>
-            );
-        }
+	const renderEndButton = () => {
+		if (isAuthenticated) {
+			if (isMobile) {
+				return (
+					<div className={styles.dropdown}>
+						<button className={styles.dropdownButton}>
+							<i className="pi pi-bars" /> {/* Ícono de las tres rayas */}
+						</button>
+						<div className={styles.dropdownContent}>
+							{menuItems.map((item, index) => (
+								<div
+									key={index}
+									className={styles.dropdownItem}
+									onClick={item.command}
+								>
+									{item.label}
+								</div>
+							))}
+							<div className={styles.dropdownItem} onClick={handleLogout}>
+								Cerrar sesión
+							</div>
+						</div>
+					</div>
+				);
+			}
+			return (
+				<div className={styles.desktopButtons}>
+					<button
+						className={`p-button ${styles.sessionButton}`}
+						onClick={handleLogout}
+					>
+						Cerrar sesión
+					</button>
+				</div>
+			);
+		}
 
-        // Si el usuario no está autenticado, solo mostrar el botón de "Iniciar sesión"
-        return (
-            <button
-                className={`p-button ${styles.sessionButton}`}
-                onClick={() => history.push('/login')}
-            >
-                Iniciar sesión
-            </button>
-        );
-    };
+		// Si el usuario no está autenticado, solo mostrar el botón de "Iniciar sesión"
+		return (
+			<button
+				className={`p-button ${styles.sessionButton}`}
+				onClick={() => history.push('/login')}
+			>
+				Iniciar sesión
+			</button>
+		);
+	};
 
-    const start = (
-        <div className={styles.startContainer}>
-            <img
-                src={logo}
-                alt="Logo"
-                style={{ height: '40px' }}
-                onClick={() => history.push('/')}
-            />
-        </div>
-    );
+	const start = (
+		<div className={styles.startContainer}>
+			<img
+				src={logo}
+				alt="Logo"
+				style={{ height: '40px' }}
+				onClick={() => history.push('/')}
+			/>
+		</div>
+	);
 
-    return (
-        <Menubar
-            className={styles.header}
-            model={isAuthenticated && !isMobile ? menuItems : []} // Mostrar el Menubar solo si está autenticado y no es móvil
-            start={start}
-            end={renderEndButton()}
-        />
-    );
+	return (
+		<Menubar
+			className={styles.header}
+			model={isAuthenticated && !isMobile ? menuItems : []} // Mostrar el Menubar solo si está autenticado y no es móvil
+			start={start}
+			end={renderEndButton()}
+		/>
+	);
 };
 
 export default Header;

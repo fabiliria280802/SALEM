@@ -132,7 +132,9 @@ const UploadServiceDeliveryRecordPage = () => {
 		<div className={styles.container}>
 			<Toast ref={toast} />
 			<div className={styles.formContainer}>
-				<h1 className={styles.formTitle}>Nueva acta de recepción de servicio</h1>
+				<h1 className={styles.formTitle}>
+					Nueva acta de recepción de servicio
+				</h1>
 				<p className={styles.formSubtitle}>Completa la información</p>
 
 				<div className={styles.formGrid}>
@@ -146,7 +148,7 @@ const UploadServiceDeliveryRecordPage = () => {
 							onBlur={handleRucBlur}
 							maxLength={13}
 							disabled={isRucReadOnly}
-							placeholder={isRucReadOnly ? "" : "Ingrese el RUC del proveedor"}
+							placeholder={isRucReadOnly ? '' : 'Ingrese el RUC del proveedor'}
 						/>
 					</div>
 					<div className={styles.formGroup}>

@@ -29,14 +29,15 @@ const DocumentsListPage = () => {
 				const response = await documentService.getDocumentsList();
 				// Asegurarse de que data sea un array
 				const data = Array.isArray(response.data) ? response.data : response;
-				
+
 				// Filtrar documentos según el rol
-				const filteredData = user.role === 'Proveedor'
-					? data.filter(doc => doc.ruc === user.ruc)
-					: data;
-				
+				const filteredData =
+					user.role === 'Proveedor'
+						? data.filter(doc => doc.ruc === user.ruc)
+						: data;
+
 				console.log('Documentos cargados:', filteredData); // Para debugging
-				
+
 				setDocuments(filteredData);
 				setFilteredDocuments(filteredData);
 			} catch (error) {
@@ -45,7 +46,7 @@ const DocumentsListPage = () => {
 					severity: 'error',
 					summary: 'Error',
 					detail: 'Error al cargar los documentos',
-					life: 3000
+					life: 3000,
 				});
 				// Inicializar con array vacío en caso de error
 				setDocuments([]);
@@ -108,20 +109,18 @@ const DocumentsListPage = () => {
 		setAppliedFilters(updatedFilters);
 	};
 
-	const handleRequestRevalidation = async (documentId) => {
+	const handleRequestRevalidation = async documentId => {
 		try {
 			await documentService.requestRevalidation(documentId);
 			toast.current.show({
 				severity: 'success',
 				summary: 'Éxito',
 				detail: 'Solicitud de revalidación enviada correctamente',
-				life: 3000
+				life: 3000,
 			});
 			// Actualizar la lista de documentos
 			const updatedDocs = documents.map(doc =>
-				doc._id === documentId
-					? { ...doc, status: 'Revalidación' }
-					: doc
+				doc._id === documentId ? { ...doc, status: 'Revalidación' } : doc,
 			);
 			setDocuments(updatedDocs);
 			setFilteredDocuments(updatedDocs);
@@ -130,7 +129,7 @@ const DocumentsListPage = () => {
 				severity: 'error',
 				summary: 'Error',
 				detail: 'Error al solicitar la revalidación',
-				life: 3000
+				life: 3000,
 			});
 		}
 	};
@@ -149,11 +148,7 @@ const DocumentsListPage = () => {
 					click en la lupa o presiona la tecla Enter
 				</p>
 				<div className={styles.filterContainer}>
-					<i
-						className="pi pi-search"
-						onClick={handleSearch}
-
-					/>
+					<i className="pi pi-search" onClick={handleSearch} />
 					<input
 						type="text"
 						value={searchTerm}
@@ -196,7 +191,7 @@ const DocumentsListPage = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{filteredDocuments.map((doc) => (
+						{filteredDocuments.map(doc => (
 							<tr key={doc._id}>
 								<td>{doc.ruc}</td>
 								<td>{doc.contrato}</td>
@@ -213,7 +208,8 @@ const DocumentsListPage = () => {
 											Solicitar Revalidación
 										</button>
 									)}
-									{(user.role === 'Administrador' || user.role === 'Gestor') && (
+									{(user.role === 'Administrador' ||
+										user.role === 'Gestor') && (
 										<button
 											className={styles.viewButton}
 											onClick={() => history.push(`/document/${doc._id}`)}

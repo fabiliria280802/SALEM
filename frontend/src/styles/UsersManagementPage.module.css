@@ -3,71 +3,71 @@
 	flex-direction: column;
 	min-height: 100vh;
 	background-color: #f5f6fa;
-  }
-  
-  .container {
+}
+
+.container {
 	flex-grow: 1;
 	padding: 20px;
 	max-width: 1400px;
 	margin: 0 auto;
 	width: 100%;
-  }
-  
-  .formTitle {
+}
+
+.formTitle {
 	font-size: 32px;
 	font-weight: bold;
 	text-align: left;
 	margin-bottom: 20px;
 	color: #2c3e50;
-  }
-  
-  .searchNote {
+}
+
+.searchNote {
 	color: #666;
 	margin-bottom: 1rem;
-  }
-  
-  .filterContainer {
+}
+
+.filterContainer {
 	background: white;
 	padding: 1rem;
 	border-radius: 8px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	margin-bottom: 1.5rem;
-  }
-  
-  .searchWrapper {
+}
+
+.searchWrapper {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 	margin-bottom: 1rem;
-  }
-  
-  .searchIcon {
+}
+
+.searchIcon {
 	color: #666;
 	cursor: pointer;
 	font-size: 1.2rem;
-  }
-  
-  .searchInput {
+}
+
+.searchInput {
 	flex: 1;
 	padding: 0.75rem;
 	border: 1px solid #ddd;
 	border-radius: 6px;
 	font-size: 1rem;
 	transition: border-color 0.2s ease;
-  }
-  
-  .searchInput:focus {
+}
+
+.searchInput:focus {
 	border-color: #3498db;
 	outline: none;
-  }
-  
-  .appliedFiltersContainer {
+}
+
+.appliedFiltersContainer {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
-  }
-  
-  .filteredTag {
+}
+
+.filteredTag {
 	display: inline-flex;
 	align-items: center;
 	background-color: #f1f5f9;
@@ -76,101 +76,101 @@
 	border-radius: 999px;
 	font-size: 0.875rem;
 	transition: background-color 0.2s ease;
-  }
-  
-  .clearButton {
+}
+
+.clearButton {
 	margin-left: 0.5rem;
 	cursor: pointer;
 	color: #64748b;
 	font-weight: bold;
-  }
-  
-  .clearButton:hover {
+}
+
+.clearButton:hover {
 	color: #334155;
-  }
-  
-  .buttonContainer {
+}
+
+.buttonContainer {
 	display: flex;
 	gap: 1rem;
 	margin-bottom: 1.5rem;
-  }
-  
-  .newButton,
-  .exitButton {
+}
+
+.newButton,
+.exitButton {
 	padding: 0.75rem 1.5rem;
 	border-radius: 6px;
 	font-weight: 500;
 	cursor: pointer;
 	transition: all 0.2s ease;
-  }
-  
-  .newButton {
+}
+
+.newButton {
 	background-color: black;
 	color: white;
 	border: none;
-  }
-  
-  .exitButton {
+}
+
+.exitButton {
 	background-color: white;
 	color: black;
 	border: 1px solid black;
-  }
-  
-  .newButton:hover,
-  .exitButton:hover {
+}
+
+.newButton:hover,
+.exitButton:hover {
 	transform: translateY(-1px);
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Tabla y contenedor responsivo */
-  .tableContainer {
+}
+
+/* Tabla y contenedor responsivo */
+.tableContainer {
 	display: block;
-  }
-  
-  .cardContainer {
+}
+
+.cardContainer {
 	display: none;
-  }
-  
-  .usersTable {
+}
+
+.usersTable {
 	width: 100%;
 	border-collapse: collapse;
 	background: white;
 	border-radius: 8px;
 	overflow: hidden;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .usersTable th,
-  .usersTable td {
+}
+
+.usersTable th,
+.usersTable td {
 	padding: 1rem;
 	text-align: left;
-  }
-  
-  .usersTable th {
+}
+
+.usersTable th {
 	background-color: #2c3e50;
 	color: white;
 	font-weight: 500;
 	text-transform: uppercase;
 	font-size: 0.875rem;
-  }
-  
-  .usersTable tr:nth-child(even) {
+}
+
+.usersTable tr:nth-child(even) {
 	background-color: #f8fafc;
-  }
-  
-  .usersTable tr:hover {
+}
+
+.usersTable tr:hover {
 	background-color: #f1f5f9;
-  }
-  
-  /* Estilos de botones en la tabla */
-  .usersTable td:last-child {
+}
+
+/* Estilos de botones en la tabla */
+.usersTable td:last-child {
 	display: flex;
 	gap: 0.5rem;
-  }
-  
-  .usersTable .editButton,
-  .usersTable .deleteButton,
-  .usersTable .resumeButton {
+}
+
+.usersTable .editButton,
+.usersTable .deleteButton,
+.usersTable .resumeButton {
 	padding: 0.5rem 1rem;
 	border: none;
 	border-radius: 6px;
@@ -178,55 +178,55 @@
 	cursor: pointer;
 	transition: all 0.2s ease;
 	min-width: 100px;
-  }
-  
-  .usersTable .editButton {
+}
+
+.usersTable .editButton {
 	background-color: #3498db;
 	color: white;
-  }
-  
-  .usersTable .deleteButton {
+}
+
+.usersTable .deleteButton {
 	background-color: #e74c3c;
 	color: white;
-  }
-  
-  .usersTable .resumeButton {
+}
+
+.usersTable .resumeButton {
 	background-color: #138804;
 	color: white;
-  }
-  
-  .usersTable .editButton:hover,
-  .usersTable .deleteButton:hover,
-  .usersTable .resumeButton:hover {
+}
+
+.usersTable .editButton:hover,
+.usersTable .deleteButton:hover,
+.usersTable .resumeButton:hover {
 	opacity: 0.9;
 	transform: translateY(-1px);
-  }
-  
-  /* Media queries */
-  @media screen and (max-width: 1400px) {
+}
+
+/* Media queries */
+@media screen and (max-width: 1400px) {
 	.container {
-	  padding: 15px;
+		padding: 15px;
 	}
-	
+
 	.formTitle {
-	  font-size: 28px;
+		font-size: 28px;
 	}
-	
+
 	.searchInput {
-	  width: 100%;
+		width: 100%;
 	}
-  
+
 	.tableContainer {
-	  display: none;
+		display: none;
 	}
-  
+
 	.cardContainer {
-	  display: block;
+		display: block;
 	}
-  }
-  
-  /* Popup styles */
-  .popup {
+}
+
+/* Popup styles */
+.popup {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -237,9 +237,9 @@
 	justify-content: center;
 	align-items: center;
 	z-index: 1000;
-  }
-  
-  .popupContent {
+}
+
+.popupContent {
 	background: white;
 	padding: 2rem;
 	border-radius: 12px;
@@ -247,48 +247,48 @@
 	width: 90%;
 	max-width: 400px;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .popupContent h2 {
+}
+
+.popupContent h2 {
 	margin-bottom: 1rem;
 	color: #2c3e50;
 	font-size: 1.25rem;
-  }
-  
-  .popupContent p {
+}
+
+.popupContent p {
 	color: #666;
 	margin-bottom: 1.5rem;
-  }
-  
-  .popupActions {
+}
+
+.popupActions {
 	display: flex;
 	justify-content: center;
 	gap: 1rem;
-  }
-  
-  .confirmButton,
-  .cancelButton {
+}
+
+.confirmButton,
+.cancelButton {
 	padding: 0.75rem 1.5rem;
 	border-radius: 6px;
 	font-weight: 500;
 	cursor: pointer;
 	transition: opacity 0.2s ease;
 	min-width: 120px;
-  }
-  
-  .confirmButton {
+}
+
+.confirmButton {
 	background-color: black;
 	color: white;
 	border: none;
-  }
-  
-  .cancelButton {
+}
+
+.cancelButton {
 	background-color: #e2e8f0;
 	color: #475569;
 	border: none;
-  }
-  
-  .confirmButton:hover,
-  .cancelButton:hover {
+}
+
+.confirmButton:hover,
+.cancelButton:hover {
 	opacity: 0.9;
-  }
+}

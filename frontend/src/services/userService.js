@@ -104,7 +104,6 @@ const updateUser = async (userId, userData) => {
 	}
 };
 
-
 const userService = {
 	createUser,
 	getAllUsers,

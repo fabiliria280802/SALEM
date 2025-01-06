@@ -7,7 +7,7 @@ const { sendPasswordCreationEmail } = require('../notificationController');
 // Mock del módulo de notificaciones
 jest.mock('../notificationController', () => ({
 	sendPasswordCreationEmail: jest.fn().mockResolvedValue(undefined),
-	sendPasswordResetEmail: jest.fn().mockResolvedValue(undefined)
+	sendPasswordResetEmail: jest.fn().mockResolvedValue(undefined),
 }));
 
 describe('UserController Integration Tests', () => {
@@ -23,7 +23,7 @@ describe('UserController Integration Tests', () => {
 			const mongoUri = mongoServer.getUri();
 			await mongoose.connect(mongoUri, {
 				useNewUrlParser: true,
-				useUnifiedTopology: true
+				useUnifiedTopology: true,
 			});
 		} catch (error) {
 			console.error('Error en beforeAll:', error);
@@ -56,7 +56,7 @@ describe('UserController Integration Tests', () => {
 				company_name: 'Empresa Ejemplo',
 				ruc: '1757797202001',
 				role: 'Administrador',
-				status: 'Activo'
+				status: 'Activo',
 			});
 		} catch (error) {
 			console.error('Error en beforeEach:', error);
@@ -77,17 +77,17 @@ describe('UserController Integration Tests', () => {
 					company_name: 'Empresa Ejemplo',
 					ruc: '1757797202001',
 					email: 'test@example.com',
-					role: 'Proveedor'
+					role: 'Proveedor',
 				},
 				user: {
 					name: adminUser.name,
-					last_name: adminUser.last_name
-				}
+					last_name: adminUser.last_name,
+				},
 			};
 
 			const res = {
 				status: jest.fn().mockReturnThis(),
-				json: jest.fn()
+				json: jest.fn(),
 			};
 
 			const next = jest.fn();
@@ -100,9 +100,9 @@ describe('UserController Integration Tests', () => {
 					message: expect.any(String),
 					user: expect.objectContaining({
 						email: 'test@example.com',
-						role: 'Proveedor'
-					})
-				})
+						role: 'Proveedor',
+					}),
+				}),
 			);
 			expect(sendPasswordCreationEmail).toHaveBeenCalled();
 		});
@@ -116,17 +116,17 @@ describe('UserController Integration Tests', () => {
 					company_name: 'Empresa123', // Nombre de empresa inválido
 					ruc: '123456789', // RUC inválido
 					email: 'invalid-email',
-					role: 'Proveedor'
+					role: 'Proveedor',
 				},
 				user: {
 					name: adminUser.name,
-					last_name: adminUser.last_name
-				}
+					last_name: adminUser.last_name,
+				},
 			};
 
 			const res = {
 				status: jest.fn().mockReturnThis(),
-				json: jest.fn()
+				json: jest.fn(),
 			};
 
 			const next = jest.fn();
@@ -153,7 +153,7 @@ describe('UserController Integration Tests', () => {
 					email: 'prueba@example.com',
 					role: 'Proveedor',
 					status: 'Activo',
-					password: 'ValidPass123'
+					password: 'ValidPass123',
 				},
 				{
 					name: 'Segundo',
@@ -164,25 +164,26 @@ describe('UserController Integration Tests', () => {
 					email: 'segundo@example.com',
 					role: 'Proveedor',
 					status: 'Activo',
-					password: 'ValidPass123'
-				}
+					password: 'ValidPass123',
+				},
 			]);
 
 			const req = {
 				user: {
-					role: 'Administrador'
-				}
+					role: 'Administrador',
+				},
 			};
 
 			const res = {
 				status: jest.fn().mockReturnThis(),
-				json: jest.fn()
+				json: jest.fn(),
 			};
 
 			const next = jest.fn();
 
 			// Llamar al último middleware del array
-			const getAllUsersMiddleware = userController.getAllUsers[userController.getAllUsers.length - 1];
+			const getAllUsersMiddleware =
+				userController.getAllUsers[userController.getAllUsers.length - 1];
 			await getAllUsersMiddleware(req, res, next);
 
 			// Verificar que res.json fue llamado
@@ -202,8 +203,8 @@ describe('UserController Integration Tests', () => {
 					expect.objectContaining({
 						name: expect.any(String),
 						email: expect.any(String),
-						role: expect.any(String)
-					})
+						role: expect.any(String),
+					}),
 				);
 				// Verificar que el password no está incluido en la respuesta
 				expect(Object.keys(user)).not.toContain('password');
@@ -212,23 +213,23 @@ describe('UserController Integration Tests', () => {
 
 		it('debería rechazar si no es administrador', async () => {
 			const req = {
-					user: {
-						role: 'Proveedor'
-					}
-				};
-				const res = {
-					status: jest.fn().mockReturnThis(),
-					json: jest.fn()
-				};
-				const next = jest.fn();
+				user: {
+					role: 'Proveedor',
+				},
+			};
+			const res = {
+				status: jest.fn().mockReturnThis(),
+				json: jest.fn(),
+			};
+			const next = jest.fn();
 
-				await userController.getAllUsers[1](req, res, next);
+			await userController.getAllUsers[1](req, res, next);
 
-				expect(res.status).toHaveBeenCalledWith(403);
-				expect(res.json).toHaveBeenCalledWith({
-					message: 'No autorizado, debes ser Administrador'
-				});
+			expect(res.status).toHaveBeenCalledWith(403);
+			expect(res.json).toHaveBeenCalledWith({
+				message: 'No autorizado, debes ser Administrador',
 			});
+		});
 	});
 
 	describe('updateUser', () => {
@@ -243,19 +244,19 @@ describe('UserController Integration Tests', () => {
 				ruc: '1757797202001',
 				email: 'test@example.com',
 				role: 'Proveedor',
-				status: 'Activo'
+				status: 'Activo',
 			});
 
 			const req = {
 				params: { id: testUser._id },
 				body: {
 					phone: '0987654322',
-					company_name: 'Nueva Empresa'
-				}
+					company_name: 'Nueva Empresa',
+				},
 			};
 
 			const res = {
-				json: jest.fn()
+				json: jest.fn(),
 			};
 
 			const next = jest.fn();
@@ -267,9 +268,9 @@ describe('UserController Integration Tests', () => {
 					message: 'Usuario actualizado exitosamente',
 					user: expect.objectContaining({
 						phone: '0987654322',
-						company_name: 'Nueva Empresa'
-					})
-				})
+						company_name: 'Nueva Empresa',
+					}),
+				}),
 			);
 		});
 	});
@@ -286,15 +287,15 @@ describe('UserController Integration Tests', () => {
 				ruc: '1757797202001',
 				email: 'test@example.com',
 				role: 'Proveedor',
-				status: 'Activo'
+				status: 'Activo',
 			});
 
 			const req = {
-				params: { id: testUser._id }
+				params: { id: testUser._id },
 			};
 
 			const res = {
-				json: jest.fn()
+				json: jest.fn(),
 			};
 
 			const next = jest.fn();
@@ -302,7 +303,7 @@ describe('UserController Integration Tests', () => {
 			await userController.suspendUser[2](req, res, next);
 
 			expect(res.json).toHaveBeenCalledWith({
-				message: 'Usuario desactivado exitosamente'
+				message: 'Usuario desactivado exitosamente',
 			});
 
 			const updatedUser = await User.findById(testUser._id);
@@ -322,19 +323,19 @@ describe('UserController Integration Tests', () => {
 				ruc: '1757797202001',
 				email: 'test@example.com',
 				role: 'Proveedor',
-				resetCode: '123456'
+				resetCode: '123456',
 			});
 
 			const req = {
 				body: {
 					email: 'test@example.com',
-					code: '123456'
-				}
+					code: '123456',
+				},
 			};
 
 			const res = {
 				status: jest.fn().mockReturnThis(),
-				json: jest.fn()
+				json: jest.fn(),
 			};
 
 			await userController.verifyResetCode(req, res);
@@ -346,13 +347,17 @@ describe('UserController Integration Tests', () => {
 			const actualResponse = res.json.mock.calls[0][0];
 
 			// Verificar la estructura y el mensaje
-			expect(actualResponse).toHaveProperty('message', 'Código verificado correctamente');
+			expect(actualResponse).toHaveProperty(
+				'message',
+				'Código verificado correctamente',
+			);
 			expect(actualResponse).toHaveProperty('userId');
 
 			// Convertir el ObjectId a string si es necesario
-			const userId = actualResponse.userId instanceof mongoose.Types.ObjectId
-				? actualResponse.userId.toString()
-				: actualResponse.userId;
+			const userId =
+				actualResponse.userId instanceof mongoose.Types.ObjectId
+					? actualResponse.userId.toString()
+					: actualResponse.userId;
 
 			// Verificar que el userId es válido
 			expect(mongoose.Types.ObjectId.isValid(userId)).toBeTruthy();
@@ -365,31 +370,31 @@ describe('UserController Integration Tests', () => {
 			const testUser = await User.create({
 				name: 'Test',
 				last_name: 'User',
-					phone: '0987654321',
-					company_name: 'Empresa Ejemplo',
-					ruc: '1757797202001',
-					email: 'test@example.com',
-					role: 'Proveedor',
-					resetCode: '123456'
+				phone: '0987654321',
+				company_name: 'Empresa Ejemplo',
+				ruc: '1757797202001',
+				email: 'test@example.com',
+				role: 'Proveedor',
+				resetCode: '123456',
 			});
 
 			const req = {
 				body: {
 					email: 'test@example.com',
-					code: '999999' // código incorrecto
-				}
+					code: '999999', // código incorrecto
+				},
 			};
 
 			const res = {
 				status: jest.fn().mockReturnThis(),
-				json: jest.fn()
+				json: jest.fn(),
 			};
 
 			await userController.verifyResetCode(req, res);
 
 			expect(res.status).toHaveBeenCalledWith(404);
 			expect(res.json).toHaveBeenCalledWith({
-				message: 'Código incorrecto o no encontrado'
+				message: 'Código incorrecto o no encontrado',
 			});
 		});
 	});

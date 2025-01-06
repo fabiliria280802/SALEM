@@ -1,5 +1,5 @@
 describe('Login E2E', () => {
-	//Happy path login - Administrador 
+	//Happy path login - Administrador
 	it('1.1. login exitoso del usuario (Administrador) y renderizado del Home Page', () => {
 		cy.visit('http://localhost:3000/login');
 		cy.get('input[name="email"]').type('fabiliria@gmail.com');

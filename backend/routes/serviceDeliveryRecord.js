@@ -1,10 +1,10 @@
 const express = require('express');
 const {
-    createServiceRecord,
-    getServiceRecordById,
-    updateServiceRecord,
-    getAllServiceDeliveryRecords,
-    deleteServiceDeliveryRecord
+	createServiceRecord,
+	getServiceRecordById,
+	updateServiceRecord,
+	getAllServiceDeliveryRecords,
+	deleteServiceDeliveryRecord,
 } = require('../controllers/serviceDeliveryRecordController');
 
 const { upload } = require('../middleware/uploadMiddleware');

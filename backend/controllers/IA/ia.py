@@ -716,7 +716,9 @@ if __name__ == "__main__":
         learning_dir = os.path.join(os.path.dirname(__file__), 'learning')
         os.makedirs(learning_dir, exist_ok=True)
 
+        data_dir = os.path.join(os.path.dirname(__file__), 'data', 'docs')
         current_fold = 1
+
         while True:
             try:
                 for doc_type in ["Invoice", "ServiceDeliveryRecord", "Contract"]:
@@ -727,7 +729,13 @@ if __name__ == "__main__":
                         continue
 
                     print(f"\nIniciando entrenamiento para {doc_type} - Fold {current_fold}")
-                    dataset = DocumentDataset(dataset_path='../../data/practice', document_type=doc_type)
+
+                    # Ajusta el dataset_path según el tipo de documento
+                    dataset_path = os.path.join(data_dir, doc_type.lower())
+
+                    print(f"Cargando documentos desde: {dataset_path}")
+                    dataset = DocumentDataset(dataset_path=dataset_path, document_type=doc_type)
+
                     print(f"Iniciando entrenamiento con {len(dataset)} documentos de tipo {doc_type}")
                     train_single_fold(dataset, learning_dir, doc_type, current_fold, device)
 
@@ -743,3 +751,4 @@ if __name__ == "__main__":
                 break
 
         print("\nEntrenamiento finalizado!")
+

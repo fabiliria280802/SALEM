@@ -417,27 +417,27 @@
 			},
 			"payment_terms_intro": {
 				"label": "Términos de Pago",
-				"regex": "(?i)\\b(?:términos de pago|payment terms)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:condiciones de pago|payment terms)\\b"
 			},
 			"subtotal": {
 				"label": "Subtotal",
-				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:subtotal|subtotal \\(sin impuestos|before tax)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
 			},
 			"tax_rate": {
 				"label": "Tasa de Impuesto",
-				"regex": "(?i)\\b(?:tasa de impuesto|tax rate)\\s*[:\\-]?\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:tasa de impuesto|tax rate)\\s*[:\\-]?\\s*(\\d+(?:\\.\\d{1,2})?)%"
 			},
 			"tax_amount": {
 				"label": "Monto de Impuesto",
-				"regex": "(?i)\\b(?:monto de impuesto|tax amount)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:monto de impuesto|tax amount)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
 			},
 			"total_due": {
 				"label": "Total a Pagar",
-				"regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:total a pagar|total due)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
 			},
-			"contratc_details_intro": {
+			"contract_details_intro": {
 				"label": "Detalles del Contrato",
-				"regex": "(?i)\\b(?:detalles del contrato|contract details)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:detalles del contrato|contract details)\\b"
 			},
 			"contract_number": {
 				"label": "Número de Contrato",
@@ -453,15 +453,15 @@
 			},
 			"contract_hes": {
 				"label": "HES",
-				"regex": "(?i)\\b(?:hes)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:hes)\\s*[:\\-]?\\s*(\\d+)"
 			},
 			"contract_end_date": {
 				"label": "Fecha de Término",
-				"regex": "(?i)\\b(?:fecha de finalización|end date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+				"regex": "(?i)\\b(?:fecha de finalización|end date)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})"
 			},
 			"signature_intro": {
 				"label": "Firmas",
-				"regex": "(?i)\\b(?:firmas|signatures)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:firmas|signatures)\\b)"
 			},
 			"signatures": {
 				"fields": {

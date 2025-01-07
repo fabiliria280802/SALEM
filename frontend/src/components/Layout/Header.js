@@ -12,7 +12,7 @@ const Header = () => {
 
 	useEffect(() => {
 		const handleResize = () => {
-			setIsMobile(window.innerWidth <= 1200); // Cambiamos el punto de quiebre a 1200px
+			setIsMobile(window.innerWidth <= 1200); 
 		};
 
 		window.addEventListener('resize', handleResize);
@@ -33,37 +33,36 @@ const Header = () => {
 	const menuOptionsByRole = {
 		Administrador: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
-			{ label: 'Estatus', command: () => handleMenuItemClick('/status') },
+			{ label: 'Reportes', command: () => handleMenuItemClick('/status') },
 			{ label: 'Documentos', command: () => handleMenuItemClick('/documents') },
 			{
-				label: 'Entrenamiento',
+				label: 'Entrenar IA',
 				command: () => handleMenuItemClick('/training'),
 			},
-			{ label: 'Permisos', command: () => handleMenuItemClick('/permissions') },
 			{
-				label: 'Gestión de usuarios',
+				label: 'Gestionar usuarios',
 				command: () => handleMenuItemClick('/users-management'),
 			},
-			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+			{ label: 'Mi cuenta', command: () => handleMenuItemClick('/user-account') },
 		],
 		Proveedor: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
-			{ label: 'Estatus', command: () => handleMenuItemClick('/status') },
+			{ label: 'Reportes', command: () => handleMenuItemClick('/status') },
 			{
 				label: 'Mis documentos',
 				command: () => handleMenuItemClick('/documents'),
 			},
-			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+			{ label: 'Mi cuenta', command: () => handleMenuItemClick('/user-account') },
 		],
 		Gestor: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
-			{ label: 'Estatus', command: () => handleMenuItemClick('/status') },
-			{ label: 'Documentos', command: () => handleMenuItemClick('/documents') },
+			{ label: 'Reportes', command: () => handleMenuItemClick('/status') },
+			{ label: 'Ver documentos', command: () => handleMenuItemClick('/documents') },
 			{
-				label: 'Entrenamiento',
+				label: 'Entrenar IA',
 				command: () => handleMenuItemClick('/training'),
 			},
-			{ label: 'Cuenta', command: () => handleMenuItemClick('/user-account') },
+			{ label: 'Mi cuenta', command: () => handleMenuItemClick('/user-account') },
 		],
 	};
 

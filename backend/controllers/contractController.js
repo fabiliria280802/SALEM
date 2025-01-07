@@ -38,11 +38,17 @@ exports.createContract = [
 			await newContract.save();
 
 			const filePath = path.join(process.cwd(), newContract.file_path);
-			const pythonProcess = spawn('python', [
-				'controllers/IA/ia.py',
+			const pythonProcess = spawn('python3', [
+				'controllers/IA/ia.py', // Ajusta a 'python3' si es necesario
 				filePath,
 				documentType,
-			]);
+			], {
+				env: {
+					...process.env, // Mantén las variables de entorno actuales
+					TESSDATA_PREFIX: '/usr/share/tesseract/tessdata', // Asegúrate de configurar esto
+				},
+			});
+			
 
 			let pythonOutput = '';
 			let pythonError = '';
@@ -50,9 +56,10 @@ exports.createContract = [
 			pythonProcess.stdout.on('data', data => {
 				pythonOutput += data.toString();
 			});
-
+			
 			pythonProcess.stderr.on('data', data => {
-				console.log('Debug de Python:', data.toString());
+				console.error('Error de Python:', data.toString());
+				pythonError += data.toString(); // Acumula los errores aquí
 			});
 
 			pythonProcess.on('close', async code => {

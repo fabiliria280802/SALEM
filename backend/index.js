@@ -53,9 +53,9 @@ app.use('/api/mail', mailRoutes);
 
 app.use('/api/public', userPublicRoutes);
 
-app.use('/api/invoice', authMiddleware, invoiceRoutes);
-app.use('/api/contract', authMiddleware, contractRoutes);
-app.use('/api/service-record', authMiddleware, serviceDeliveryRecordRoutes);
+app.use('/api/documents/Invoice', authMiddleware, invoiceRoutes);
+app.use('/api/documents/Contract', authMiddleware, contractRoutes);
+app.use('/api/documents/Service-record', authMiddleware, serviceDeliveryRecordRoutes);
 app.use('/api/documents', authMiddleware, documentRoutes);
 
 app.use('/api/report/ia-metrics', authMiddleware, iaMetricsRoutes);

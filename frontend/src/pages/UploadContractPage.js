@@ -38,7 +38,7 @@ const UploadContractPage = () => {
 			const fileSizeMB = file.size / (1024 * 1024);
 			const fileExtension = file.name.split('.').pop().toLowerCase();
 
-			if (fileExtension === 'pdf' && fileSizeMB <= 50) {
+			if ((fileExtension === 'pdf'|| fileExtension === 'xml') && fileSizeMB <= 50) {
 				setDocumentData({ ...documentData, file });
 			} else {
 				toast.current.show({
@@ -92,7 +92,7 @@ const UploadContractPage = () => {
 		const formData = new FormData();
 
 		// Asegurarnos de que el tipo de documento se envíe primero
-		formData.append('documentType', 'Contract'); // Valor hardcodeado ya que es específico para esta página
+		formData.append('documentType', documentData.documentType);
 		formData.append('file', documentData.file);
 		formData.append('ruc', documentData.ruc);
 		formData.append('contract', documentData.contract);
@@ -111,7 +111,7 @@ const UploadContractPage = () => {
 		}
 
 		try {
-			const response = await documentService.uploadContract(formData);
+			const response = await documentService.uploadDocument(documentData.documentType, formData);
 
 			toast.current.show({
 				severity: 'success',
@@ -177,7 +177,7 @@ const UploadContractPage = () => {
 							id="file"
 							name="file"
 							onChange={handleFileChange}
-							accept=".pdf"
+							accept=".pdf,.xml"
 						/>
 					</div>
 				</div>

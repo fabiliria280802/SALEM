@@ -28,12 +28,22 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Configurar Tesseract
 """tesseract_path = r'C:\Program Files\Tesseract-OCR' for windows"""
-tesseract_path = r'/usr/bin/tesseract'
+pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
+os.environ['TESSDATA_PREFIX'] = '/usr/share/tesseract/tessdata'
 
-pytesseract.pytesseract.tesseract_cmd = os.path.join(tesseract_path, 'tesseract.exe')
+# Debug de configuración
+print("Tesseract CMD Path:", pytesseract.pytesseract.tesseract_cmd)
+print("TESSDATA_PREFIX:", os.environ.get('TESSDATA_PREFIX'))
+print("Archivos en tessdata:", os.listdir(os.environ['TESSDATA_PREFIX']))
 
-# Configurar la variable de entorno TESSDATA_PREFIX
-os.environ['TESSDATA_PREFIX'] = os.path.join(tesseract_path, 'tessdata')
+# Prueba simple
+try:
+    test_image = Image.new('RGB', (100, 100))
+    text = pytesseract.image_to_string(test_image, lang='eng')
+    print("Prueba de Tesseract exitosa:", text)
+except Exception as e:
+    print("Error en la configuración de Tesseract:", e)
+
 """
 class DocumentDataset(Dataset):
     def __init__(self, dataset_path, document_type, transforms=None):
@@ -524,11 +534,12 @@ def process_field(field_name, text, field_info, extracted_data, confidence_score
 def process_single_document(file_path, document_type):
     try:
         # Debug info va a stderr
+        """
         print("Debug Tesseract:", file=sys.stderr)
         print(f"Tesseract CMD path: {pytesseract.pytesseract.tesseract_cmd}", file=sys.stderr)
         print(f"TESSDATA_PREFIX: {os.environ.get('TESSDATA_PREFIX')}", file=sys.stderr)
         print(f"Archivos en tessdata: {os.listdir(os.path.join(tesseract_path, 'tessdata'))}", file=sys.stderr)
-
+        """
         start_time = time.time()
         schema = load_document_schema()
 

@@ -28,8 +28,11 @@ warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Configurar Tesseract
 """tesseract_path = r'C:\Program Files\Tesseract-OCR' for windows"""
-pytesseract.pytesseract.tesseract_cmd = '/usr/bin/tesseract'
-os.environ['TESSDATA_PREFIX'] = '/usr/share/tesseract/tessdata'
+load_dotenv()
+
+# Configurar Tesseract utilizando las variables de entorno
+pytesseract.pytesseract.tesseract_cmd = os.getenv('TESSERACT_CMD')
+os.environ['TESSDATA_PREFIX'] = os.getenv('TESSDATA_PREFIX')
 
 # Debug de configuración
 print("Tesseract CMD Path:", pytesseract.pytesseract.tesseract_cmd)
@@ -478,18 +481,30 @@ def process_contract_document(image, schema, text):
     missing_fields = []
 
     contract_fields = schema["Contract"]["fields"]
+    
+    # Extraer los campos de cliente en secuencia
+    client_fields = {
+        key: value for key, value in contract_fields.items()
+        if key.startswith("client_")
+    }
+    extracted_data.update(
+        extract_sequential_fields(
+            text, contract_fields, "client_name", client_fields
+        )
+    )
+
+    # Procesar otros campos individuales
     for field_name, field_info in contract_fields.items():
-        # Procesar el campo
         try:
-            regex = field_info.get('regex')
+            if field_name in extracted_data:  # Saltar si ya fue extraído
+                continue
+
+            regex = field_info.get("regex")
             if not regex:
                 continue
             match = re.search(regex, text)
             if match:
-                # Limpiar y sanitizar el valor extraído
-                value = match.group(1)
-                # Escapar caracteres especiales y comillas
-                value = value.replace('"', '\\"').replace(':', ' -')
+                value = match.group(1).strip()
                 extracted_data[field_name] = value
                 confidence_scores[field_name] = calculate_confidence(match)
             else:
@@ -497,12 +512,24 @@ def process_contract_document(image, schema, text):
         except Exception as e:
             validation_errors.append(f"Error procesando campo {field_name}: {str(e)}")
 
+    # Procesar la tabla de servicios
+    try:
+        table_schema = schema["Contract"]["fields"].get("service_table")
+        if table_schema:
+            table_data, table_errors = extract_table_data(text, table_schema)
+            extracted_data["service_table"] = table_data
+            if table_errors:
+                validation_errors.extend(table_errors)
+    except Exception as e:
+        validation_errors.append(f"Error procesando tabla de servicios: {str(e)}")
+
     return {
         "extracted_data": extracted_data,
         "confidence_scores": confidence_scores,
         "validation_errors": validation_errors,
         "missing_fields": missing_fields
     }
+
 
 def calculate_confidence(regex_match):
     if regex_match is None:
@@ -533,13 +560,6 @@ def process_field(field_name, text, field_info, extracted_data, confidence_score
 
 def process_single_document(file_path, document_type):
     try:
-        # Debug info va a stderr
-        """
-        print("Debug Tesseract:", file=sys.stderr)
-        print(f"Tesseract CMD path: {pytesseract.pytesseract.tesseract_cmd}", file=sys.stderr)
-        print(f"TESSDATA_PREFIX: {os.environ.get('TESSDATA_PREFIX')}", file=sys.stderr)
-        print(f"Archivos en tessdata: {os.listdir(os.path.join(tesseract_path, 'tessdata'))}", file=sys.stderr)
-        """
         start_time = time.time()
         schema = load_document_schema()
 
@@ -594,24 +614,18 @@ def process_single_document(file_path, document_type):
         print(json.dumps(error_result), flush=True)
         return error_result
 
-def extract_table_data(text, schema):
-    table_data = []
-    lines = text.split('\n')
-    for i in range(len(lines)):
-        if re.search(schema['code']['regex'], lines[i], re.IGNORECASE):
-            code = re.search(schema['code']['regex'], lines[i], re.IGNORECASE).group(1)
-            description = re.search(schema['description']['regex'], lines[i+1], re.IGNORECASE).group(1)
-            quantity = re.search(schema['quantity']['regex'], lines[i+2], re.IGNORECASE).group(1)
-            unit_cost = re.search(schema['unit_cost']['regex'], lines[i+3], re.IGNORECASE).group(1)
-            total_cost = re.search(schema['total_cost']['regex'], lines[i+4], re.IGNORECASE).group(1)
-            table_data.append({
-                'code': code,
-                'description': description,
-                'quantity': quantity,
-                'unit_cost': unit_cost,
-                'total_cost': total_cost
-            })
-    return table_data
+# Process data
+def process_contract_table(image, schema, text):
+    """
+    Procesa una tabla de servicios en un documento de contrato.
+    """
+    table_schema = schema["Contract"]["fields"]["service_table"]
+    table_data, errors = extract_table_data(text, table_schema)
+
+    return {
+        "table_data": table_data,
+        "validation_errors": errors
+    }
 
 # solo para service receipt + contract
 def validate_signatures_and_positions(document_path, schema, field_key):
@@ -652,7 +666,7 @@ def verify_signature_in_image(image, position_index):
     cropped_region = image.crop(region)
     return not cropped_region.getbbox() is None 
 
-# validar por region
+# Extractions
 def extract_field_from_region(image, field_info):
     if "region" in field_info:
         region = field_info["region"]
@@ -665,6 +679,40 @@ def extract_field_from_region(image, field_info):
         text = pytesseract.image_to_string(cropped_image, lang="eng").strip()
         return text
     return None
+
+def extract_sequential_fields(text, schema, start_field, field_relations):
+    """
+    Extrae campos secuenciales a partir de un campo inicial, siguiendo las relaciones definidas.
+    """
+    extracted_data = {}
+    current_field = start_field
+
+    while current_field:
+        field_info = field_relations.get(current_field)
+        if not field_info:
+            break  # No hay más relaciones
+
+        regex = field_info.get("regex")
+        if not regex:
+            break  # El campo no tiene regex definido
+
+        # Buscar el texto a partir de la posición del campo actual
+        if current_field in extracted_data:
+            start_position = text.find(extracted_data[current_field]) + len(extracted_data[current_field])
+        else:
+            start_position = 0
+
+        match = re.search(regex, text[start_position:])
+        if match:
+            extracted_data[current_field] = match.group(1).strip()
+        else:
+            print(f"No se encontró el campo {current_field} en la secuencia.")
+            break  # Termina si no encuentra el campo actual
+
+        # Pasar al siguiente campo
+        current_field = next((k for k, v in field_relations.items() if v.get("relative_to") == current_field), None)
+
+    return extracted_data
 
 def extract_relative_field(image, base_field, field_info):
     if "relative_to" in field_info and "offset" in field_info:
@@ -693,6 +741,44 @@ def extract_field_from_xml(xml_tree, field_info):
         return element.text if element is not None else None
     return None
 
+def extract_table_data(text, table_schema):
+    """
+    Extrae datos de una tabla en el texto basado en un esquema.
+    """
+    table_data = []
+    lines = text.split("\n")
+    
+    # Localizar encabezado de la tabla
+    header_found = False
+    for i, line in enumerate(lines):
+        if all(col["label"] in line for col in table_schema["columns"].values()):
+            header_found = True
+            start_row = i + 1
+            break
+    
+    if not header_found:
+        return table_data, ["No se encontró el encabezado de la tabla."]
+    
+    # Procesar las filas de la tabla
+    for line in lines[start_row:]:
+        if line.strip() == "":
+            break  # Fin de la tabla
+        row = {}
+        row_data = re.split(r"\s*\|\s*", line.strip("|"))
+        
+        if len(row_data) != len(table_schema["columns"]):
+            continue  # Ignorar filas mal formateadas
+
+        for col_name, col_info in table_schema["columns"].items():
+            match = re.match(col_info["regex"], row_data.pop(0))
+            if match:
+                row[col_name] = match.group(0)
+            else:
+                row[col_name] = None
+        table_data.append(row)
+    
+    return table_data, []
+
 def process_invoice_document(file_path, schema):
     extracted_data = {}
     if file_path.endswith(".pdf") or file_path.endswith(".png"):
@@ -708,6 +794,7 @@ def process_invoice_document(file_path, schema):
         for field_name, field_info in schema["Invoice"]["fields"].items():
             extracted_data[field_name] = extract_field_from_xml(tree, field_info)
     return extracted_data
+
 
 # validations 
 def validate_order_number(order_number):

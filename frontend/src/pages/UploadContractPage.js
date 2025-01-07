@@ -38,7 +38,7 @@ const UploadContractPage = () => {
 			const fileSizeMB = file.size / (1024 * 1024);
 			const fileExtension = file.name.split('.').pop().toLowerCase();
 
-			if ((fileExtension === 'pdf'|| fileExtension === 'xml') && fileSizeMB <= 50) {
+			if (fileExtension === 'pdf' && fileSizeMB <= 50) {
 				setDocumentData({ ...documentData, file });
 			} else {
 				toast.current.show({
@@ -177,7 +177,7 @@ const UploadContractPage = () => {
 							id="file"
 							name="file"
 							onChange={handleFileChange}
-							accept=".pdf,.xml"
+							accept=".pdf"
 						/>
 					</div>
 				</div>

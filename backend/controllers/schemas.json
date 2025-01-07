@@ -354,59 +354,66 @@
 			},
 			"client_info_intro": {
 				"label": "Información del Cliente",
-				"regex": "(?i)\\b(?:información del Cliente|client information)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:información del cliente|client information)\\b"
 			},
 			"client_name": {
 				"label": "Nombre",
-				"regex": "(?i)\\b(?:nombre|name)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:nombre|name)\\s*[:\\-]?\\s*([^\\n,]+)",
+				"relative_to": "client_info_intro"
 			},
 			"client_ruc": {
 				"label": "RUC",
-				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d{13})"
+				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d{13})",
+				"relative_to": "client_name"
 			},
-			"cient_direction": {
+			"client_direction": {
 				"label": "Dirección del Cliente",
-				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"client_address": {
-				"label": "Dirección",
-				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "client_ruc"
 			},
 			"client_city": {
 				"label": "Ciudad del Cliente",
-				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "client_direction"
 			},
 			"client_country": {
 				"label": "País del Cliente",
-				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "client_city"
 			},
 			"service_description_intro": {
 				"label": "Descripción del Servicio",
-				"regex": "(?i)\\b(?:descripción de servicios e items|description of services & items)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:descripción de servicios e items|description of services & items)\\b"
 			},
-			"service_code": {
-				"label": "code",
-				"regex": "(?i)\\b(?:codigo|code)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"service_description": {
-				"label": "Descripción del Servicio",
-				"regex": "(?i)\\b(?:descripción|description)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"service_hes": {
-				"label": "HES",
-				"regex": "(?i)\\b(?:hes)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"service_quantity": {
-				"label": "Cantidad",
-				"regex": "(?i)\\b(?:cantidad|quantity)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"service_unit_cost": {
-				"label": "Costo Unitario",
-				"regex": "(?i)\\b(?:costo unitario|unit cost)\\s*[:\\-]?\\s*([^\\n]+)"
-			},
-			"service_cost": {
-				"label": "Costo",
-				"regex": "(?i)\\b(?:costo|cost)\\s*[:\\-]?\\s*([^\\n]+)"
+			"service_table": {
+			    "label": "Tabla de Servicios",
+			    "type": "table",
+			    "columns": {
+			        "service_code": {
+			            "label": "Código",
+			            "regex": "\\b(?:\\w{4})\\b"
+			        },
+			        "service_description": {
+			            "label": "Descripción del Servicio",
+			            "regex": ".+"
+			        },
+			        "service_hes": {
+			            "label": "HES",
+			            "regex": "\\b(?:\\d{8})\\b"
+			        },
+			        "service_quantity": {
+			            "label": "Cantidad",
+			            "regex": "\\b\\d+\\b"
+			        },
+			        "service_unit_cost": {
+			            "label": "Costo Unitario",
+			            "regex": "\\b\\d+(?:\\.\\d{2})\\b"
+			        },
+			        "service_cost": {
+			            "label": "Costo",
+			            "regex": "\\b\\d+(?:\\.\\d{2})\\b"
+			        }
+			    }
 			},
 			"payment_terms_intro": {
 				"label": "Términos de Pago",

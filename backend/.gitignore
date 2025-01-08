@@ -12,3 +12,5 @@ data/docs-internal-test/
 controllers/IA/learning/
 controllers/IA/data/docs/
 assets/
+
+controllers/IA/__pycache__/

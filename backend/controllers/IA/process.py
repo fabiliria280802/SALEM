@@ -35,29 +35,29 @@ def process_service_delivery_record_document(images, schema, text=None, xml_tree
 
             # Validaciones específicas
             if "order_number" in extracted_data:
-            valid, error = validate_order_number(extracted_data["order_number"])
-            if not valid:
-                validation_errors.append(error)
+                valid, error = validate_order_number(extracted_data["order_number"])
+                if not valid:
+                    validation_errors.append(error)
 
             if "invoice_number" in extracted_data:
-            valid, error = validate_invoice_number(extracted_data["invoice_number"])
-            if not valid:
-                validation_errors.append(error)
+                valid, error = validate_invoice_number(extracted_data["invoice_number"])
+                if not valid:
+                    validation_errors.append(error)
 
             if "hes_number" in extracted_data:
-            valid, error = validate_hes_number(extracted_data["hes_number"])
-            if not valid:
-                validation_errors.append(error)
+                valid, error = validate_hes_number(extracted_data["hes_number"])
+                if not valid:
+                    validation_errors.append(error)
 
             if "receiving_company" in extracted_data:
-            valid, error = validate_company_name(extracted_data["receiving_company"])
-            if not valid:
-                validation_errors.append(error)
+                valid, error = validate_company_name(extracted_data["receiving_company"])
+                if not valid:
+                    validation_errors.append(error)
 
             if "receiver_date" in extracted_data and "end_date" in extracted_data:
-            valid, errors = validate_dates(extracted_data["receiver_date"], extracted_data["end_date"])
-            if not valid:
-                validation_errors.extend(errors)
+                valid, errors = validate_dates(extracted_data["receiver_date"], extracted_data  ["end_date"])
+                if not valid:
+                    validation_errors.extend(errors)
 
     except Exception as e:
         validation_errors.append(f"Error general en el procesamiento: {str(e)}")

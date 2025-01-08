@@ -8,10 +8,10 @@ import time
 
 from extractions import extract_field_from_region, extract_relative_field, extract_field_from_xml, extract_sequential_fields, extract_table_data
 from utils import convert_pdf_to_images, load_document_schema
-from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates
+from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates, validate_contract_number, validate_signatures_and_positions, validate_tables_mathematics_logic, validate_totals_logic
 
 # Funciones de procesamiento de documentos específicos
-def process_service_delivery_record_document(file_path, schema):
+def process_service_delivery_record_document(images, schema, text=None, xml_tree=None):
     """Procesa un documento de acta de recepción y valida sus campos."""
     extracted_data = {}
     confidence_scores = {}
@@ -19,33 +19,13 @@ def process_service_delivery_record_document(file_path, schema):
     missing_fields = []
 
     try:
-        # Determinar el tipo de archivo
-        if file_path.endswith(".pdf"):
-            images = convert_pdf_to_images(file_path)  # Todas las páginas del PDF
-            source = "image"
-            text = ""
-            for image in images:
-                page_text = pytesseract.image_to_string(image, lang="eng")
-                text += page_text + "\n"
-        elif file_path.endswith(".png"):
-            image = Image.open(file_path).convert('RGB')
-            source = "image"
-            text = pytesseract.image_to_string(image, lang="eng")
-            images = [image]
-        elif file_path.endswith(".xml"):
-            import xml.etree.ElementTree as ET
-            tree = ET.parse(file_path)
-            source = "xml"
-        else:
-            raise ValueError("Formato de archivo no soportado")
+        if text:
+            # Procesar campos definidos en el esquema
+            record_fields = schema["ServiceDeliveryRecord"]["fields"]
 
-        # Procesar campos definidos en el esquema
-        record_fields = schema["ServiceDeliveryRecord"]["fields"]
-
-        if source == "image":
             for field_name, field_info in record_fields.items():
                 if "region" in field_info:
-                    extracted_data[field_name] = extract_field_from_region(images[0], field_info)  # Usa la primera página
+                    extracted_data[field_name] = extract_field_from_region(images[0],  field_info)  # Usa la primera página
                 elif "regex" in field_info:
                     match = re.search(field_info["regex"], text)
                     if match:
@@ -53,34 +33,28 @@ def process_service_delivery_record_document(file_path, schema):
                     else:
                         missing_fields.append(field_name)
 
-        elif source == "xml":
-            for field_name, field_info in record_fields.items():
-                extracted_data[field_name] = extract_field_from_xml(tree, field_info)
-                if not extracted_data[field_name]:
-                    missing_fields.append(field_name)
-
-        # Validaciones específicas
-        if "order_number" in extracted_data:
+            # Validaciones específicas
+            if "order_number" in extracted_data:
             valid, error = validate_order_number(extracted_data["order_number"])
             if not valid:
                 validation_errors.append(error)
 
-        if "invoice_number" in extracted_data:
+            if "invoice_number" in extracted_data:
             valid, error = validate_invoice_number(extracted_data["invoice_number"])
             if not valid:
                 validation_errors.append(error)
 
-        if "hes_number" in extracted_data:
+            if "hes_number" in extracted_data:
             valid, error = validate_hes_number(extracted_data["hes_number"])
             if not valid:
                 validation_errors.append(error)
 
-        if "receiving_company" in extracted_data:
+            if "receiving_company" in extracted_data:
             valid, error = validate_company_name(extracted_data["receiving_company"])
             if not valid:
                 validation_errors.append(error)
 
-        if "receiver_date" in extracted_data and "end_date" in extracted_data:
+            if "receiver_date" in extracted_data and "end_date" in extracted_data:
             valid, errors = validate_dates(extracted_data["receiver_date"], extracted_data["end_date"])
             if not valid:
                 validation_errors.extend(errors)
@@ -95,84 +69,67 @@ def process_service_delivery_record_document(file_path, schema):
         "missing_fields": missing_fields
     }
 
-def process_invoice_document(file_path, schema):
+def process_invoice_document(images, schema, text=None, xml_tree=None):
     extracted_data = {}
-    confidence_scores = {}
     validation_errors = []
     missing_fields = []
 
     try:
-        # Determina el tipo de archivo
-        if file_path.endswith(".pdf") or file_path.endswith(".png"):
-            image = convert_pdf_to_images(file_path)[0]  # Primera página
-            source = "image"
-        elif file_path.endswith(".xml"):
-            import xml.etree.ElementTree as ET
-            tree = ET.parse(file_path)
-            source = "xml"
-        else:
-            raise ValueError("Formato de archivo no soportado")
+        if text:
+            invoice_fields = schema["Invoice"]["fields"]
 
-        # Iterar sobre los campos definidos en el esquema
-        for field_name, field_info in schema["Invoice"]["fields"].items():
-            try:
-                if source == "image":
-                    if "region" in field_info:
-                        extracted_data[field_name] = extract_field_from_region(image, field_info)
-                    elif "relative_to" in field_info:
-                        extracted_data[field_name] = extract_relative_field(image, extracted_data, field_info)
-                elif source == "xml":
-                    extracted_data[field_name] = extract_field_from_xml(tree, field_info)
+            # Procesar campos del esquema
+            for field_name, field_info in invoice_fields.items():
+                if "region" in field_info:
+                    extracted_data[field_name] = extract_field_from_region(images[0], field_info)
+                elif "regex" in field_info:
+                    match = re.search(field_info["regex"], text)
+                    if match:
+                        extracted_data[field_name] = match.group(1).strip()
+                    else:
+                        missing_fields.append(field_name)
 
-                # Validar si el campo no fue extraído
-                if not extracted_data.get(field_name):
-                    missing_fields.append(field_name)
-            except Exception as e:
-                validation_errors.append(f"Error en {field_name}: {str(e)}")
+            # Validar campos específicos
+            if "company_name" in extracted_data:
+                valid, error = validate_company_name(extracted_data["company_name"])
+                if not valid:
+                    validation_errors.append(error)
 
-        # Validar campos esenciales (como invoice_number)
-        if "invoice_number" in extracted_data:
-            valid, error = validate_invoice_number(extracted_data["invoice_number"])
-            if not valid:
-                validation_errors.append(error)
+
+            if "invoice_date" in extracted_data and "payable_at" in extracted_data:
+                valid, error = validate_dates(extracted_data["invoice_date"], extracted_data["payable_at"])
+                if not valid:
+                    validation_errors.append(error)
+
+            if "invoice_number" in extracted_data:
+                valid, error = validate_invoice_number(extracted_data["invoice_number"])
+                if not valid:
+                    validation_errors.append(error)
+
+            if "order_number" in extracted_data:
+                valid, error = validate_hes_number(extracted_data["order_number"])
+                if not valid:
+                    validation_errors.append(error)
 
     except Exception as e:
         validation_errors.append(f"Error general en el procesamiento: {str(e)}")
 
     return {
         "extracted_data": extracted_data,
-        "confidence_scores": confidence_scores,
         "validation_errors": validation_errors,
-        "missing_fields": missing_fields
+        "missing_fields": missing_fields,
     }
 
-def process_contract_document(file_path, schema):
+def process_contract_document(images, schema, text=None, xml_tree=None):
     extracted_data = {}
     confidence_scores = {}
     validation_errors = []
     missing_fields = []
 
     try:
-        # Determina el tipo de archivo
-        if file_path.endswith(".pdf"):
-            images = convert_pdf_to_images(file_path)  # Todas las páginas del PDF
-            source = "image"
-        elif file_path.endswith(".xml"):
-            import xml.etree.ElementTree as ET
-            tree = ET.parse(file_path)
-            source = "xml"
-        else:
-            raise ValueError("Formato de archivo no soportado")
-
-        # Extraer y procesar campos según el tipo de archivo
-        contract_fields = schema["Contract"]["fields"]
-
-        if source == "image":
-            text = ""
-            # Combinar texto de todas las páginas del PDF
-            for image in images:
-                page_text = pytesseract.image_to_string(image, lang="eng")
-                text += page_text + "\n"
+        if text:
+            # Procesar texto extraído con OCR
+            contract_fields = schema["Contract"]["fields"]
 
             # Extraer campos secuenciales
             client_fields = {
@@ -198,25 +155,61 @@ def process_contract_document(file_path, schema):
                     else:
                         missing_fields.append(field_name)
 
-        elif source == "xml":
+        elif xml_tree:
+            # Procesar campos desde XML
+            contract_fields = schema["Contract"]["fields"]
             for field_name, field_info in contract_fields.items():
-                extracted_data[field_name] = extract_field_from_xml(tree, field_info)
+                extracted_data[field_name] = extract_field_from_xml(xml_tree, field_info)
                 if not extracted_data[field_name]:
                     missing_fields.append(field_name)
 
-        # Procesar la tabla de servicios
-        try:
-            table_schema = contract_fields.get("service_table")
-            if table_schema and source == "image":
-                table_data, table_errors = extract_table_data(text, table_schema)
-                extracted_data["service_table"] = table_data
-                if table_errors:
-                    validation_errors.extend(table_errors)
-            elif table_schema and source == "xml":
-                # Procesa la tabla desde XML si está disponible
-                extracted_data["service_table"] = extract_field_from_xml(tree, table_schema)
-        except Exception as e:
-            validation_errors.append(f"Error procesando tabla de servicios: {str(e)}")
+        if "contract_number" in extracted_data:
+            valid, error = validate_contract_number(extracted_data["contract_number"])
+            if not valid:
+                validation_errors.append(error)
+
+        if "contract_order_number" in extracted_data:
+            valid, error = validate_order_number(extracted_data["contract_order_number"])
+            if not valid:
+                validation_errors.append(error)
+
+        if "contract_invoice_number" in extracted_data:
+            valid, error = validate_invoice_number(extracted_data["contract_invoice_number"])
+            if not valid:
+                validation_errors.append(error)
+
+        if "contract_hes" in extracted_data:
+            valid, error = validate_hes_number(extracted_data["contract_hes"])
+            if not valid:
+                validation_errors.append(error)
+
+        if "service_table" in extracted_data:
+            table_data = extracted_data["service_table"]  
+            valid, errors = validate_tables_mathematics_logic(table_data)
+            if not valid:
+                validation_errors.extend(errors)
+
+        if {"subtotal", "tax_rate", "tax_amount", "total_due"} <= extracted_data.keys():
+            valid_totals, totals_errors = validate_totals_logic(extracted_data, table_data)
+            if not valid_totals:
+                validation_errors.extend(totals_errors)
+
+        if "signatures" in schema["Contract"]:
+            # Validar texto y posiciones de las firmas
+            signatures_data, signatures_missing = validate_signatures_and_positions(
+                images[-1], schema["Contract"], "signatures"
+            )
+
+            # Agregar datos extraídos y campos faltantes
+            extracted_data.update({
+                "Contract.signatures.first_person_signature": signatures_data.get("first_person_signature"),
+                "Contract.signatures.second_person_signature": signatures_data.get("second_person_signature"),
+                "Contract.signatures.first_person_position": signatures_data.get("first_person_position"),
+                "Contract.signatures.second_person_position": signatures_data.get("second_person_position"),
+            })
+            missing_fields.extend([
+                f"Contract.signatures.{field}" for field in signatures_missing
+            ])
 
     except Exception as e:
         validation_errors.append(f"Error general en el procesamiento: {str(e)}")
@@ -234,33 +227,27 @@ def process_single_document(file_path, document_type):
         schema = load_document_schema()
 
         if file_path.endswith('.pdf'):
-            image = convert_pdf_to_images(file_path)[0]
+            images = convert_pdf_to_images(file_path)
+            text = "".join(pytesseract.image_to_string(image, lang='spa') for image in images)
+            xml_tree = None
         elif file_path.endswith('.xml'):
             import xml.etree.ElementTree as ET
             xml_tree = ET.parse(file_path)
+            text = None
         else:
             image = Image.open(file_path).convert('RGB')
+            text = pytesseract.image_to_string(image, lang='spa')
+            xml_tree = None
 
-        # Extraer texto según el idioma
-        text = None
-        if not file_path.endswith('.xml'):
-            try:
-                text = pytesseract.image_to_string(image, lang='spa')
-            except:
-                print("Advertencia: No se pudo usar español, usando inglés.", file=sys.stderr)
-                text = pytesseract.image_to_string(image, lang='eng')
-
-        # Procesamiento según el tipo de documento
         if document_type == "Invoice":
-            result = process_invoice_document(image, schema, text, xml_tree if file_path.endswith('.xml') else None)
+            result = process_invoice_document(file_path, schema, text, xml_tree)
         elif document_type == "ServiceDeliveryRecord":
-            result = process_service_delivery_record_document(image, schema, text, xml_tree if file_path.endswith('.xml') else None)
+            result = process_service_delivery_record_document(file_path, schema, text, xml_tree)
         elif document_type == "Contract":
-            result = process_contract_document(image, schema, text, xml_tree if file_path.endswith('.xml') else None)
+            result = process_contract_document(file_path, schema, text, xml_tree)
         else:
             raise ValueError(f"Tipo de documento no soportado: {document_type}")
 
-        # Actualización de resultados
         result.update({
             "document_type": document_type,
             "processing_time": time.time() - start_time,
@@ -272,20 +259,15 @@ def process_single_document(file_path, document_type):
             )
         })
 
-        # Salida JSON
-        result_json = json.dumps(result, ensure_ascii=False)
-        print(result_json, flush=True)
         return result
 
     except Exception as e:
-        error_result = {
+        return {
             "error": str(e),
             "document_type": document_type,
             "status": "Denegado",
             "ai_decision_explanation": f"Error en el procesamiento: {str(e)}",
             "validation_errors": [str(e)]
         }
-        print(f"Error en process_single_document: {str(e)}", file=sys.stderr)
-        print(json.dumps(error_result), flush=True)
-        return error_result
+
 

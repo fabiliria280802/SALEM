@@ -12,6 +12,8 @@ def extract_field_from_region(image, field_info):
             region["top"] + region["height"]
         ))
         text = pytesseract.image_to_string(cropped_image, lang="eng").strip()
+        text = text.replace('\n', ' ').strip() 
+        text = re.sub(r'\s+', ' ', text) 
         return text
     return None
 
@@ -66,6 +68,8 @@ def extract_relative_field(image, base_field, field_info):
             region["top"] + region["height"]
         ))
         text = pytesseract.image_to_string(cropped_image, lang="eng").strip()
+        text = text.replace('\n', ' ').strip() 
+        text = re.sub(r'\s+', ' ', text) 
         return text
     return None
 
@@ -119,6 +123,8 @@ def extract_text_from_document(file_path):
     try:
         image = Image.open(file_path)
         text = pytesseract.image_to_string(image, lang="eng")
+        text = text.replace('\n', ' ').strip() 
+        text = re.sub(r'\s+', ' ', text) 
         return text
     except Exception as e:
         raise ValueError(f"Error al extraer texto del documento {file_path}: {e}")

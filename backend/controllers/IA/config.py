@@ -1,4 +1,5 @@
 import os
+import re
 import pytesseract
 from PIL import Image
 from dotenv import load_dotenv
@@ -23,6 +24,8 @@ def test_tesseract():
     try:
         test_image = Image.new('RGB', (100, 100))
         text = pytesseract.image_to_string(test_image, lang='eng')
+        text = text.replace('\n', ' ').strip()
+        text = re.sub(r'\s+', ' ', text)  
         print("Prueba de Tesseract exitosa:", text)
     except Exception as e:
         print("Error en la configuración de Tesseract:", e)

@@ -310,233 +310,233 @@
             }
         }
     },
-    "Contract": {
-        "fields": {
-            "provider_info_intro": {
-                "label": "Información de la Compañía",
-                "regex": "(?:(?i)\\b(?:información de la compañía|company information)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_name": {
-                "label": "Nombre",
-                "regex": "(?:(?i)\\b(?:nombre|name)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_ruc": {
-                "label": "RUC",
-                "regex": "(?:(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d{13})|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_transaction": {
-                "label": "Transacción",
-                "regex": "(?:(?i)\\b(?:tax id)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_address": {
-                "label": "Dirección de la Compañía",
-                "regex": "(?:(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_city": {
-                "label": "Ciudad de la Compañía",
-                "regex": "(?:(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_country": {
-                "label": "País de la Compañía",
-                "regex": "(?:(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_phone": {
-                "label": "Teléfono de la Compañía",
-                "regex": "(?:(?i)\\b(?:teléfono|phone)\\s*[:\\-]?\\s*(\\+?\\d[\\d\\-\\s]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_website": {
-                "label": "Página Web de la Compañía",
-                "regex": "(?:(?i)\\b(?:página web|pagina web|website)\\s*[:\\-]?\\s*(https?:\\/\\/[\\w\\.-]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "provider_email": {
-                "label": "Correo Electrónico de la Compañía",
-                "regex": "(?:(?i)\\b(?:correo electrónico|email)\\s*[:\\-]?\\s*([^\\s]+@[\\w\\.-]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "client_info_intro": {
-                "label": "Información del Cliente",
-                "regex": "(?:(?i)\\b(?:información del cliente|client information)\\b|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "client_name": {
-                "label": "Nombre",
-                "regex": "(?:(?i)\\b(?:nombre|name)\\s*[:\\-]?\\s*([^\\n,]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)",
-                "relative_to": "client_info_intro"
-            },
-            "client_ruc": {
-                "label": "RUC",
-                "regex": "(?:(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d{13})|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)",
-                "relative_to": "client_name"
-            },
-            "client_direction": {
-                "label": "Dirección del Cliente",
-                "regex": "(?:(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)",
-                "relative_to": "client_ruc"
-            },
-            "client_city": {
-                "label": "Ciudad del Cliente",
-                "regex": "(?:(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)",
-                "relative_to": "client_direction"
-            },
-            "client_country": {
-                "label": "País del Cliente",
-                "regex": "(?:(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)",
-                "relative_to": "client_city"
-            },
-            "service_description_intro": {
-                "label": "Descripción del Servicio",
-                "regex": "(?:(?i)\\b(?:descripción de servicios e items|description of services & items)\\b|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "service_table": {
-                "label": "Tabla de Servicios",
-                "type": "table",
-                "columns": {
-                    "service_code": {
-                        "label": "Código",
-                        "regex": "\\b(?:\\w{4})\\b"
-                    },
-                    "service_description": {
-                        "label": "Descripción del Servicio",
-                        "regex": ".+"
-                    },
-                    "service_hes": {
-                        "label": "HES",
-                        "regex": "\\b(?:\\d{8})\\b"
-                    },
-                    "service_quantity": {
-                        "label": "Cantidad",
-                        "regex": "\\b\\d+\\b"
-                    },
-                    "service_unit_cost": {
-                        "label": "Costo Unitario",
-                        "regex": "\\b\\d+(?:\\.\\d{2})\\b"
-                    },
-                    "service_cost": {
-                        "label": "Costo",
-                        "regex": "\\b\\d+(?:\\.\\d{2})\\b"
-                    }
-                }
-            },
-            "payment_terms_intro": {
-                "label": "Términos de Pago",
-                "regex": "(?:(?i)\\b(?:condiciones de pago|payment terms)\\b|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "subtotal": {
-                "label": "Subtotal",
-                "regex": "(?:(?i)\\b(?:subtotal|subtotal \\(sin impuestos|before tax)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "tax_rate": {
-                "label": "Tasa de Impuesto",
-                "regex": "(?:(?i)\\b(?:tasa de impuesto|tax rate)\\s*[:\\-]?\\s*(\\d+(?:\\.\\d{1,2})?)%|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "tax_amount": {
-                "label": "Monto de Impuesto",
-                "regex": "(?:(?i)\\b(?:monto de impuesto|tax amount)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "total_due": {
-                "label": "Total a Pagar",
-                "regex": "(?:(?i)\\b(?:total a pagar|total due)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "contract_details_intro": {
-                "label": "Detalles del Contrato",
-                "regex": "(?:(?i)\\b(?:detalles del contrato|contract details)\\b|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "contract_number": {
-                "label": "Número de Contrato",
-                "regex": "(?:(?i)\\b(?:número de contrato|contract number)\\s*[:\\-]?\\s*(\\d+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "contract_order_number": {
-                "label": "Número de Orden",
-                "regex": "(?:(?i)\\b(?:número de orden|order number)\\s*[:\\-]?\\s*(\\d+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "contract_invoice_number": {
-                "label": "Número de Factura",
-                "regex": "(?:(?i)\\b(?:número de factura|invoice number)\\s*[:\\-]?\\s*(\\d+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "contract_hes": {
-                "label": "HES",
-                "regex": "(?:(?i)\\b(?:hes)\\s*[:\\-]?\\s*(\\d+)|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "contract_end_date": {
-                "label": "Fecha de Término",
-                "regex": "(?:(?i)\\b(?:fecha de finalización|end date)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "signature_intro": {
-                "label": "Firmas",
-                "regex": "(?:(?i)\\b(?:firmas|signatures)\\b|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            },
-            "signatures": {
-                "fields": {
-                    "first_person_name": {
-                        "label": "Nombre de la Primera Persona",
-                        "regex": "(?i)\\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\\b"
-                    },
-                    "first_person_signature": {
-                        "label": "Firma de la Primera Persona",
-                        "type": "image"
-                    },
-                    "first_person_position": {
-                        "label": "Posición de la Primera Persona",
-                        "values": [
-                            "Accounting Manager",
-                            "Accounts Payable Clerk",
-                            "Accounts Receivable Clerk",
-                            "Tax Accountant",
-                            "Payroll Specialist",
-                            "Financial Analyst",
-                            "Internal Auditor",
-                            "Cost Accountant",
-                            "Budget Analyst",
-                            "Financial Controller",
-                            "Gerente de Contabilidad",
-                            "Asistente de Cuentas por Pagar",
-                            "Asistente de Cuentas por Cobrar",
-                            "Contador de Impuestos",
-                            "Especialista de Nómina",
-                            "Analista Financiero",
-                            "Auditor Interno",
-                            "Contador de Costos",
-                            "Analista Presupuestario",
-                            "Controlador Financiero"
-                        ]
-                    },
-                    "second_person_name": {
-                        "label": "Nombre de la Segunda Persona",
-                        "regex": "(?i)\\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\\b"
-                    },
-                    "second_person_signature": {
-                        "label": "Firma de la Segunda Persona",
-                        "type": "image"
-                    },
-                    "second_person_position": {
-                        "label": "Posición de la Segunda Persona",
-                        "values": [
-                            "Accounting Manager",
-                            "Accounts Payable Clerk",
-                            "Accounts Receivable Clerk",
-                            "Tax Accountant",
-                            "Payroll Specialist",
-                            "Financial Analyst",
-                            "Internal Auditor",
-                            "Cost Accountant",
-                            "Budget Analyst",
-                            "Financial Controller",
-                            "Gerente de Contabilidad",
-                            "Asistente de Cuentas por Pagar",
-                            "Asistente de Cuentas por Cobrar",
-                            "Contador de Impuestos",
-                            "Especialista de Nómina",
-                            "Analista Financiero",
-                            "Auditor Interno",
-                            "Contador de Costos",
-                            "Analista Presupuestario",
-                            "Controlador Financiero"
-                        ]
-                    }
-                }
-            },
-            "contract_start_date": {
-                "label": "Fecha de Inicio",
-                "regex": "(?:(?i)\\b(?:date|fecha)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})|wits\\ roup\\\n\\\n6281\\ Alexander\\ Was\\ “elena:\\ \\(@2\\}242\\ 1579702\\\n\\\n‘gt\\ 482,\\ Danio\\.\\ vnwiiamssrop\\ com\\\n\\\naS\\ ws\\ a7s97\\ ‘o@witansyroup\\.con\\\nauraburoh\\ 10\\ Fiscal:\\ 51675\\\ncabon\\\nout\\\n\\\n1»\\ \\|\\ codigo\\ Deseripen\\ Cantidad\\ \\|\\ costo\\ Unitario\\ \\|\\ Coste\\ Tota\\\n1\\]\\ ses\\ \\|\\ Tpsicy\\ and\\ govemance\\ ensuing\\ ‘\\ \\$223\\.00\\ \\$902\\.00\\\n2\\ ses2\\ \\|\\ Pigtelwenstomatn\\ sratesy\\ 3\\ siss2\\ s22r76\\\n\\|\\ 6a\\ \\|\\ Atta\\ intigence\\ consuting\\ \\*\\ 153\\.63\\ 1229\\.08\\\n«\\|\\ soe\\ \\|\\ cusemerselaonanp\\ management\\ \\(ra\\)\\ sons\\ \\|\\ 290\\.95\\ 2000\\.65\\\n\\\nSubtotal\\ saaae\\.as\\\nImpuesto\\ 3667\\.27\\\nTotal\\ \\$5115\\.72\\\n\\\nLcencias\\ de\\ stare\\ enregadas\\ en\\ soporte\\ inmate\\\n\\\nEsta\\ factura\\ ett\\ en\\ dlresestadounidenses)"
-            }
-        }
-    }
+	"Contract": {
+		"fields": {
+			"provider_info_intro": {
+				"label": "Información de la Compañía",
+				"regex": "(?i)\\b(?:información de la compañía|company information)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"provider_name": {
+				"label": "Nombre",
+				"regex": "(?i)\\b(?:nombre|name)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"provider_ruc": {
+				"label": "RUC",
+				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d{13})"
+			},
+			"provider_transaction": {
+			    "label": "Transacción",
+			    "regex": "(?i)\\b(?:tax id|tax id|Tax ID)\\s*[:\\-]?\\s*(\\d{8})\\b"
+			},
+			"provider_address": {
+				"label": "Dirección de la Compañía",
+				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"provider_city": {
+				"label": "Ciudad de la Compañía",
+				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"provider_country": {
+				"label": "País de la Compañía",
+				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"provider_phone": {
+			    "label": "Teléfono de la Compañía",
+			    "regex": "(?i)\b(?:tel[eé]fono|phone)\\s*[:\\-]?\\s*((?:\\+?\\d{1,3}[-\\s]?)?(?:\\(?\\d{1,4}\\)?[-\\s]?)?\\d{1,4}(?:[-\\s]?\\d{1,4}){1,3})"
+			},
+			"provider_website": {
+			    "label": "Página Web de la Compañía",
+			    "regex": "(?i)\\b(?:p[aá]gina\\sweb|website)\\s*[:\\-]?\\s*(www\\.[\\w\\.-]+)"
+			},
+			"provider_email": {
+			    "label": "Correo Electrónico de la Compañía",
+			    "regex": "(?i)\\b(?:correo\\s(?:electr[oó]nico|email|correo)|email|Email)\\s*[:\\-]?\\s*([\\w._%+-]+@[a-zA-Z0-9.-]+\\.com)\\b"
+			},
+			"client_info_intro": {
+				"label": "Información del Cliente",
+				"regex": "(?i)\\b(?:información del cliente|client information)\\b"
+			},
+			"client_name": {
+				"label": "Nombre",
+				"regex": "(?i)\\b(?:nombre|name)\\s*[:\\-]?\\s*([^\\n,]+)",
+				"relative_to": "client_info_intro"
+			},
+			"client_ruc": {
+				"label": "RUC",
+				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d{13})",
+				"relative_to": "client_name"
+			},
+			"client_direction": {
+				"label": "Dirección del Cliente",
+				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "client_ruc"
+			},
+			"client_city": {
+				"label": "Ciudad del Cliente",
+				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "client_direction"
+			},
+			"client_country": {
+				"label": "País del Cliente",
+				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "client_city"
+			},
+			"service_description_intro": {
+				"label": "Descripción del Servicio",
+				"regex": "(?i)\\b(?:descripción de servicios e items|description of services & items)\\b"
+			},
+			"service_table": {
+			    "label": "Tabla de Servicios",
+			    "type": "table",
+			    "columns": {
+			        "service_code": {
+			            "label": "Código",
+			            "regex": "\\b(?:\\w{4})\\b"
+			        },
+			        "service_description": {
+			            "label": "Descripción del Servicio",
+			            "regex": ".+"
+			        },
+			        "service_hes": {
+			            "label": "HES",
+			            "regex": "\\b(?:\\d{8})\\b"
+			        },
+			        "service_quantity": {
+			            "label": "Cantidad",
+			            "regex": "\\b\\d+\\b"
+			        },
+			        "service_unit_cost": {
+			            "label": "Costo Unitario",
+			            "regex": "\\b\\d+(?:\\.\\d{2})\\b"
+			        },
+			        "service_cost": {
+			            "label": "Costo",
+			            "regex": "\\b\\d+(?:\\.\\d{2})\\b"
+			        }
+			    }
+			},
+			"payment_terms_intro": {
+				"label": "Términos de Pago",
+				"regex": "(?i)\\b(?:condiciones de pago|payment terms)\\b"
+			},
+			"subtotal": {
+				"label": "Subtotal",
+				"regex": "(?i)\\b(?:subtotal|subtotal \\(sin impuestos|before tax)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
+			},
+			"tax_rate": {
+				"label": "Tasa de Impuesto",
+				"regex": "(?i)\\b(?:tasa de impuesto|tax rate)\\s*[:\\-]?\\s*(\\d+(?:\\.\\d{1,2})?)%"
+			},
+			"tax_amount": {
+				"label": "Monto de Impuesto",
+				"regex": "(?i)\\b(?:monto de impuesto|tax amount)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
+			},
+			"total_due": {
+				"label": "Total a Pagar",
+				"regex": "(?i)\\b(?:total a pagar|total due)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
+			},
+			"contract_details_intro": {
+				"label": "Detalles del Contrato",
+				"regex": "(?i)\\b(?:detalles del contrato||contract details)\\b"
+			},
+			"contract_number": {
+				"label": "Número de Contrato",
+				"regex": "(?i)\\b(?:número de contrato|contract number)\\s*[:\\-]?\\s*(\\d+)"
+			},
+			"contract_order_number": {
+				"label": "Número de Orden",
+				"regex": "(?i)\\b(?:número de orden|order number)\\s*[:\\-]?\\s*(\\d+)"
+			},
+			"contract_invoice_number": {
+				"label": "Número de Factura",
+				"regex": "(?i)\\b(?:número de factura|invoice number)\\s*[:\\-]?\\s*(\\d+)"
+			},
+			"contract_hes": {
+				"label": "HES",
+				"regex": "(?i)\\b(?:hes)\\s*[:\\-]?\\s*(\\d+)"
+			},
+			"contract_end_date": {
+				"label": "Fecha de Término",
+				"regex": "(?i)\\b(?:fecha de finalización|end date)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})"
+			},
+			"signature_intro": {
+				"label": "Firmas",
+				"regex": "(?i)\\b(?:firmas|signatures)\\b)"
+			},
+			"signatures": {
+				"fields": {
+					"first_person_name": {
+						"label": "Nombre de la Primera Persona",
+						"regex": "(?i)\\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\\b"
+					},
+					"first_person_signature": {
+						"label": "Firma de la Primera Persona",
+						"type": "image"
+					},
+					"first_person_position": {
+						"label": "Posición de la Primera Persona",
+						"values": [
+							"Accounting Manager",
+							"Accounts Payable Clerk",
+							"Accounts Receivable Clerk",
+							"Tax Accountant",
+							"Payroll Specialist",
+							"Financial Analyst",
+							"Internal Auditor",
+							"Cost Accountant",
+							"Budget Analyst",
+							"Financial Controller",
+							"Gerente de Contabilidad",
+							"Asistente de Cuentas por Pagar",
+							"Asistente de Cuentas por Cobrar",
+							"Contador de Impuestos",
+							"Especialista de Nómina",
+							"Analista Financiero",
+							"Auditor Interno",
+							"Contador de Costos",
+							"Analista Presupuestario",
+							"Controlador Financiero"
+						]
+					},
+					"second_person_name": {
+						"label": "Nombre de la Segunda Persona",
+						"regex": "(?i)\\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\\b"
+					},
+					"second_person_signature": {
+						"label": "Firma de la Segunda Persona",
+						"type": "image"
+					},
+					"second_person_position": {
+						"label": "Posición de la Segunda Persona",
+						"values": [
+							"Accounting Manager",
+							"Accounts Payable Clerk",
+							"Accounts Receivable Clerk",
+							"Tax Accountant",
+							"Payroll Specialist",
+							"Financial Analyst",
+							"Internal Auditor",
+							"Cost Accountant",
+							"Budget Analyst",
+							"Financial Controller",
+							"Gerente de Contabilidad",
+							"Asistente de Cuentas por Pagar",
+							"Asistente de Cuentas por Cobrar",
+							"Contador de Impuestos",
+							"Especialista de Nómina",
+							"Analista Financiero",
+							"Auditor Interno",
+							"Contador de Costos",
+							"Analista Presupuestario",
+							"Controlador Financiero"
+						]
+					}
+				}
+			},
+			"contract_start_date": {
+				"label": "Fecha de Inicio",
+				"regex": "(?i)\\b(?:date|fecha)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+			}
+		}
+	}
 }

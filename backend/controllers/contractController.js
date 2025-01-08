@@ -41,7 +41,11 @@ exports.createContract = [
 			const pythonProcess = spawn('python3', [
 				'controllers/IA/ia.py', // Ajusta a 'python3' si es necesario
 				filePath,
-				documentType,
+				documentType
+				/*
+				req.body.ruc,
+    			req.body.contract */
+
 			], {
 				env: {
 					...process.env, // Mantén las variables de entorno actuales
@@ -166,6 +170,8 @@ exports.createContract = [
 									)
 								: [];
 
+						console.log("Validation Errors before DB update:", validation_errors);
+	
 						const updateData = {
 							...result.extracted_data,
 							status,
@@ -205,11 +211,13 @@ exports.createContract = [
 						ai_decision_explanation:
 							'Error al procesar la respuesta: formato inválido',
 					});
-
+				
+					/*
 					res.status(500).json({
 						error: 'Error al procesar la respuesta de la IA',
-						details: 'Error en el formato de la respuesta',
+						details: pythonError,
 					});
+					*/
 				}
 			});
 		} catch (error) {

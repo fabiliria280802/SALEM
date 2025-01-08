@@ -16,7 +16,7 @@ const signatureSchema = new mongoose.Schema({
 const serviceDeliveryRecordSchema = new mongoose.Schema({
 	hes_number: {
 		type: String,
-		unique: true,
+		trim: true,
 	},
 	receiving_company: {
 		type: String,

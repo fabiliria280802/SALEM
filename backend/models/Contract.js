@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const contractSchema = new mongoose.Schema({
 	contract_number: {
 		type: String,
-		unique: true,
+		trim: true,
 	},
 	contracting_company: {
 		type: String,

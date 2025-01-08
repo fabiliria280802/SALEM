@@ -8,7 +8,7 @@ import time
 
 from extractions import extract_field_from_region, extract_relative_field, extract_field_from_xml, extract_sequential_fields, extract_table_data
 from utils import convert_pdf_to_images, load_document_schema
-from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates, validate_contract_number, validate_signatures_and_positions, validate_tables_mathematics_logic, validate_totals_logic
+from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates, validate_contract_number, validate_signatures_and_positions, validate_tables_mathematics_logic, validate_totals_logic,validate_company_direction, validate_company_ruc, validate_company_country, validate_company_city, validate_input_vs_extracted
 
 # Funciones de procesamiento de documentos específicos
 def process_service_delivery_record_document(images, schema, text=None, xml_tree=None):
@@ -120,6 +120,10 @@ def process_invoice_document(images, schema, text=None, xml_tree=None):
         "missing_fields": missing_fields,
     }
 
+""" TODO: corregir funcion
+ef process_contract_document(images, schema, ruc_input, contract_input, text=None, xml_tree=None):
+"""
+
 def process_contract_document(images, schema, text=None, xml_tree=None):
     extracted_data = {}
     confidence_scores = {}
@@ -163,8 +167,45 @@ def process_contract_document(images, schema, text=None, xml_tree=None):
                 if not extracted_data[field_name]:
                     missing_fields.append(field_name)
 
+        if "client_name" in extracted_data:
+            valid, error = validate_company_name(extracted_data["client_name"])
+            if not valid:
+                validation_errors.append(error)
+                print(f"Validation Error for 'client_name': {error}")
+        
+        if "client_direction" in extracted_data:
+            valid, error = validate_company_direction(extracted_data["client_direction"])
+            if not valid:
+                validation_errors.append(error)
+                print(f"Validation Error for 'client_direction': {error}")
+
+        """ TODO: Mejorar
+        if "client_ruc" in extracted_data:
+            valid, error = validate_company_ruc(extracted_data["client_ruc"])
+            if not valid:
+                validation_errors.append(error)
+            print(ruc_input)
+            validRuc, error = validate_input_vs_extracted(ruc_input, extracted_data["client_ruc"], "RUC")
+            if not validRuc:
+                validation_errors.append(error)
+
         if "contract_number" in extracted_data:
             valid, error = validate_contract_number(extracted_data["contract_number"])
+            if not valid:
+                validation_errors.append(error)
+            print(contract_input)
+            validNumber, error = validate_input_vs_extracted(contract_input, extracted_data["contract_number"], "Número de Contrato")
+            if not validNumber:
+                validation_errors.append(error)
+        """
+
+        if "client_country" in extracted_data:
+            valid, error = validate_company_country(extracted_data["client_country"])
+            if not valid:
+                validation_errors.append(error)
+
+        if "client_city" in extracted_data:
+            valid, error = validate_company_city(extracted_data["client_city"])
             if not valid:
                 validation_errors.append(error)
 
@@ -221,6 +262,10 @@ def process_contract_document(images, schema, text=None, xml_tree=None):
         "missing_fields": missing_fields
     }
 
+""" TODO: agregar los parametros de ruc y contarct
+def process_single_document(file_path, document_type, ruc_input, contract_input):
+
+"""
 def process_single_document(file_path, document_type):
     try:
         start_time = time.time()
@@ -244,6 +289,9 @@ def process_single_document(file_path, document_type):
         elif document_type == "ServiceDeliveryRecord":
             result = process_service_delivery_record_document(file_path, schema, text, xml_tree)
         elif document_type == "Contract":
+            """
+            result = process_contract_document(file_path, schema,ruc_input, contract_input, text, xml_tree)
+            """
             result = process_contract_document(file_path, schema, text, xml_tree)
         else:
             raise ValueError(f"Tipo de documento no soportado: {document_type}")

@@ -33,7 +33,7 @@ const Header = () => {
 	const menuOptionsByRole = {
 		Administrador: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
-			{ label: 'Reportes', command: () => handleMenuItemClick('/status') },
+			{ label: 'Reportes', command: () => handleMenuItemClick('/dashboard') },
 			{ label: 'Documentos', command: () => handleMenuItemClick('/documents') },
 			{
 				label: 'Entrenar IA',
@@ -47,7 +47,7 @@ const Header = () => {
 		],
 		Proveedor: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
-			{ label: 'Reportes', command: () => handleMenuItemClick('/status') },
+			{ label: 'Reportes', command: () => handleMenuItemClick('/dashboard') },
 			{
 				label: 'Mis documentos',
 				command: () => handleMenuItemClick('/documents'),
@@ -56,7 +56,7 @@ const Header = () => {
 		],
 		Gestor: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
-			{ label: 'Reportes', command: () => handleMenuItemClick('/status') },
+			{ label: 'Reportes', command: () => handleMenuItemClick('/dashboard') },
 			{ label: 'Ver documentos', command: () => handleMenuItemClick('/documents') },
 			{
 				label: 'Entrenar IA',

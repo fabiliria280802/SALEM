@@ -28,6 +28,40 @@ def validate_contract_number(contract_number):
         return True, None
     return False, f"contract_number '{contract_number}' no cumple con el formato."
 
+def validate_company_direction(company_direction):
+    """Valida que la dirección de la empresa sea exactamente 'AV. GRANADOS VIA A NAYON EDIFICIO EKOPARK OFICINA 3 PISO 3'."""
+    expected_direction = "AV. GRANADOS VIA A NAYON EDIFICIO EKOPARK OFICINA 3 PISO 3"
+    if company_direction.strip() == expected_direction:
+        return True, None
+    return False, f"company_direction '{company_direction}' no coincide con '{expected_direction}'."
+
+def validate_company_city(company_city):
+    """Valida que la ciudad de la empresa sea exactamente 'Quito'."""
+    expected_city= "Quito"
+    if company_city.strip() == expected_city:
+        return True, None
+    return False, f"company_city '{company_city}' no coincide con '{expected_city}'."
+
+def validate_company_country(company_country):
+    """Valida que la pais de la empresa sea exactamente 'Ecuador'."""
+    expected_country= "Ecuador"
+    if company_country.strip() == expected_country:
+        return True, None
+    return False, f"company_country '{company_country}' no coincide con '{expected_country}'."
+
+def validate_company_ruc(company_ruc):
+    """Valida que el ruc de la empresa sea exactamente '1791239245001'."""
+    expected_ruc= "1791239245001"
+    if company_ruc.strip() == expected_ruc:
+        return True, None
+    return False, f"company_ruc '{company_ruc}' no coincide con '{expected_ruc}'."
+
+def validate_input_vs_extracted(input_value, extracted_value, field_name):
+    if input_value.strip() != extracted_value.strip():
+        return False, f"El valor ingresado para '{field_name}' ('{input_value}') no coincide con el valor extraído ('{extracted_value}')."
+    return True, None
+
+
 def validate_company_name(company_name):
     """Valida que el nombre de la empresa sea exactamente 'ENAP SIPETROL S.A. ENAP SIPEC'."""
     expected_name = "ENAP SIPETROL S.A. ENAP SIPEC"

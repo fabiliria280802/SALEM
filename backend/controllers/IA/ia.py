@@ -17,7 +17,12 @@ if __name__ == "__main__":
     if len(sys.argv) == 3:
         file_path = sys.argv[1]
         document_type = sys.argv[2]
-        result = process_single_document(file_path, document_type)
+        """ TODO: 
+        ruc_input = sys.argv[3]
+        contract_input = sys.argv[4]
+        result = process_single_document(file_path, document_type, ruc_input, contract_input )
+        """
+        result = process_single_document(file_path, document_type )
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         learning_dir = os.path.join(os.path.dirname(__file__), 'learning')

@@ -4,7 +4,9 @@
 	justify-content: center;
 	align-items: center;
 	padding: 70px;
-	background-color: #f9f9f9; /* Fondo claro para resaltar el formulario */
+	background-color: #f5f6fa; /* Fondo claro para resaltar el formulario */
+	min-height: 100vh; /* Asegura que el fondo cubra toda la altura de la pantalla */
+	width: 100%; /* Cubre todo el ancho */
 }
 
 .formContainer {

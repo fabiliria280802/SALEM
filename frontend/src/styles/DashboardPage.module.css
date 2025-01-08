@@ -5,7 +5,7 @@
 	justify-content: center; /* Centra verticalmente las tarjetas */
 	align-items: center; /* Centra horizontalmente las tarjetas */
 	min-height: 100vh; /* Ocupa toda la altura de la pantalla */
-	background-color: #f4f4f9; /* Fondo gris */
+	background-color: #f5f6fa; /* Fondo gris */
 	font-family: 'Arial', sans-serif;
 	margin: 0; /* Elimina márgenes externos */
 	padding: 20px; /* Espaciado interno */

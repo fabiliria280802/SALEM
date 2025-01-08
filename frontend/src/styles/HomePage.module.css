@@ -1,9 +1,14 @@
 .homePageContainer {
-	display: flex;
-	flex-direction: column;
-	min-height: calc(100vh - 190px);
-	justify-content: center;
+    flex-grow: 1; /* Permite que el contenido principal crezca dentro de .content */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-image: url('../assets/Adobe.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
+
 
 .outerSquare {
 	border-radius: 50px;

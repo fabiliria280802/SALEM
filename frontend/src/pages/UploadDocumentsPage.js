@@ -158,7 +158,7 @@ const UploadDocumentsPage = () => {
 							onBlur={handleRucBlur}
 							maxLength={13}
 							disabled={isRucReadOnly}
-							placeholder={isRucReadOnly ? "" : "Ingrese el RUC del proveedor"}
+							placeholder={isRucReadOnly ? '' : 'Ingrese el RUC del proveedor'}
 						/>
 					</div>
 					<div className={styles.formGroup}>

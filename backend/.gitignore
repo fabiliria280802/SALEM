@@ -9,5 +9,6 @@ data/docs/
 data/practice/
 data/docs-internal-test/
 # IA related files
-IA/learning/
+controllers/IA/learning/
+controllers/IA/data/docs/
 assets/

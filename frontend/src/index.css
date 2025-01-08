@@ -6,16 +6,16 @@
 
 body,
 html {
-    font-family: 'New Rubrik', sans-serif; /* Cambia Roboto por New Rubrik */
+	font-family: 'New Rubrik', sans-serif; /* Cambia Roboto por New Rubrik */
 }
 
 body {
-    margin: 0;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-        monospace, Arial, Helvetica, sans-serif;
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+		monospace, Arial, Helvetica, sans-serif;
 }

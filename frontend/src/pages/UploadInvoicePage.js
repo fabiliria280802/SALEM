@@ -38,7 +38,10 @@ const UploadInvoicePage = () => {
 			const fileSizeMB = file.size / (1024 * 1024);
 			const fileExtension = file.name.split('.').pop().toLowerCase();
 
-			if ((fileExtension === 'pdf' || fileExtension === 'png') && fileSizeMB <= 50) {
+			if (
+				(fileExtension === 'pdf' || fileExtension === 'png') &&
+				fileSizeMB <= 50
+			) {
 				setDocumentData({ ...documentData, file });
 			} else {
 				toast.current.show({
@@ -146,7 +149,7 @@ const UploadInvoicePage = () => {
 							onBlur={handleRucBlur}
 							maxLength={13}
 							disabled={isRucReadOnly}
-							placeholder={isRucReadOnly ? "" : "Ingrese el RUC del proveedor"}
+							placeholder={isRucReadOnly ? '' : 'Ingrese el RUC del proveedor'}
 						/>
 					</div>
 					<div className={styles.formGroup}>

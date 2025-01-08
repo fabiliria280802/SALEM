@@ -29,17 +29,40 @@ import ReviewInvoicePage from './pages/ReviewInvoicePage';
 import UploadContractPage from './pages/UploadContractPage';
 import UploadServiceDeliveryRecordPage from './pages/UploadServiceDeliveryRecordPage';
 import UploadInvoicePage from './pages/UploadInvoicePage';
+import useAuth from './hooks/useAuth';
 import './App.css';
 
 const AppContent = () => {
 	const location = useLocation();
+	const { isAuthenticated, loading } = useAuth();
+
+	const publicRoutes = [
+		'/login',
+		'/reset-password',
+		'/create-password',
+		'/unauthorized',
+	];
+	const isPublicRoute = publicRoutes.includes(location.pathname);
+
+	if (loading) {
+		return (
+			<div style={{ textAlign: 'center', marginTop: '50px' }}>Cargando...</div>
+		); // Spinner de carga
+	}
 
 	return (
 		<div className="App">
-			<Header />
+			{/* Renderizar Header solo en rutas privadas */}
+			{!isPublicRoute && isAuthenticated && <Header />}
 			<div className="content">
 				<Switch>
+					{/* Rutas públicas */}
 					<Route path="/login" component={LoginPage} />
+					<Route path="/create-password" component={CreatePasswordPage} />
+					<Route path="/reset-password" component={ResetPasswordPage} />
+					<Route path="/unauthorized" component={UnauthorizedPage} />
+
+					{/* Rutas privadas */}
 					<PrivateRoute
 						path="/upload-contract"
 						component={UploadContractPage}
@@ -70,19 +93,16 @@ const AppContent = () => {
 						component={ReviewInvoicePage}
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
-
 					<PrivateRoute
 						path="/upload-document"
 						component={UploadDocumentsPage}
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
-
 					<PrivateRoute
 						path="/dashboard"
 						component={DashboardPage}
 						roles={['Administrador', 'Gestor']}
 					/>
-
 					<PrivateRoute
 						path="/create-user"
 						component={CreateUserPage}
@@ -118,14 +138,17 @@ const AppContent = () => {
 						component={UserAcountPage}
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
-					{/* Rutas públicas */}
-					<Route path="/create-password" component={CreatePasswordPage} />
-					<Route path="/reset-password" component={ResetPasswordPage} />
-					<Route path="/unauthorized" component={UnauthorizedPage} />
-					<Route path="/" component={HomePage} />
+					<PrivateRoute
+						path="/"
+						component={HomePage}
+						roles={['Administrador', 'Gestor', 'Proveedor']}
+					/>
 				</Switch>
 			</div>
-			<Footer currentPath={location.pathname} />
+			{/* Renderizar Footer solo en rutas privadas */}
+			{!isPublicRoute && isAuthenticated && (
+				<Footer currentPath={location.pathname} />
+			)}
 		</div>
 	);
 };

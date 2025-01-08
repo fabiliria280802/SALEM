@@ -32,18 +32,18 @@ describe('AuthController - Pruebas de Integración', () => {
 				company_name: 'Empresa Ejemplo',
 				ruc: '1757797202001',
 				phone: '0987654321',
-				status: 'Activo'
+				status: 'Activo',
 			});
 
 			const req = {
 				body: {
 					email: 'fabiliria@gmail.com',
-					password: 'ValidPass123'
-				}
+					password: 'ValidPass123',
+				},
 			};
 
 			const res = {
-				json: jest.fn()
+				json: jest.fn(),
 			};
 
 			const next = jest.fn();
@@ -63,8 +63,8 @@ describe('AuthController - Pruebas de Integración', () => {
 			const req = {
 				body: {
 					email: 'invalidemail',
-					password: 'ValidPass123'
-				}
+					password: 'ValidPass123',
+				},
 			};
 
 			const res = {};
@@ -74,7 +74,9 @@ describe('AuthController - Pruebas de Integración', () => {
 
 			expect(next).toHaveBeenCalled();
 			expect(next.mock.calls[0][0].statusCode).toBe(406);
-			expect(next.mock.calls[0][0].message).toBe('El correo electrónico ingresado no es válido');
+			expect(next.mock.calls[0][0].message).toBe(
+				'El correo electrónico ingresado no es válido',
+			);
 		});
 
 		it('debería rechazar el login para usuario inactivo', async () => {
@@ -87,14 +89,14 @@ describe('AuthController - Pruebas de Integración', () => {
 				company_name: 'Empresa Ejemplo',
 				ruc: '1757797202001',
 				phone: '0987654321',
-				status: 'Inactivo'
+				status: 'Inactivo',
 			});
 
 			const req = {
 				body: {
 					email: 'inactive@example.com',
-					password: 'ValidPass123'
-				}
+					password: 'ValidPass123',
+				},
 			};
 
 			const res = {};
@@ -104,7 +106,9 @@ describe('AuthController - Pruebas de Integración', () => {
 
 			expect(next).toHaveBeenCalled();
 			expect(next.mock.calls[0][0].statusCode).toBe(403);
-			expect(next.mock.calls[0][0].message).toBe('El usuario está desactivado y no puede acceder al sistema');
+			expect(next.mock.calls[0][0].message).toBe(
+				'El usuario está desactivado y no puede acceder al sistema',
+			);
 		});
 
 		it('debería rechazar el login con contraseña incorrecta', async () => {
@@ -117,14 +121,14 @@ describe('AuthController - Pruebas de Integración', () => {
 				company_name: 'Empresa Ejemplo',
 				ruc: '1757797202001',
 				phone: '0987654321',
-				status: 'Activo'
+				status: 'Activo',
 			});
 
 			const req = {
 				body: {
 					email: 'test@example.com',
-					password: 'WrongPass123'
-				}
+					password: 'WrongPass123',
+				},
 			};
 
 			const res = {};
@@ -141,8 +145,8 @@ describe('AuthController - Pruebas de Integración', () => {
 			const req = {
 				body: {
 					email: 'nonexistent@example.com',
-					password: 'ValidPass123'
-				}
+					password: 'ValidPass123',
+				},
 			};
 
 			const res = {};
@@ -152,7 +156,9 @@ describe('AuthController - Pruebas de Integración', () => {
 
 			expect(next).toHaveBeenCalled();
 			expect(next.mock.calls[0][0].statusCode).toBe(404);
-			expect(next.mock.calls[0][0].message).toBe('El correo electrónico ingresado no esta registrado en el sistema');
+			expect(next.mock.calls[0][0].message).toBe(
+				'El correo electrónico ingresado no esta registrado en el sistema',
+			);
 		});
 	});
 });

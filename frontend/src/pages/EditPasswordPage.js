@@ -27,7 +27,7 @@ const EditPasswordPage = () => {
 
 		try {
 			const response = await axios.post(
-				`http://localhost:5000/api/users/${userId}/`,
+				`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/api/users/${userId}/`,
 				{
 					password: newPassword,
 				},

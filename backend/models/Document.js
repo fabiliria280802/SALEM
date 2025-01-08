@@ -11,7 +11,7 @@ const documentSchema = new mongoose.Schema({
 		type: String,
 		enum: ['HES', 'MIGO'],
 		required: true,
-	},//
+	}, //
 });
 
 module.exports = mongoose.model('Document', documentSchema);

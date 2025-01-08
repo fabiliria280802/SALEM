@@ -1,9 +1,9 @@
 const express = require('express');
 const {
-    createContract,
-    getContractById,
-    updateContract,
-    deleteContract
+	createContract,
+	getContractById,
+	updateContract,
+	deleteContract,
 } = require('../controllers/contractController');
 const { upload } = require('../middleware/uploadMiddleware');
 const router = express.Router();

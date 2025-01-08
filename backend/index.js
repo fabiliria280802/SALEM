@@ -34,10 +34,10 @@ const dataDir = path.join(process.cwd(), 'data');
 const docsDir = path.join(dataDir, 'docs');
 
 if (!fs.existsSync(dataDir)) {
-    fs.mkdirSync(dataDir);
+	fs.mkdirSync(dataDir);
 }
 if (!fs.existsSync(docsDir)) {
-    fs.mkdirSync(docsDir);
+	fs.mkdirSync(docsDir);
 }
 
 app.get('/', (req, res) => {
@@ -50,6 +50,14 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', authMiddleware, userRoutes);
 app.use('/api/new-user', createPasswordRoutes);
 app.use('/api/mail', mailRoutes);
+
+app.use('/api/public', userPublicRoutes);
+
+app.use('/api/documents/Invoice', authMiddleware, invoiceRoutes);
+app.use('/api/documents/Contract', authMiddleware, contractRoutes);
+app.use('/api/documents/Service-record', authMiddleware, serviceDeliveryRecordRoutes);
+app.use('/api/documents', authMiddleware, documentRoutes);
+
 app.use('/api/report/ia-metrics', authMiddleware, iaMetricsRoutes);
 
 app.use(errorMiddleware);

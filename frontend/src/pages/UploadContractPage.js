@@ -92,7 +92,7 @@ const UploadContractPage = () => {
 		const formData = new FormData();
 
 		// Asegurarnos de que el tipo de documento se envíe primero
-		formData.append('documentType', 'Contract'); // Valor hardcodeado ya que es específico para esta página
+		formData.append('documentType', documentData.documentType);
 		formData.append('file', documentData.file);
 		formData.append('ruc', documentData.ruc);
 		formData.append('contract', documentData.contract);
@@ -111,7 +111,7 @@ const UploadContractPage = () => {
 		}
 
 		try {
-			const response = await documentService.uploadContract(formData);
+			const response = await documentService.uploadDocument(documentData.documentType, formData);
 
 			toast.current.show({
 				severity: 'success',
@@ -120,7 +120,10 @@ const UploadContractPage = () => {
 				life: 5000,
 			});
 
-			setTimeout(() => history.push(`/review-contract/${response.data._id}`), 2000);
+			setTimeout(
+				() => history.push(`/review-contract/${response.data._id}`),
+				2000,
+			);
 		} catch (error) {
 			console.error('Error en handleSubmit:', error);
 			toast.current.show({
@@ -154,7 +157,7 @@ const UploadContractPage = () => {
 							onBlur={handleRucBlur}
 							maxLength={13}
 							disabled={isRucReadOnly}
-							placeholder={isRucReadOnly ? "" : "Ingrese el RUC del proveedor"}
+							placeholder={isRucReadOnly ? '' : 'Ingrese el RUC del proveedor'}
 						/>
 					</div>
 					<div className={styles.formGroup}>

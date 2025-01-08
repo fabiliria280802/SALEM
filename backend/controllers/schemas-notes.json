@@ -56,12 +56,13 @@
 			"service": {
 				"label": "Servicio",
 				"regex": "(?i)\\b(?:servicio)\\s*[:\\-]?\\s*([^\\n]+)"
-			},//no se usa
+			}, //no se usa
 			"location": {
 				"label": "Ubicación del servicio",
 				"regex": "(?i)\\b(?:ubicación del servicio|ubicación)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
-			"contract": {//numero de orden de compra
+			"contract": {
+				//numero de orden de compra
 				"label": "Contrato N°",
 				"regex": "(?i)\\b(?:contrato n°|contrato no\\.?|n°|no\\.?)\\s*[:\\-]?\\s*(contract-\\d{4})\\b"
 			},
@@ -82,7 +83,8 @@
 							"label": "Nombre",
 							"regex": "(?i)^[A-Za-zÁáÉéÍíÓóÚúÑñ\\s]+$"
 						},
-						"position": {//opcional
+						"position": {
+							//opcional
 							"label": "Cargo",
 							"regex": "(?i)^[A-Za-zÁáÉéÍíÓóÚúÑñ\\s]+$"
 						},

@@ -1,8 +1,10 @@
 import axios from 'axios';
 import authService from './authService';
 
+const API_URL = `${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/api/users/`;
+/*
 const API_URL = 'http://localhost:8080/api/users/';
-
+*/
 const createUser = async userData => {
 	try {
 		const token = authService.getToken();
@@ -101,7 +103,6 @@ const updateUser = async (userId, userData) => {
 		throw error;
 	}
 };
-
 
 const userService = {
 	createUser,

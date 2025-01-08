@@ -1,13 +1,22 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+
 import Login from '../../pages/LoginPage';
+import { AuthContext } from '../../contexts/AuthContext'; // Importa el contexto
+
 
 /* FIX: creacte unit test
 test('renders login form', () => {
-	render(<Login />, { wrapper: MemoryRouter });
-	expect(screen.getByLabelText(/Usuario/i)).toBeInTheDocument();
-	expect(screen.getByLabelText(/Contraseña/i)).toBeInTheDocument();
+  render(
+    <AuthContext.Provider value={{ login: jest.fn() }}>
+      <Login />
+    </AuthContext.Provider>,
+    { wrapper: MemoryRouter }
+  );
+
+  expect(screen.getByLabelText(/Correo electrónico/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/Contraseña/i)).toBeInTheDocument();
 });
 
 test('submits login form', () => {

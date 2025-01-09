@@ -11,7 +11,7 @@ from utils import convert_pdf_to_images, load_document_schema
 from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates, validate_contract_number, validate_signatures_and_positions, validate_tables_mathematics_logic, validate_totals_logic,validate_company_direction, validate_company_ruc, validate_company_country, validate_company_city, validate_input_vs_extracted
 
 # Funciones de procesamiento de documentos específicos
-def process_service_delivery_record_document(images, schema, text=None, xml_tree=None):
+def process_service_delivery_record_document(images, schema, ruc_input, contract_input, text=None, xml_tree=None):
     """Procesa un documento de acta de recepción y valida sus campos."""
     extracted_data = {}
     confidence_scores = {}
@@ -69,7 +69,7 @@ def process_service_delivery_record_document(images, schema, text=None, xml_tree
         "missing_fields": missing_fields
     }
 
-def process_invoice_document(images, schema, text=None, xml_tree=None):
+def process_invoice_document(images, schema, ruc_input, contract_input, text=None, xml_tree=None):
     extracted_data = {}
     validation_errors = []
     missing_fields = []
@@ -120,11 +120,7 @@ def process_invoice_document(images, schema, text=None, xml_tree=None):
         "missing_fields": missing_fields,
     }
 
-""" TODO: corregir funcion
-ef process_contract_document(images, schema, ruc_input, contract_input, text=None, xml_tree=None):
-"""
-
-def process_contract_document(images, schema, text=None, xml_tree=None):
+def process_contract_document(images, schema, ruc_input, contract_input, text=None, xml_tree=None):
     extracted_data = {}
     confidence_scores = {}
     validation_errors = []
@@ -134,6 +130,15 @@ def process_contract_document(images, schema, text=None, xml_tree=None):
         if text:
             # Procesar texto extraído con OCR
             contract_fields = schema["Contract"]["fields"]
+
+            if "service_table" in contract_fields:
+                table_schema = contract_fields["service_table"]
+                table_data, table_errors = extract_table_data(text, table_schema)
+                if table_errors:
+                    validation_errors.extend(table_errors)
+                else:
+                    extracted_data["service_table"] = table_data
+
 
             # Extraer campos secuenciales
             client_fields = {
@@ -179,7 +184,6 @@ def process_contract_document(images, schema, text=None, xml_tree=None):
                 validation_errors.append(error)
                 print(f"Validation Error for 'client_direction': {error}")
 
-        """ TODO: Mejorar
         if "client_ruc" in extracted_data:
             valid, error = validate_company_ruc(extracted_data["client_ruc"])
             if not valid:
@@ -197,7 +201,6 @@ def process_contract_document(images, schema, text=None, xml_tree=None):
             validNumber, error = validate_input_vs_extracted(contract_input, extracted_data["contract_number"], "Número de Contrato")
             if not validNumber:
                 validation_errors.append(error)
-        """
 
         if "client_country" in extracted_data:
             valid, error = validate_company_country(extracted_data["client_country"])
@@ -262,11 +265,7 @@ def process_contract_document(images, schema, text=None, xml_tree=None):
         "missing_fields": missing_fields
     }
 
-""" TODO: agregar los parametros de ruc y contarct
 def process_single_document(file_path, document_type, ruc_input, contract_input):
-
-"""
-def process_single_document(file_path, document_type):
     try:
         start_time = time.time()
         schema = load_document_schema()
@@ -289,10 +288,11 @@ def process_single_document(file_path, document_type):
         elif document_type == "ServiceDeliveryRecord":
             result = process_service_delivery_record_document(file_path, schema, text, xml_tree)
         elif document_type == "Contract":
-            """
+            
             result = process_contract_document(file_path, schema,ruc_input, contract_input, text, xml_tree)
-            """
+            """ TODO: DELETE
             result = process_contract_document(file_path, schema, text, xml_tree)
+            """
         else:
             raise ValueError(f"Tipo de documento no soportado: {document_type}")
 

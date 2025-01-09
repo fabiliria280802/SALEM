@@ -41,15 +41,14 @@ exports.createContract = [
 			const pythonProcess = spawn('python3', [
 				'controllers/IA/ia.py', // Ajusta a 'python3' si es necesario
 				filePath,
-				documentType
-				/*
+				documentType,
 				req.body.ruc,
-    			req.body.contract */
+    			req.body.contract
 
 			], {
 				env: {
-					...process.env, // Mantén las variables de entorno actuales
-					TESSDATA_PREFIX: '/usr/share/tesseract/tessdata', // Asegúrate de configurar esto
+					...process.env,
+					TESSDATA_PREFIX: '/usr/share/tesseract/tessdata', 
 				},
 			});
 			

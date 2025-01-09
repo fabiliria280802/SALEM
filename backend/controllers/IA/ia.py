@@ -14,15 +14,15 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    if len(sys.argv) == 3:
+    if len(sys.argv) == 5:
         file_path = sys.argv[1]
         document_type = sys.argv[2]
-        """ TODO: 
         ruc_input = sys.argv[3]
         contract_input = sys.argv[4]
         result = process_single_document(file_path, document_type, ruc_input, contract_input )
-        """
+        """ TODO: DELETE COMMENT
         result = process_single_document(file_path, document_type )
+        """
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         learning_dir = os.path.join(os.path.dirname(__file__), 'learning')

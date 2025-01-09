@@ -7,11 +7,13 @@ import sys
 import time
 
 from extractions import extract_field_from_region, extract_relative_field, extract_field_from_xml, extract_sequential_fields, extract_table_data
+
 from utils import convert_pdf_to_images, load_document_schema
+
 from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates, validate_contract_number, validate_signatures_and_positions, validate_tables_mathematics_logic, validate_totals_logic,validate_company_direction, validate_company_ruc, validate_company_country, validate_company_city, validate_input_vs_extracted
 
 # Funciones de procesamiento de documentos específicos
-def process_service_delivery_record_document(images, schema, ruc_input, contract_input, text=None, xml_tree=None):
+def process_service_delivery_record_document(images, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
     """Procesa un documento de acta de recepción y valida sus campos."""
     extracted_data = {}
     confidence_scores = {}
@@ -33,7 +35,15 @@ def process_service_delivery_record_document(images, schema, ruc_input, contract
                     else:
                         missing_fields.append(field_name)
 
-            # Validaciones específicas
+        elif xml_tree:
+            # Procesar campos desde XML
+            contract_fields = schema["ServiceDeliveryRecord"]["fields"]
+            for field_name, field_info in contract_fields.items():
+                extracted_data[field_name] = extract_field_from_xml(xml_tree, field_info)
+                if not extracted_data[field_name]:
+                    missing_fields.append(field_name)
+
+            # TODO: Validaciones específicas
             if "order_number" in extracted_data:
                 valid, error = validate_order_number(extracted_data["order_number"])
                 if not valid:
@@ -69,8 +79,9 @@ def process_service_delivery_record_document(images, schema, ruc_input, contract
         "missing_fields": missing_fields
     }
 
-def process_invoice_document(images, schema, ruc_input, contract_input, text=None, xml_tree=None):
+def process_invoice_document(images, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
     extracted_data = {}
+    confidence_scores = {}    
     validation_errors = []
     missing_fields = []
 
@@ -78,10 +89,19 @@ def process_invoice_document(images, schema, ruc_input, contract_input, text=Non
         if text:
             invoice_fields = schema["Invoice"]["fields"]
 
-            # Procesar campos del esquema
+            if "service_table" in invoice_fields:
+                table_schema = invoice_fields["service_table"]
+                table_data, table_errors = extract_table_data(text, table_schema)
+                if table_errors:
+                    validation_errors.extend(table_errors)
+                else:
+                    extracted_data["service_table"] = table_data
+
             for field_name, field_info in invoice_fields.items():
                 if "region" in field_info:
                     extracted_data[field_name] = extract_field_from_region(images[0], field_info)
+                elif "relative_to" in field_info:
+                    extracted_data[field_name] = extract_relative_field(images[0], extracted_data, field_info)
                 elif "regex" in field_info:
                     match = re.search(field_info["regex"], text)
                     if match:
@@ -89,24 +109,47 @@ def process_invoice_document(images, schema, ruc_input, contract_input, text=Non
                     else:
                         missing_fields.append(field_name)
 
-            # Validar campos específicos
-            if "company_name" in extracted_data:
-                valid, error = validate_company_name(extracted_data["company_name"])
-                if not valid:
-                    validation_errors.append(error)
+        elif xml_tree:
+            # Procesar campos desde XML
+            contract_fields = schema["Invoice"]["fields"]
+            for field_name, field_info in contract_fields.items():
+                extracted_data[field_name] = extract_field_from_xml(xml_tree, field_info)
+                if not extracted_data[field_name]:
+                    missing_fields.append(field_name)
 
 
-            if "invoice_date" in extracted_data and "payable_at" in extracted_data:
-                valid, error = validate_dates(extracted_data["invoice_date"], extracted_data["payable_at"])
-                if not valid:
-                    validation_errors.append(error)
+        # TODO: Validar campos específicos
+        if "service_table" in extracted_data:
+            table_data = extracted_data["service_table"]  
+            valid, errors = validate_tables_mathematics_logic(table_data)
+            if not valid:
+                validation_errors.extend(errors)
 
-            if "invoice_number" in extracted_data:
-                valid, error = validate_invoice_number(extracted_data["invoice_number"])
-                if not valid:
-                    validation_errors.append(error)
+        if "company_name" in extracted_data:
+            valid, error = validate_company_name(extracted_data["company_name"])
+            if not valid:
+                validation_errors.append(error)
 
-            if "order_number" in extracted_data:
+        if "client_ruc" in extracted_data:
+            valid, error = validate_company_ruc(extracted_data["client_ruc"])
+            if not valid:
+                validation_errors.append(error)
+            print(ruc_input)
+            validRuc, error = validate_input_vs_extracted(ruc_input, extracted_data["client_ruc"], "RUC")
+            if not validRuc:
+                validation_errors.append(error)
+
+        if "invoice_date" in extracted_data and "payable_at" in extracted_data:
+            valid, error = validate_dates(extracted_data["invoice_date"], extracted_data["payable_at"])
+            if not valid:
+                validation_errors.append(error)
+
+        if "invoice_number" in extracted_data:
+            valid, error = validate_invoice_number(extracted_data["invoice_number"])
+            if not valid:
+                validation_errors.append(error)
+
+        if "order_number" in extracted_data:
                 valid, error = validate_hes_number(extracted_data["order_number"])
                 if not valid:
                     validation_errors.append(error)
@@ -116,11 +159,12 @@ def process_invoice_document(images, schema, ruc_input, contract_input, text=Non
 
     return {
         "extracted_data": extracted_data,
+        "confidence_scores": confidence_scores,
         "validation_errors": validation_errors,
         "missing_fields": missing_fields,
     }
 
-def process_contract_document(images, schema, ruc_input, contract_input, text=None, xml_tree=None):
+def process_contract_document(images, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
     extracted_data = {}
     confidence_scores = {}
     validation_errors = []
@@ -197,8 +241,8 @@ def process_contract_document(images, schema, ruc_input, contract_input, text=No
             valid, error = validate_contract_number(extracted_data["contract_number"])
             if not valid:
                 validation_errors.append(error)
-            print(contract_input)
-            validNumber, error = validate_input_vs_extracted(contract_input, extracted_data["contract_number"], "Número de Contrato")
+            print(auxiliar_input)
+            validNumber, error = validate_input_vs_extracted(auxiliar_input, extracted_data["contract_number"], "Número de Contrato")
             if not validNumber:
                 validation_errors.append(error)
 
@@ -265,7 +309,7 @@ def process_contract_document(images, schema, ruc_input, contract_input, text=No
         "missing_fields": missing_fields
     }
 
-def process_single_document(file_path, document_type, ruc_input, contract_input):
+def process_single_document(file_path, document_type, ruc_input, auxiliar_input):
     try:
         start_time = time.time()
         schema = load_document_schema()
@@ -289,7 +333,7 @@ def process_single_document(file_path, document_type, ruc_input, contract_input)
             result = process_service_delivery_record_document(file_path, schema, text, xml_tree)
         elif document_type == "Contract":
             
-            result = process_contract_document(file_path, schema,ruc_input, contract_input, text, xml_tree)
+            result = process_contract_document(file_path, schema,ruc_input, auxiliar_input, text, xml_tree)
             """ TODO: DELETE
             result = process_contract_document(file_path, schema, text, xml_tree)
             """

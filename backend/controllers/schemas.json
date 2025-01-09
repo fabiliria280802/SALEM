@@ -177,25 +177,35 @@
                     "height": 20
                 }
             },
-            "code": {
-                "label": "Código",
-                "regex": "(?i)\\b(?:code)\\s*[:\\-]?\\s*([^\\n]+)"
-            },
-            "description": {
-                "label": "Descripción",
-                "regex": "(?i)\\b(?:description)\\s*[:\\-]?\\s*([^\\n]+)"
-            },
-            "quantity": {
-                "label": "Cantidad",
-                "regex": "(?i)\\b(?:quantity)\\s*[:\\-]?\\s*([^\\n]+)"
-            },
-            "unit_cost": {
-                "label": "Costo Unitario",
-                "regex": "(?i)\\b(?:unit cost)\\s*[:\\-]?\\s*([^\\n]+)"
-            },
-            "total_cost": {
-                "label": "Costo Total",
-                "regex": "(?i)\\b(?:total cost)\\s*[:\\-]?\\s*([^\\n]+)"
+            "service_table": {
+			    "label": "Tabla de Servicios",
+			    "type": "table",
+			    "columns": {
+			        "service_code": {
+			            "label": "Código",
+			            "regex": "\\b(?:\\w{4})\\b"
+			        },
+			        "service_description": {
+			            "label": "Descripción del Servicio",
+			            "regex": ".+"
+			        },
+			        "service_quantity": {
+			            "label": "Cantidad",
+			            "regex": "\\b\\d+\\b"
+			        },
+			        "service_unit_cost": {
+			            "label": "Costo Unitario",
+			            "regex": "\\b\\d+(?:\\.\\d{2})\\b"
+			        },
+			        "service_cost": {
+			            "label": "Costo",
+			            "regex": "\\b\\d+(?:\\.\\d{2})\\b"
+			        }
+			    }
+			},
+            "service_hes": {
+                "label": "HES",
+                "regex": "\\b(?:HES:\\s?\\d{8})\\b"
             },
             "subtotal": {
                 "label": "Subtotal",

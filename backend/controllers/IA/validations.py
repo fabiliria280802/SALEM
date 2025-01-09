@@ -61,7 +61,6 @@ def validate_input_vs_extracted(input_value, extracted_value, field_name):
         return False, f"El valor ingresado para '{field_name}' ('{input_value}') no coincide con el valor extraído ('{extracted_value}')."
     return True, None
 
-
 def validate_company_name(company_name):
     """Valida que el nombre de la empresa sea exactamente 'ENAP SIPETROL S.A. ENAP SIPEC'."""
     expected_name = "ENAP SIPETROL S.A. ENAP SIPEC"
@@ -237,4 +236,3 @@ def verify_signature_in_image(image, position_index):
         return cropped_region.getbbox() is not None
     except IndexError:
         return False  # Manejar errores de índice si no hay más regiones definidas
-

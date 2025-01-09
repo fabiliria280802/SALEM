@@ -38,16 +38,13 @@ const UploadInvoicePage = () => {
 			const fileSizeMB = file.size / (1024 * 1024);
 			const fileExtension = file.name.split('.').pop().toLowerCase();
 
-			if (
-				(fileExtension === 'pdf' || fileExtension === 'png') &&
-				fileSizeMB <= 50
-			) {
+			if ((fileExtension === 'pdf' || fileExtension ==="xml" || fileExtension==="png") && fileSizeMB <= 50) {
 				setDocumentData({ ...documentData, file });
 			} else {
 				toast.current.show({
 					severity: 'error',
 					summary: 'Error',
-					detail: 'Solo se permiten archivos PDF o PNG de hasta 50 MB',
+					detail: 'Solo se permiten archivos PDF de hasta 50 MB',
 					life: 5000,
 				});
 			}
@@ -90,9 +87,20 @@ const UploadInvoicePage = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-		const { ruc, contract, documentType, file } = documentData;
 
-		if (!ruc || !contract || !documentType || !file) {
+		// Crear FormData y agregar los campos
+		const formData = new FormData();
+
+		// Asegurarnos de que el tipo de documento se envíe primero
+		formData.append('documentType', documentData.documentType);
+		formData.append('file', documentData.file);
+		formData.append('ruc', documentData.ruc);
+		formData.append('invoice', documentData.invoice);
+
+		// Debug para verificar que se está enviando correctamente
+		console.log('DocumentType siendo enviado:', formData.get('documentType'));
+
+		if (!documentData.ruc || !documentData.invoice || !documentData.file) {
 			toast.current.show({
 				severity: 'warn',
 				summary: 'Advertencia',
@@ -103,25 +111,25 @@ const UploadInvoicePage = () => {
 		}
 
 		try {
-			const formData = new FormData();
-			formData.append('file', file);
-			formData.append('ruc', ruc);
-			formData.append('contract', contract);
-			formData.append('documentType', documentType);
+			const response = await documentService.uploadDocument(documentData.documentType, formData);
 
-			await documentService.addADocument(formData);
 			toast.current.show({
 				severity: 'success',
 				summary: 'Éxito',
-				detail: 'Documento cargado correctamente',
+				detail: 'Contrato cargado correctamente',
 				life: 5000,
 			});
-			setTimeout(() => history.push('/document-analizer'), 2000);
+
+			setTimeout(
+				() => history.push(`/review-invoice/${response.data._id}`),
+				2000,
+			);
 		} catch (error) {
+			console.error('Error en handleSubmit:', error);
 			toast.current.show({
 				severity: 'error',
 				summary: 'Error',
-				detail: 'Error al cargar el documento',
+				detail: error.message || 'Error al cargar el contrato',
 				life: 10000,
 			});
 		}
@@ -135,7 +143,7 @@ const UploadInvoicePage = () => {
 		<div className={styles.container}>
 			<Toast ref={toast} />
 			<div className={styles.formContainer}>
-				<h1 className={styles.formTitle}>Nueva factura de un servicio</h1>
+				<h1 className={styles.formTitle}>Nuevo contrato</h1>
 				<p className={styles.formSubtitle}>Completa la información</p>
 
 				<div className={styles.formGrid}>
@@ -163,13 +171,13 @@ const UploadInvoicePage = () => {
 					</div>
 
 					<div className={styles.formGroup}>
-						<label htmlFor="file">Cargar archivo (PDF o PNG):</label>
+						<label htmlFor="file">Cargar archivo (PDF):</label>
 						<InputText
 							type="file"
 							id="file"
 							name="file"
 							onChange={handleFileChange}
-							accept=".pdf,.png"
+							accept=".pdf"
 						/>
 					</div>
 				</div>

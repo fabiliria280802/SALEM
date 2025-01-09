@@ -7,7 +7,191 @@ const Invoice = require('../models/Invoice');
 const { spawn } = require('child_process');
 const path = require('path');
 const authMiddleware = require('../middleware/authMiddleware');
+exports.createInvoice = [
+	authMiddleware,
+	async (req, res, next) => {
+		const { ruc, invoice, documentType } = req.body;
+		try {
+			const file = req.file;
 
+			if (documentType !== 'Invoice') {
+				return res.status(400).json({
+					error: 'Tipo de documento inválido',
+					details: `Se esperaba 'Invoice', se recibió '${documentType}'`,
+				});
+			}
+
+			if (!file) {
+				return res
+					.status(400)
+					.json({ error: 'No se ha proporcionado un archivo' });
+			}
+
+			const newInvoice = new Invoice({
+				invoice_number: invoice,
+				file_path: path.join('data', 'docs', file.filename),
+				status: 'Analizando',
+				created_by: req.user.id,
+			});
+
+			await newInvoice.save();
+
+			const filePath = path.join(process.cwd(), newInvoice.file_path);
+			const pythonProcess = spawn('python3', [
+				'controllers/IA/ia.py',
+				filePath,
+				documentType,
+				req.body.ruc,
+    			req.body.invoice
+
+			], {
+				env: {
+					...process.env,
+					TESSDATA_PREFIX: '/usr/share/tesseract/tessdata', 
+				},
+			});
+			
+
+			let pythonOutput = '';
+			let pythonError = '';
+
+			pythonProcess.stdout.on('data', data => {
+				pythonOutput += data.toString();
+			});
+			
+			pythonProcess.stderr.on('data', data => {
+				console.error('Error de Python:', data.toString());
+				pythonError += data.toString(); // Acumula los errores aquí
+			});
+
+			pythonProcess.on('close', async code => {
+				if (code !== 0) {
+					console.error('Python script error:', pythonError);
+					await Contract.findByIdAndUpdate(newContract._id, {
+						status: 'Denegado',
+						ai_decision_explanation: `Error en el procesamiento: ${pythonError}`,
+					});
+					return res.status(500).json({
+						error: 'Error al procesar el documento con IA',
+						details: pythonError,
+					});
+				}
+
+				try {
+					let jsonStr = pythonOutput;
+					try {
+						const matches = pythonOutput.match(/({[\s\S]*?})\s*$/);
+						if (matches) {
+							jsonStr = matches[1];
+						}
+
+						jsonStr = jsonStr
+							.replace(/\n/g, ' ')
+							.replace(/\r/g, '')
+							.replace(/\s+/g, ' ')
+							.replace(/\\\\/g, '\\')
+							.replace(/\\"/g, '"')
+							.replace(/"\s*:\s*"([^"]*?)\\*"/g, '": "$1"')
+							.trim();
+
+						console.log('JSON limpio:', jsonStr);
+						const result = JSON.parse(jsonStr);
+
+						if (result.extracted_data) {
+							Object.keys(result.extracted_data).forEach(key => {
+								if (typeof result.extracted_data[key] === 'string') {
+									result.extracted_data[key] = result.extracted_data[key]
+										.replace(/\\+/g, '')
+										.replace(/"{2,}/g, '"')
+										.replace(/^"|"$/g, '')
+										.replace(/\\n/g, ' ')
+										.trim();
+								}
+							});
+						}
+
+						const requiredFields = [];
+						const missingFields = requiredFields.filter(
+							field => !(result.extracted_data && result.extracted_data[field])
+						);
+
+						requiredFields.forEach(field => {
+							if (!result.extracted_data[field]) {
+								result.extracted_data[field] = null; // Marca como nulo para claridad
+							}
+						});
+						
+
+						const status = missingFields.length > 0 ? 'Denegado' : 'Aceptado';
+						const validation_errors =
+							missingFields.length > 0
+								? missingFields.map(
+										field => `Campo requerido no encontrado: ${field}`,
+									)
+								: [];
+
+						console.log("Validation Errors before DB update:", validation_errors);
+	
+						const updateData = {
+							...result.extracted_data,
+							status,
+							validation_errors,
+							ai_decision_explanation:
+								missingFields.length > 0
+									? 'Faltan campos requeridos'
+									: 'Documento procesado correctamente',
+						};
+
+						const updateInvoice = await invoice.findByIdAndUpdate(
+							newContract._id,
+							updateData,
+							{ new: true },
+						);
+
+						res.status(201).json({
+							message:
+								status === 'Aceptado'
+									? 'Factura procesado correctamente'
+									: 'Factura procesado con errores',
+							_id: updatedContract._id,
+							status,
+							validation_errors,
+						});
+					} catch (parseError) {
+						console.error('Error al parsear JSON:', parseError);
+						console.error('JSON intentado parsear:', jsonStr);
+						throw new Error(`Error al parsear JSON: ${parseError.message}`);
+					}
+				} catch (error) {
+					console.error('Error completo al procesar la respuesta:', error);
+					console.error('Salida completa de Python:', pythonOutput);
+
+					await Contract.findByIdAndUpdate(newContract._id, {
+						status: 'Denegado',
+						ai_decision_explanation:
+							'Error al procesar la respuesta: formato inválido',
+					});
+				
+					/*
+					res.status(500).json({
+						error: 'Error al procesar la respuesta de la IA',
+						details: pythonError,
+					});
+					*/
+				}
+			});
+		} catch (error) {
+			console.error('Error completo:', error);
+			res.status(500).json({
+				error: 'Error interno del servidor',
+				details: error.message,
+			});
+		}
+	},
+
+];
+
+/*
 exports.createInvoice = [
 	authMiddleware,
 	async (req, res) => {
@@ -35,6 +219,8 @@ exports.createInvoice = [
 				'controllers/IA/ia.py',
 				filePath,
 				documentType,
+				ruc,
+				contract,
 			]);
 
 			let pythonOutput = '';
@@ -171,7 +357,7 @@ exports.createInvoice = [
 		}
 	},
 ];
-
+*/
 exports.getAllInvoices = [
 	authMiddleware,
 	async (req, res) => {

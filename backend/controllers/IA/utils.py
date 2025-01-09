@@ -31,4 +31,3 @@ def convert_pdf_to_images(pdf_path):
     except Exception as e:
         print(f"Error convirtiendo PDF a imágenes: {str(e)}")
         raise
-

@@ -18,8 +18,8 @@ if __name__ == "__main__":
         file_path = sys.argv[1]
         document_type = sys.argv[2]
         ruc_input = sys.argv[3]
-        contract_input = sys.argv[4]
-        result = process_single_document(file_path, document_type, ruc_input, contract_input )
+        auxiliar_input = sys.argv[4]
+        result = process_single_document(file_path, document_type, ruc_input, auxiliar_input )
         """ TODO: DELETE COMMENT
         result = process_single_document(file_path, document_type )
         """

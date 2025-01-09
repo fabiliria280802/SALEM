@@ -39,7 +39,7 @@ exports.createContract = [
 
 			const filePath = path.join(process.cwd(), newContract.file_path);
 			const pythonProcess = spawn('python3', [
-				'controllers/IA/ia.py', // Ajusta a 'python3' si es necesario
+				'controllers/IA/ia.py',
 				filePath,
 				documentType,
 				req.body.ruc,

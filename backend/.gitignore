@@ -10,7 +10,7 @@ data/practice/
 data/docs-internal-test/
 # IA related files
 controllers/IA/learning/
-controllers/IA/data/docs/
+controllers/IA/data/
 assets/
 
 controllers/IA/__pycache__/

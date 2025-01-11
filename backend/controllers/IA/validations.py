@@ -1,8 +1,9 @@
 import re
 from datetime import datetime
+from PIL import ImageOps, ImageChops, Image
 
 from utils import convert_pdf_to_images
-from extractions import extract_text_from_document
+from extractions import extract_text_from_document, extract_section
 
 def validate_order_number(order_number):
     """Valida que el número de orden inicie con '34' y tenga 5 cifras más."""
@@ -232,7 +233,24 @@ def verify_signature_in_image(image, position_index):
     try:
         region = signature_regions[position_index]
         cropped_region = image.crop(region)
-        # Verifica si hay contenido en la región recortada
-        return cropped_region.getbbox() is not None
+        gray_region = ImageOps.grayscale(cropped_region)
+        if ImageChops.difference(gray_region, Image.new("L", gray_region.size, 255)).getbbox():
+            return True
     except IndexError:
         return False  # Manejar errores de índice si no hay más regiones definidas
+
+def validate_provider_intro(provider_info_intro):
+    expected_intro = "1. Información de la Compañía"
+    expected_intro_english = "1. Company Information"
+    if provider_info_intro.strip().lower() in {expected_intro.lower(), expected_intro_english.lower()}:
+        return True, None
+    
+    return False, f"provider_info_intro '{provider_info_intro}' no coincide con '{expected_intro}' ni con '{expected_intro_english}'."
+
+def validate_client_intro(client_info_intro):
+    expected_intro = "2. Información del Cliente"
+    expected_intro_english = "2. Client Information"
+    if client_info_intro.strip().lower() in {expected_intro.lower(), expected_intro_english.lower()}:
+        return True, None
+    
+    return False, f"client_info_intro '{client_info_intro}' no coincide con '{expected_intro}' ni con '{expected_intro_english}'."

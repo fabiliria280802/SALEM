@@ -20,15 +20,12 @@ if __name__ == "__main__":
         ruc_input = sys.argv[3]
         auxiliar_input = sys.argv[4]
         result = process_single_document(file_path, document_type, ruc_input, auxiliar_input )
-        """ TODO: DELETE COMMENT
-        result = process_single_document(file_path, document_type )
-        """
         print(json.dumps(result, indent=2, ensure_ascii=False))
     else:
         learning_dir = os.path.join(os.path.dirname(__file__), 'learning')
         os.makedirs(learning_dir, exist_ok=True)
 
-        data_dir = os.path.join(os.path.dirname(__file__), 'data', 'docs')
+        data_dir = os.path.join(os.path.dirname(__file__), 'data', 'train')
         current_fold = 1
 
         while True:
@@ -42,10 +39,8 @@ if __name__ == "__main__":
 
                     print(f"\nIniciando entrenamiento para {doc_type} - Fold {current_fold}")
 
-                    # Ajusta el dataset_path según el tipo de documento
                     dataset_path = os.path.join(data_dir, doc_type.lower())
 
-                    # Listar todos los subdirectorios y validar archivos
                     valid_files = []
                     for root, dirs, files in os.walk(dataset_path):
                         for file in files:

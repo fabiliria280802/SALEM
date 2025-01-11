@@ -111,90 +111,31 @@ exports.createContract = [
 							});
 						}
 
-						const requiredFields = [
-							'contract_number',
-							'provider_info_intro',
-							'provider_name',
-							'provider_ruc',
-							'provider_transaction',
-							'provider_address',
-							'provider_city',
-							'provider_country',
-							'provider_phone',
-							'provider_website',
-							'provider_email',
-							'client_info_intro',
-							'client_name',
-							'client_ruc',
-							'client_direction',
-							'client_city',
-							'client_country',
-							'service_description_intro',
-							'service_table',
-							'payment_terms_intro',
-							'subtotal',
-							'tax_rate',
-							'tax_amount',
-							'total_due',
-							'contract_details_intro',
-							'contract_order_number',
-							'contract_invoice_number',
-							'contract_hes',
-							'contract_end_date',
-							'signature_intro',
-							'signatures.first_person_name',
-							'signatures.first_person_position',
-							'signatures.first_person_signature',
-							'signatures.second_person_name',
-							'signatures.second_person_position',
-							'signatures.second_person_signature',
-							'contract_start_date'
-						];
-						const missingFields = requiredFields.filter(
-							field => !(result.extracted_data && result.extracted_data[field])
-						);
+						const status = result.validation_errors && result.validation_errors.length > 0 ? 'Denegado' : 'Aceptado';
+						const ai_decision_explanation = status === 'Denegado'
+    						? `Documento denegado. Errores: ${result.validation_errors.join(', ')}`
+   							: 'Documento procesado correctamente';
 
-						requiredFields.forEach(field => {
-							if (!result.extracted_data[field]) {
-								result.extracted_data[field] = null; // Marca como nulo para claridad
-							}
-						});
-						
 
-						const status = missingFields.length > 0 ? 'Denegado' : 'Aceptado';
-						const validation_errors =
-							missingFields.length > 0
-								? missingFields.map(
-										field => `Campo requerido no encontrado: ${field}`,
-									)
-								: [];
+						console.log("Validation Errors before DB update:", result.validation_errors);
 
-						console.log("Validation Errors before DB update:", validation_errors);
-	
 						const updateData = {
 							...result.extracted_data,
 							status,
-							validation_errors,
-							ai_decision_explanation:
-								missingFields.length > 0
-									? 'Faltan campos requeridos'
-									: 'Documento procesado correctamente',
+							validation_errors: result.validation_errors || [],
+							ai_decision_explanation,
 						};
 
-						const updatedContract = await Contract.findByIdAndUpdate(
-							newContract._id,
-							updateData,
-							{ new: true },
-						);
+						await Contract.findByIdAndUpdate(newContract._id, updateData, { new: true });
 
 						res.status(201).json({
 							message:
 								status === 'Aceptado'
 									? 'Contrato procesado correctamente'
 									: 'Contrato procesado con errores',
-							_id: updatedContract._id,
+							_id: newContract._id,
 							status,
-							validation_errors,
+							validation_errors: result.validation_errors || []
 						});
 					} catch (parseError) {
 						console.error('Error al parsear JSON:', parseError);

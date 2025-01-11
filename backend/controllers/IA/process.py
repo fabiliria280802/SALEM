@@ -6,11 +6,11 @@ import json
 import sys
 import time
 
-from extractions import extract_field_from_region, extract_relative_field, extract_field_from_xml, extract_sequential_fields, extract_table_data
+from extractions import extract_field_from_region, extract_relative_field, extract_field_from_xml, extract_sequential_fields, extract_table_data, extract_section
 
 from utils import convert_pdf_to_images, load_document_schema
 
-from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates, validate_contract_number, validate_signatures_and_positions, validate_tables_mathematics_logic, validate_totals_logic,validate_company_direction, validate_company_ruc, validate_company_country, validate_company_city, validate_input_vs_extracted
+from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates, validate_contract_number, validate_signatures_and_positions, validate_tables_mathematics_logic, validate_totals_logic,validate_company_direction, validate_company_ruc, validate_company_country, validate_company_city, validate_input_vs_extracted, validate_provider_intro, validate_client_intro
 
 # Funciones de procesamiento de documentos específicos
 def process_service_delivery_record_document(images, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
@@ -282,22 +282,29 @@ def process_contract_document(images, schema, ruc_input, auxiliar_input, text=No
             if not valid_totals:
                 validation_errors.extend(totals_errors)
 
-        if "signatures" in schema["Contract"]:
-            # Validar texto y posiciones de las firmas
-            signatures_data, signatures_missing = validate_signatures_and_positions(
-                images[-1], schema["Contract"], "signatures"
-            )
+        if "signatures" in contract_fields:
+            signature_text = extract_section(text, "Firmas", "Fecha")
+            for field, info in contract_fields["signatures"]["fields"].items():
+                if "regex" in info:
+                    match = re.search(info["regex"], signature_text)
+                    extracted_data[field] = match.group(0) if match else None
+                    if not match:
+                        missing_fields.append(field)
+                        validation_errors.extend(errors)
 
-            # Agregar datos extraídos y campos faltantes
-            extracted_data.update({
-                "Contract.signatures.first_person_signature": signatures_data.get("first_person_signature"),
-                "Contract.signatures.second_person_signature": signatures_data.get("second_person_signature"),
-                "Contract.signatures.first_person_position": signatures_data.get("first_person_position"),
-                "Contract.signatures.second_person_position": signatures_data.get("second_person_position"),
-            })
-            missing_fields.extend([
-                f"Contract.signatures.{field}" for field in signatures_missing
-            ])
+        if "provider_info_intro" in extracted_data:
+            provider_intro = extracted_data["provider_info_intro"]
+            valid, errors = validate_provider_intro(provider_intro)
+            if not valid:
+                validation_errors.extend(errors)
+                missing_fields.append("provider_info_intro")
+
+        if "client_info_intro" in extracted_data:
+            client_intro = extracted_data["client_info_intro"]
+            valid, errors = validate_client_intro(client_intro)
+            if not valid:
+                validation_errors.extend(errors)
+                missing_fields.append("client_info_intro")
 
     except Exception as e:
         validation_errors.append(f"Error general en el procesamiento: {str(e)}")
@@ -332,7 +339,6 @@ def process_single_document(file_path, document_type, ruc_input, auxiliar_input)
         elif document_type == "ServiceDeliveryRecord":
             result = process_service_delivery_record_document(file_path, schema, text, xml_tree)
         elif document_type == "Contract":
-            
             result = process_contract_document(file_path, schema,ruc_input, auxiliar_input, text, xml_tree)
             """ TODO: DELETE
             result = process_contract_document(file_path, schema, text, xml_tree)

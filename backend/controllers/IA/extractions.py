@@ -1,7 +1,6 @@
 import re
 import pytesseract
 from PIL import Image
-
 def extract_field_from_region(image, field_info):
     if "region" in field_info:
         region = field_info["region"]
@@ -129,10 +128,13 @@ def extract_text_from_document(file_path):
     except Exception as e:
         raise ValueError(f"Error al extraer texto del documento {file_path}: {e}")
 
-if __name__ == "__main__":
-    extract_field_from_region()
-    extract_sequential_fields()
-    extract_relative_field()
-    extract_field_from_xml()
-    extract_table_data()
-    extract_text_from_document()
+def extract_section(text, start_marker, end_marker=None):
+    start_idx = text.find(start_marker)
+    end_idx = text.find(end_marker, start_idx) if end_marker else len(text)
+    return text[start_idx:end_idx]
+
+def extract_tax_id(image_path):
+    image = Image.open(image_path)
+    cropped_image = image.crop((72, 150, 200, 160))  # Usar coordenadas detectadas
+    text = pytesseract.image_to_string(cropped_image, lang="eng")
+    return text.strip()

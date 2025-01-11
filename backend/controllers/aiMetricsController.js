@@ -41,17 +41,18 @@ exports.createAiMetrics = async (req, res) => {
 };
 
 exports.getAllAiMetrics = async (req, res) => {
-	try {
-		const aiMetrics = await AiMetrics.find().populate(
-			'validationID',
-			'document_type validation_status',
-		);
-		res.status(200).json(aiMetrics);
-	} catch (error) {
-		console.error('Error al obtener las métricas AI:', error);
-		res.status(500).json({ error: 'Error al obtener las métricas AI' });
-	}
+    try {
+        console.log('Intentando obtener métricas de AI...');
+        const aiMetrics = await AiMetrics.find(); // Consulta a la colección "aimetrics"
+        console.log('Métricas obtenidas:', aiMetrics);
+        res.status(200).json(aiMetrics);
+    } catch (error) {
+        console.error('Error al obtener las métricas AI:', error.message);
+        res.status(500).json({ error: 'Error al obtener las métricas AI' });
+    }
 };
+
+
 
 exports.getAiMetricsById = async (req, res) => {
 	try {

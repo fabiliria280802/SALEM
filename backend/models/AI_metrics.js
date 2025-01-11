@@ -22,4 +22,4 @@ const aiMetricsSchema = new mongoose.Schema({
 	date_recorded: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('AiMetrics', aiMetricsSchema);
+module.exports = mongoose.model('AiMetrics', aiMetricsSchema, 'aimetrics');

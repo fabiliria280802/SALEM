@@ -1,87 +1,37 @@
-/* Estilo principal del dashboard */
 .dashboard {
 	display: flex;
 	flex-direction: column;
-	justify-content: center; /* Centra verticalmente las tarjetas */
-	align-items: center; /* Centra horizontalmente las tarjetas */
-	min-height: 100vh; /* Ocupa toda la altura de la pantalla */
-	background-color: #f5f6fa; /* Fondo gris */
-	font-family: 'Arial', sans-serif;
-	margin: 0; /* Elimina márgenes externos */
-	padding: 20px; /* Espaciado interno */
+	align-items: center;
+	padding: 20px;
+	background-color: #f4f6f8;
+	min-height: 100vh;
   }
   
-  /* Estilo del título */
-  .title {
-	text-align: center;
-	color: #333;
-	margin-bottom: 12px;
-	font-size: 22px;
-  }
-  
-  /* Estilo de la cuadrícula */
-  .grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsivo */
-	gap: 20px; /* Espacio entre las tarjetas */
-	width: 100%;
-	max-width: 1200px; /* Opcional: limitar ancho máximo de la cuadrícula */
-	margin: 0 auto; /* Centra horizontalmente la cuadrícula */
-  }
-  
-  /* Estilo de las tarjetas */
-  .card,
-  .centeredChart {
-	display: flex;
-	flex-direction: column; /* Organiza los elementos en columna */
-	justify-content: center; /* Centra el gráfico verticalmente */
-	align-items: center; /* Centra el gráfico horizontalmente */
-	width: 100%;
-	background-color: #fff;
+  .filterContainer {
+	margin-bottom: 20px;
+	padding: 15px;
+	background-color: white;
 	border-radius: 8px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	padding: 20px; /* Espaciado interno */
-	text-align: center;
-	min-height: 250px; /* Asegura que todas las tarjetas tengan la misma altura */
   }
   
-  /* Estilo del encabezado en cada tarjeta */
-  .card h2,
-  .centeredChart h2 {
-	font-size: 16px;
-	color: #555;
+  .filterContainer h2 {
 	margin-bottom: 10px;
+	color: #333;
   }
   
-  /* Ajuste de los gráficos */
-  .card canvas,
-  .centeredChart canvas {
-	max-width: 100%;
-	height: auto; /* Ajusta automáticamente la altura */
-	flex-shrink: 0; /* Asegura que el gráfico no se deforme */
+  .grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 20px;
+	width: 100%;
   }
   
-  /* Ajustes globales */
-  body {
-	margin: 0;
-	padding: 0;
-	background-color: #f4f4f9; /* Fondo gris claro */
-  }
-  
-  /* Media queries para pantallas pequeñas */
-  @media (max-width: 768px) {
-	.grid {
-	  grid-template-columns: 1fr; /* Una sola columna en móviles y tablets */
-	}
-  
-	.card,
-	.centeredChart {
-	  margin: 10px auto; /* Espaciado uniforme en dispositivos pequeños */
-	}
-  
-	.card h2,
-	.centeredChart h2 {
-	  font-size: 14px; /* Tamaño de texto más pequeño */
-	}
+  .card {
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	padding: 20px;
+	text-align: center;
   }
   

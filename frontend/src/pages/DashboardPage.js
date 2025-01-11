@@ -60,6 +60,14 @@ const DashboardPage = () => {
         return <div className={styles.dashboard}>{error}</div>;
     }
 
+    // Mapeo de nombres técnicos a nombres amigables
+    const errorFieldLabels = {
+        missing_fields: 'Campos faltantes',
+        invalid_format: 'Formato inválido',
+        duplicate_entry: 'Entrada duplicada',
+        unknown_error: 'Error desconocido',
+    };
+
     // Preparación de datos para las gráficas
     const accuracyData = {
         labels: filteredMetrics.map(m => m.batch_id || 'Sin Lote'),
@@ -108,39 +116,13 @@ const DashboardPage = () => {
         },
     };
 
-    const executionTimeData = {
-        labels: filteredMetrics.map(m => new Date(m.date_recorded).toLocaleDateString()),
-        datasets: [
-            {
-                label: 'Tiempo de Ejecución (ms)',
-                data: filteredMetrics.map(m => m.execution_time),
-                borderColor: '#FFCE56',
-                fill: false,
-                tension: 0.4,
-            },
-        ],
-    };
-
-    const confidenceScoreData = {
-        labels: filteredMetrics.map(m => m.batch_id || 'Sin Lote'),
-        datasets: [
-            {
-                label: 'Puntaje de Confianza',
-                data: filteredMetrics.map(m => m.ai_confidence_score || 0),
-                backgroundColor: '#81C784',
-                borderColor: '#66BB6A',
-                fill: true,
-            },
-        ],
-    };
-
     const fieldErrorsData = {
         labels: Object.keys(
             filteredMetrics.reduce((fields, m) => {
                 Object.keys(m.field_errors || {}).forEach(key => fields[key] = true);
                 return fields;
             }, {})
-        ),
+        ).map(key => errorFieldLabels[key] || key),
         datasets: [
             {
                 label: 'Errores por Campo',
@@ -159,9 +141,9 @@ const DashboardPage = () => {
 
     return (
         <div className={styles.dashboard}>
-            <h1 className={styles.pageTitle}>Dashboard de métricas de IA</h1>
+            <h1 className={styles.pageTitle}>Dashboard de Métricas de IA</h1>
             <p className={styles.pageSubtitle}>
-                Monitorea la precisión, tiempos de ejecución y errores del sistema.
+                Monitorea la precisión, tiempos de ejecución y errores del sistema de validación automática.
             </p>
             <div className={styles.filterContainer}>
                 <h2>Filtrar por fechas:</h2>
@@ -200,20 +182,6 @@ const DashboardPage = () => {
                     <Chart type="bar" data={errorDistributionData} options={errorDistributionOptions} />
                 </div>
                 <div className={styles.card}>
-                    <h2>Tiempo de Ejecución</h2>
-                    <p className={styles.chartDescription}>
-                        Tiempo promedio que toma la IA en procesar cada lote de datos.
-                    </p>
-                    <Chart type="line" data={executionTimeData} />
-                </div>
-                <div className={styles.card}>
-                    <h2>Puntaje de Confianza</h2>
-                    <p className={styles.chartDescription}>
-                        Variabilidad del puntaje de confianza en las predicciones realizadas.
-                    </p>
-                    <Chart type="line" data={confidenceScoreData} />
-                </div>
-                <div className={styles.card}>
                     <h2>Errores por Campo</h2>
                     <p className={styles.chartDescription}>
                         Muestra los campos con mayor cantidad de errores en las predicciones.
@@ -226,4 +194,5 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+
 

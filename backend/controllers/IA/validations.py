@@ -2,55 +2,93 @@ import re
 from datetime import datetime
 
 from utils import convert_pdf_to_images
-from extractions import extract_text_from_document
 
+def validate_contract_fields(fields):
+    errors = []
+    
+    provider_ruc = fields.get("provider_ruc")
+    if provider_ruc is None or len(provider_ruc) != 13:
+        errors.append("RUC del Proveedor inválido o no encontrado")
+    
+    contract_number = fields.get("contract_number")
+    if contract_number and not contract_number.isdigit():
+        errors.append("El Número de Contrato debe ser un número entero")
+    
+    return {"valid": len(errors) == 0, "errors": errors}
+
+def validate_invoice_fields(fields):
+    errors = []
+    # Si 'invoice_number' es None, error
+    if not fields.get("invoice_number"):
+        errors.append("No se encontró invoice_number.")
+
+    # Asegurar que 'subtotal', 'tax' y 'total_due' sean numéricos y tengan sentido
+    subtotal = fields.get("subtotal")
+    tax = fields.get("tax")
+    total = fields.get("total_due")
+    try:
+        if subtotal and total:
+            sub_val = float(subtotal)
+            tax_val = float(tax) if tax else 0.0
+            tot_val = float(total)
+            # Podrías verificar que tot_val ≈ sub_val + tax_val (con cierto margen)
+            if abs((sub_val + tax_val) - tot_val) > 0.01:
+                errors.append("La suma de subtotal + impuesto no coincide con total.")
+    except ValueError:
+        errors.append("Subtotal/Tax/Total no son valores numéricos válidos.")
+
+    return {"valid": len(errors) == 0, "errors": errors}
+
+
+def validate_service_delivery_record_fields(fields):
+    errors = []
+    # ...
+    # Valida que el HES Number no esté vacío
+    if not fields.get("hes_number"):
+        errors.append("Falta el HES number")
+    return {"valid": len(errors) == 0, "errors": errors}
+
+
+"""
 def validate_order_number(order_number):
-    """Valida que el número de orden inicie con '34' y tenga 5 cifras más."""
     if re.fullmatch(r"34\d{5}", order_number):
         return True, None
     return False, f"order_number '{order_number}' no cumple con el formato."
 
 def validate_invoice_number(invoice_number):
-    """Valida que el número de factura inicie con '11' y tenga 5 cifras más."""
     if re.fullmatch(r"11\d{5}", invoice_number):
         return True, None
     return False, f"invoice_number '{invoice_number}' no cumple con el formato."
 
 def validate_hes_number(hes_number):
-    """Valida que el número HES inicie con '812' y tenga 5 cifras más."""
     if re.fullmatch(r"812\d{5}", hes_number):
         return True, None
     return False, f"hes_number '{hes_number}' no cumple con el formato."
 
 def validate_contract_number(contract_number):
-    """Valida que el número contract inicie con '65' y tenga 6 cifras más"""
     if re.fullmatch(r"65\d{5}",contract_number):
         return True, None
     return False, f"contract_number '{contract_number}' no cumple con el formato."
 
 def validate_company_direction(company_direction):
-    """Valida que la dirección de la empresa sea exactamente 'AV. GRANADOS VIA A NAYON EDIFICIO EKOPARK OFICINA 3 PISO 3'."""
     expected_direction = "AV. GRANADOS VIA A NAYON EDIFICIO EKOPARK OFICINA 3 PISO 3"
     if company_direction.strip() == expected_direction:
         return True, None
     return False, f"company_direction '{company_direction}' no coincide con '{expected_direction}'."
 
 def validate_company_city(company_city):
-    """Valida que la ciudad de la empresa sea exactamente 'Quito'."""
     expected_city= "Quito"
     if company_city.strip() == expected_city:
         return True, None
     return False, f"company_city '{company_city}' no coincide con '{expected_city}'."
 
 def validate_company_country(company_country):
-    """Valida que la pais de la empresa sea exactamente 'Ecuador'."""
     expected_country= "Ecuador"
     if company_country.strip() == expected_country:
         return True, None
     return False, f"company_country '{company_country}' no coincide con '{expected_country}'."
 
 def validate_company_ruc(company_ruc):
-    """Valida que el ruc de la empresa sea exactamente '1791239245001'."""
     expected_ruc= "1791239245001"
     if company_ruc.strip() == expected_ruc:
         return True, None
@@ -62,14 +100,12 @@ def validate_input_vs_extracted(input_value, extracted_value, field_name):
     return True, None
 
 def validate_company_name(company_name):
-    """Valida que el nombre de la empresa sea exactamente 'ENAP SIPETROL S.A. ENAP SIPEC'."""
     expected_name = "ENAP SIPETROL S.A. ENAP SIPEC"
     if company_name.strip() == expected_name:
         return True, None
     return False, f"company_name '{company_name}' no coincide con '{expected_name}'."
 
 def validate_dates(receiver_date, end_date):
-    """Valida que las fechas estén en formato correcto y sean cronológicamente coherentes."""
     errors = []
     date_format = "%d/%m/%Y"
     
@@ -92,17 +128,6 @@ def validate_dates(receiver_date, end_date):
     return len(errors) == 0, errors
 
 def validate_tables_mathematics_logic(table_data):
-    """
-    Valida la lógica matemática de la tabla de servicios.
-
-    Args:
-        table_data (list[dict]): Lista de filas de la tabla extraídas.
-
-    Returns:
-        tuple: (valid (bool), errors (list[str]))
-               - valid: True si toda la tabla es válida, False si hay errores.
-               - errors: Lista de errores encontrados, con detalles de las filas incorrectas.
-    """
     valid = True
     errors = []
 
@@ -128,18 +153,6 @@ def validate_tables_mathematics_logic(table_data):
     return valid, errors
 
 def validate_totals_logic(extracted_data, table_data):
-    """
-    Valida la lógica numérica de los totales: subtotal, tax_amount y total_due.
-
-    Args:
-        extracted_data (dict): Datos extraídos del documento que incluyen subtotal, tax_rate, tax_amount, y total_due.
-        table_data (list[dict]): Datos de la tabla extraída (filas con costos totales).
-
-    Returns:
-        tuple: (valid (bool), errors (list[str]))
-               - valid: True si todos los cálculos son válidos, False si hay errores.
-               - errors: Lista de errores encontrados, con detalles específicos.
-    """
     valid = True
     errors = []
 
@@ -236,3 +249,4 @@ def verify_signature_in_image(image, position_index):
         return cropped_region.getbbox() is not None
     except IndexError:
         return False  # Manejar errores de índice si no hay más regiones definidas
+"""

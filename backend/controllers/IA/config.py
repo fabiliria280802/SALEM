@@ -9,27 +9,20 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
+CONFIG = {
+    "TESSERACT_PATH": "/usr/bin/tesseract",  
+    "TRAINING_DATA_PATH": "./data/training",
+    "MODEL_SAVE_PATH": "./models/",
+    "TRAINING_DATA_PATH": "./data",   
+    "MODEL_SAVE_PATH": "./learning" 
+}
+
+CLASS_NAMES = [
+    "contract", 
+    "invoice", 
+    "service_delivery_record"]
+
 # Configurar Tesseract
 load_dotenv()
 pytesseract.pytesseract.tesseract_cmd = os.getenv('TESSERACT_CMD')
 os.environ['TESSDATA_PREFIX'] = os.getenv('TESSDATA_PREFIX')
-
-# Debug de configuración
-def debug_tesseract():
-    print("Tesseract CMD Path:", pytesseract.pytesseract.tesseract_cmd)
-    print("TESSDATA_PREFIX:", os.environ.get('TESSDATA_PREFIX'))
-    print("Archivos en tessdata:", os.listdir(os.environ['TESSDATA_PREFIX']))
-
-def test_tesseract():
-    try:
-        test_image = Image.new('RGB', (100, 100))
-        text = pytesseract.image_to_string(test_image, lang='eng')
-        text = text.replace('\n', ' ').strip()
-        text = re.sub(r'\s+', ' ', text)  
-        print("Prueba de Tesseract exitosa:", text)
-    except Exception as e:
-        print("Error en la configuración de Tesseract:", e)
-
-if __name__ == "__main__":
-    debug_tesseract()
-    test_tesseract()

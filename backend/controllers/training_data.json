@@ -1,0 +1,56 @@
+[
+    {
+        "text": "Información de la Compañía • Nombre: wáliams group • RUC: 0801234550001 • Tax ID: 56351675 • Dirección: 6241 Alexander Walks Apt. 482, Danielburgh, MS 47997 • Ciudad: Lauraburgh • País: Gabon • Telefono: (921)242-1379 • Pagina web: www.williamsgroup.com • Correo: info@williamsgroup.com",
+        "entities": [
+            [24, 38, "provider_name"],
+            [41, 54, "provider_ruc"],
+            [58, 66, "provider_transaction"],
+            [69, 123, "provider_address"],
+            [127, 138, "provider_city"],
+            [142, 147, "provider_country"],
+            [151, 168, "provider_phone"],
+            [172, 196, "provider_website"],
+            [200, 222, "provider_email"]
+        ]
+    },
+    {
+        "text": "Información del Cliente • Nombre: ENAP SIPETROL S.A • RUC: 1791239245001 • Dirección: AV. GRANADOS VIA A NAYON EDIFICIO EKOPARK OFICINA 3 PISO 3 • Ciudad: Quito • País: Ecuador",
+        "entities": [
+            [23, 42, "client_name"],
+            [45, 58, "client_ruc"],
+            [62, 120, "client_direction"],
+            [124, 129, "client_city"],
+            [133, 140, "client_country"]
+        ]
+    },
+    {
+        "text": "Descripción de Servicios e Items • Código: 1234 • Descripción del Servicio: Gestión Financiera • HES: 81200002 • Cantidad: 5 • Costo Unitario: 200.00 • Costo: 1000.00",
+        "entities": [
+            [33, 37, "service_code"],
+            [61, 78, "service_description"],
+            [82, 90, "service_hes"],
+            [103, 104, "service_quantity"],
+            [120, 126, "service_unit_cost"],
+            [135, 141, "service_cost"]
+        ]
+    },
+    {
+        "text": "Subtotal (sin impuestos): USD 4448.45 • Tasa de impuesto: 15% • Monto de impuesto: USD 667.27 • Total a Pagar: USD 5115.72",
+        "entities": [
+            [27, 34, "subtotal"],
+            [53, 55, "tax_rate"],
+            [77, 84, "tax_amount"],
+            [102, 109, "total_due"]
+        ]
+    },
+    {
+        "text": "Detalles del Contrato • Número de Contrato: 6500002 • Número de Orden: 3400002 • Número de Factura: 1100002 • Fecha de Finalización: 10-11-2025",
+        "entities": [
+            [22, 29, "contract_number"],
+            [49, 56, "contract_order_number"],
+            [76, 83, "contract_invoice_number"],
+            [111, 121, "contract_end_date"]
+        ]
+    }
+]
+

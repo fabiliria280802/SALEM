@@ -10,6 +10,7 @@ const documentRoutes = require('./routes/documents');
 const iaMetricsRoutes = require('./routes/ia_metrics');
 const createPasswordRoutes = require('./routes/create-password');
 const mailRoutes = require('./routes/mail');
+const trainRoutes = require('./routes/train');
 const authMiddleware = require('./middleware/authMiddleware');
 const errorMiddleware = require('./middleware/errorMiddleware');
 const userPublicRoutes = require('./routes/userPublicRoutes');
@@ -52,7 +53,7 @@ app.use('/api/new-user', createPasswordRoutes);
 app.use('/api/mail', mailRoutes);
 
 app.use('/api/public', userPublicRoutes);
-
+router.post('/api/train', trainRoutes);
 app.use('/api/documents/Invoice', authMiddleware, invoiceRoutes);
 app.use('/api/documents/Contract', authMiddleware, contractRoutes);
 app.use('/api/documents/Service-record', authMiddleware, serviceDeliveryRecordRoutes);

@@ -1,79 +1,54 @@
-import torch
-import os
+# ia.py
+import argparse
 import json
-import sys
+import os
 
-from process import process_single_document
-from model import DocumentDataset
-from model import train_single_fold
-from config import debug_tesseract, test_tesseract
+from model import train_model, classify_document, load_model
+from process import process_contract, process_invoice, process_service_delivery_record
+from config import CONFIG
 
-if __name__ == "__main__":
-    debug_tesseract()
-    test_tesseract()
+def main():
+    parser = argparse.ArgumentParser(description='IA Core')
+    parser.add_argument('--action', type=str, required=True, help='Accion a realizar: train | predict')
+    parser.add_argument('--file_path', type=str, help='Ruta del archivo a procesar')
+    args = parser.parse_args()
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    if args.action == 'train':
+        print(json.dumps({"status": "Training started"}))
+        train_model()
+        print(json.dumps({"status": "Training finished"}))
 
-    if len(sys.argv) == 5:
-        file_path = sys.argv[1]
-        document_type = sys.argv[2]
-        ruc_input = sys.argv[3]
-        auxiliar_input = sys.argv[4]
-        result = process_single_document(file_path, document_type, ruc_input, auxiliar_input )
-        """ TODO: DELETE COMMENT
-        result = process_single_document(file_path, document_type )
-        """
-        print(json.dumps(result, indent=2, ensure_ascii=False))
+    elif args.action == 'predict':
+        if not args.file_path:
+            print(json.dumps({"error": "No se proporcionó file_path"}))
+            return
+
+        # 1. Clasificar (contrato, factura o acta)
+        classification_result = classify_document(args.file_path)
+        doc_type = classification_result["predicted_class"]
+        confidence = classification_result["confidence"]
+
+        # 2. Dependiendo del tipo, llamar a la lógica de extracción
+        if doc_type == "contract":
+            output_data = process_contract(args.file_path)
+        elif doc_type == "invoice":
+            output_data = process_invoice(args.file_path)
+        elif doc_type == "service_delivery_record":
+            output_data = process_service_delivery_record(args.file_path)
+        else:
+            output_data = {"error": "Tipo de documento desconocido"}
+
+        # 3. Retornar la respuesta
+        combined_response = {
+            "classification": {
+                "predicted_class": doc_type,
+                "confidence": confidence
+            },
+            "extraction_result": output_data
+        }
+        print(json.dumps(combined_response))
     else:
-        learning_dir = os.path.join(os.path.dirname(__file__), 'learning')
-        os.makedirs(learning_dir, exist_ok=True)
+        print(json.dumps({"error": "Acción no reconocida. Usa --action train o --action predict"}))
 
-        data_dir = os.path.join(os.path.dirname(__file__), 'data', 'docs')
-        current_fold = 1
-
-        while True:
-            try:
-                for doc_type in ["Invoice", "ServiceDeliveryRecord", "Contract"]:
-                    model_path = os.path.join(learning_dir, f'model_fold_{doc_type.lower()}{current_fold}.pth')
-
-                    if os.path.exists(model_path):
-                        print(f"Modelo {doc_type} para fold {current_fold} ya existe, saltando...")
-                        continue
-
-                    print(f"\nIniciando entrenamiento para {doc_type} - Fold {current_fold}")
-
-                    # Ajusta el dataset_path según el tipo de documento
-                    dataset_path = os.path.join(data_dir, doc_type.lower())
-
-                    # Listar todos los subdirectorios y validar archivos
-                    valid_files = []
-                    for root, dirs, files in os.walk(dataset_path):
-                        for file in files:
-                            if doc_type == "Invoice" and file.startswith("invoice_") and file.endswith((".pdf", ".png", ".xml")):
-                                valid_files.append(os.path.join(root, file))
-                            elif doc_type == "ServiceDeliveryRecord" and file.startswith("delivery_") and file.endswith((".pdf", ".png", ".xml")):
-                                valid_files.append(os.path.join(root, file))
-                            elif doc_type == "Contract" and file.startswith("contract_") and file.endswith((".pdf", ".xml")):
-                                valid_files.append(os.path.join(root, file))
-
-                    if not valid_files:
-                        raise ValueError(f"No se encontraron archivos válidos para {doc_type} en {dataset_path}")
-
-                    print(f"Cargando {len(valid_files)} documentos desde: {dataset_path}")
-                    dataset = DocumentDataset(file_paths=valid_files, document_type=doc_type)
-
-                    print(f"Iniciando entrenamiento con {len(dataset)} documentos de tipo {doc_type}")
-                    train_single_fold(dataset, learning_dir, doc_type, current_fold, device)
-
-                print(f"\nFold {current_fold} completado para todos los tipos de documentos!")
-                response = input("\n¿Desea continuar con otro fold? (s/n): ").lower()
-                if response not in ['s', 'si', 'yes', 'y']:
-                    print("Entrenamiento detenido por el usuario")
-                    break
-                current_fold += 1
-
-            except Exception as e:
-                print(f"Error durante el entrenamiento: {str(e)}")
-                break
-
-        print("\nEntrenamiento finalizado!")
+if __name__ == '__main__':
+    main()

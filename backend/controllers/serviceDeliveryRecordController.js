@@ -9,51 +9,7 @@ const path = require('path');
 const authMiddleware = require('../middleware/authMiddleware');
 
 exports.createServiceDeliveryRecord = [
-	authMiddleware,
-	async (req, res) => {
-		try {
-			const {
-				hes_number,
-				receiving_company,
-				service,
-				location,
-				names,
-				positions,
-				contract,
-				start_date,
-				end_date,
-			} = req.body;
 
-			const newRecord = new ServiceDeliveryRecord({
-				hes_number,
-				receiving_company,
-				service,
-				location,
-				signatures: [
-					{
-						name: names[0],
-						position: positions[0],
-						type: 'Provider',
-					},
-					{
-						name: names[1],
-						position: positions[1],
-						type: 'Receiver',
-					},
-				],
-				contract,
-				start_date,
-				end_date,
-				created_by: req.user.id,
-				status: 'Pending',
-			});
-
-			const savedRecord = await newRecord.save();
-			res.status(201).json(savedRecord);
-		} catch (error) {
-			res.status(500).json({ message: error.message });
-		}
-	},
 ];
 
 exports.getAllServiceDeliveryRecords = [

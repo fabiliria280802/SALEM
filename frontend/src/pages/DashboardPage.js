@@ -76,17 +76,36 @@ const DashboardPage = () => {
     };
 
     const errorDistributionData = {
-        labels: ['Falsos Positivos', 'Falsos Negativos'],
+        labels: ['Errores'],
         datasets: [
             {
-                label: 'Errores',
-                data: [
-                    filteredMetrics.reduce((acc, m) => acc + (m.false_positives || 0), 0),
-                    filteredMetrics.reduce((acc, m) => acc + (m.false_negatives || 0), 0),
-                ],
-                backgroundColor: ['#FF6384', '#36A2EB'],
+                label: 'Falsos Positivos',
+                data: [filteredMetrics.reduce((acc, m) => acc + (m.false_positives || 0), 0)],
+                backgroundColor: '#FF6384',
+            },
+            {
+                label: 'Falsos Negativos',
+                data: [filteredMetrics.reduce((acc, m) => acc + (m.false_negatives || 0), 0)],
+                backgroundColor: '#36A2EB',
             },
         ],
+    };
+
+    const errorDistributionOptions = {
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+        },
+        responsive: true,
+        scales: {
+            x: {
+                stacked: true,
+            },
+            y: {
+                stacked: true,
+            },
+        },
     };
 
     const executionTimeData = {
@@ -140,7 +159,7 @@ const DashboardPage = () => {
 
     return (
         <div className={styles.dashboard}>
-            <h1 className={styles.pageTitle}>Dashboard de métricas de la IA</h1>
+            <h1 className={styles.pageTitle}>Dashboard de métricas de IA</h1>
             <p className={styles.pageSubtitle}>
                 Monitorea la precisión, tiempos de ejecución y errores del sistema.
             </p>
@@ -155,7 +174,8 @@ const DashboardPage = () => {
                         dateFormat="dd/mm/yy"
                         placeholder="Selecciona las fechas"
                         className={styles.calendar}
-						maxDate={new Date()}
+                        maxDate={new Date()}
+                        showButtonBar
                     />
                     <Button
                         label="Restablecer"
@@ -167,22 +187,37 @@ const DashboardPage = () => {
             <div className={styles.grid}>
                 <div className={styles.card}>
                     <h2>Precisión por Batch</h2>
+                    <p className={styles.chartDescription}>
+                        Representa la precisión de las predicciones de la IA agrupadas por lote.
+                    </p>
                     <Chart type="bar" data={accuracyData} />
                 </div>
                 <div className={styles.card}>
                     <h2>Distribución de Errores</h2>
-                    <Chart type="doughnut" data={errorDistributionData} />
+                    <p className={styles.chartDescription}>
+                        Proporción de errores falsos positivos y falsos negativos en el sistema.
+                    </p>
+                    <Chart type="bar" data={errorDistributionData} options={errorDistributionOptions} />
                 </div>
                 <div className={styles.card}>
                     <h2>Tiempo de Ejecución</h2>
+                    <p className={styles.chartDescription}>
+                        Tiempo promedio que toma la IA en procesar cada lote de datos.
+                    </p>
                     <Chart type="line" data={executionTimeData} />
                 </div>
                 <div className={styles.card}>
                     <h2>Puntaje de Confianza</h2>
+                    <p className={styles.chartDescription}>
+                        Variabilidad del puntaje de confianza en las predicciones realizadas.
+                    </p>
                     <Chart type="line" data={confidenceScoreData} />
                 </div>
                 <div className={styles.card}>
                     <h2>Errores por Campo</h2>
+                    <p className={styles.chartDescription}>
+                        Muestra los campos con mayor cantidad de errores en las predicciones.
+                    </p>
                     <Chart type="bar" data={fieldErrorsData} options={{ indexAxis: 'y' }} />
                 </div>
             </div>
@@ -191,3 +226,4 @@ const DashboardPage = () => {
 };
 
 export default DashboardPage;
+

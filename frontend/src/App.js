@@ -12,7 +12,6 @@ import ResetPasswordPage from './pages/ResetPassawordPage';
 import CreateUserPage from './pages/CreateUserPage';
 import DashboardPage from './pages/DashboardPage';
 import UploadDocumentsPage from './pages/UploadDocumentsPage';
-import DocumentReviewPage from './pages/DocumentReviewPage';
 import DocumentsListPage from './pages/DocumentsListPage';
 import UserAcountPage from './pages/UserAcountPage';
 import UsersManagementPage from './pages/UsersManagementPage';
@@ -117,11 +116,6 @@ const AppContent = () => {
 						path="/training"
 						component={TrainingPage}
 						roles={['Administrador', 'Gestor']}
-					/>
-					<PrivateRoute
-						path="/document-analizer"
-						component={DocumentReviewPage}
-						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
 					<PrivateRoute
 						path="/users-management"

@@ -128,6 +128,14 @@
     color: #D32F2F;
 }
 
+.chartDescription {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+
 /* Estilo responsivo para tablets y móviles */
 @media (max-width: 768px) {
     .filterContainer {

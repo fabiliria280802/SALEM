@@ -42,9 +42,7 @@ exports.createAiMetrics = async (req, res) => {
 
 exports.getAllAiMetrics = async (req, res) => {
     try {
-        console.log('Intentando obtener métricas de AI...');
-        const aiMetrics = await AiMetrics.find(); // Consulta a la colección "aimetrics"
-        console.log('Métricas obtenidas:', aiMetrics);
+        const aiMetrics = await AiMetrics.find(); // Consulta a la colección
         res.status(200).json(aiMetrics);
     } catch (error) {
         console.error('Error al obtener las métricas AI:', error.message);

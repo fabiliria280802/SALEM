@@ -7,112 +7,136 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    position: relative; /* Necesario para que ::before funcione */
 }
 
+.homePageContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent; /* Por defecto, la capa no es visible */
+    z-index: 0; /* Colocar la capa detrás del contenido */
+    transition: background-color 0.3s ease; /* Transición suave */
+}
 
 .outerSquare {
-	border-radius: 50px;
-	margin: auto;
-	width: 90%;
-	background-color: #f2f2f2;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	height: calc(100vh - 290px);
+    border-radius: 50px;
+    margin: auto;
+    width: 90%;
+    background-color: #f2f2f2;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: calc(100vh - 290px);
+    position: relative; /* Para mantener la estructura del contenido encima */
+    z-index: 1; /* Coloca el contenido encima de la capa */
 }
 
 .buttonReverse {
-	background-color: white;
-	border-color: black;
-	color: black;
-	margin: 0 0 0 10px;
-	border-radius: 10px;
-	height: 43px;
-	width: 150px;
-	font-weight: bold;
+    background-color: white;
+    border-color: black;
+    color: black;
+    margin: 0 0 0 10px;
+    border-radius: 10px;
+    height: 43px;
+    width: 150px;
+    font-weight: bold;
 }
 
 .buttons {
-	background-color: black;
-	border-color: black;
-	border-radius: 10px;
-	height: 43px;
-	width: 150px;
+    background-color: black;
+    border-color: black;
+    border-radius: 10px;
+    height: 43px;
+    width: 150px;
 }
 
 .homePageInfo {
-	text-align: left;
-	flex: 1;
-	padding-left: 179px; /*TODO: mejorar el responsive*/
+    text-align: left;
+    flex: 1;
+    padding-left: 179px; /*TODO: mejorar el responsive*/
 }
 
 .homePageInfoLog {
-	text-align: left;
-	flex: 1;
-	padding-left: 179px; /*TODO: mejorar el responsive*/
+    text-align: left;
+    flex: 1;
+    padding-left: 179px; /*TODO: mejorar el responsive*/
 }
 
 .homePageTitle {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 18px;
-	font-weight: normal;
-	text-align: left;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: normal;
+    text-align: left;
+    position: relative; /* Asegura que el texto quede sobre la capa */
+    z-index: 2; /* Encima de la capa */
 }
 
 .homePageParagraph {
-	margin: 10px 90px 20px 0; /*TODO: mejorar el responsive*/
-	font-size: 32px;
-	font-weight: bold; /* Corregido el font-weight */
+    margin: 10px 90px 20px 0; /*TODO: mejorar el responsive*/
+    font-size: 32px;
+    font-weight: bold; /* Corregido el font-weight */
+    position: relative; /* Asegura que el texto quede sobre la capa */
+    z-index: 2; /* Encima de la capa */
 }
 
 .homePageImage {
-	flex: 1;
-	display: flex;
-	justify-content: flex-end;
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
 }
 
 .homePageImage img {
-	width: auto;
-	max-width: 100%;
-	height: auto;
-	max-height: 42vh;
-	padding-right: 179px;
-	align-content: end;
-	object-fit: contain;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: 42vh;
+    padding-right: 179px;
+    align-content: end;
+    object-fit: contain;
 }
 
-@media (max-width: 768px) {
-	.outerSquare {
-		flex-direction: column; /* Cambia a disposición vertical */
-		align-items: center; /* Centra los elementos */
-		justify-content: center; /* Centra verticalmente el contenido */
-		height: 70vh; /* Ocupa el 70% de la altura de la pantalla */
-		padding: 40px 20px; /* Aumenta el espacio interno (arriba/abajo: 40px, laterales: 20px) */
-		margin: 20px auto; /* Añade margen vertical para centrar */
-	}
+@media (max-width: 1200px) {
+    .homePageContainer::before {
+        background-color: rgba(0, 0, 0, 0.5); /* Capa oscura con transparencia */
+    }
 
-	.homePageInfo {
-		padding-left: 0; /* Elimina padding en pantallas pequeñas */
-		text-align: center; /* Centra el texto */
-		margin: 0; /* Elimina márgenes adicionales */
-	}
+    .outerSquare {
+        flex-direction: column; /* Cambia a disposición vertical */
+        align-items: center; /* Centra los elementos */
+        justify-content: center; /* Centra verticalmente el contenido */
+        height: 70vh; /* Ocupa el 70% de la altura de la pantalla */
+        padding: 40px 20px; /* Aumenta el espacio interno (arriba/abajo: 40px, laterales: 20px) */
+        margin: 20px auto; /* Añade margen vertical para centrar */
+    }
 
-	.homePageTitle {
-		text-align: center; /* Centra el título */
-		margin-bottom: 10px; /* Espaciado con el resto del contenido */
-	}
+    .homePageInfo {
+        padding-left: 0; /* Elimina padding en pantallas pequeñas */
+        text-align: center; /* Centra el texto */
+        margin: 0; /* Elimina márgenes adicionales */
+    }
 
-	.homePageParagraph {
-		margin: 10px 0; /* Ajusta el margen */
-		font-size: 24px; /* Ajusta el tamaño del texto */
-	}
+    .homePageTitle {
+        text-align: center; /* Centra el título */
+        margin-bottom: 10px; /* Espaciado con el resto del contenido */
+        color: white; /* Cambia el color del texto a blanco */
+    }
 
-	.homePageImage {
-		display: none; /* Oculta la imagen en pantallas pequeñas */
-	}
+    .homePageParagraph {
+        margin: 10px 0; /* Ajusta el margen */
+        font-size: 24px; /* Ajusta el tamaño del texto */
+        color: white; /* Cambia el color del texto a blanco */
+    }
 
-	.buttons {
-		margin-top: 30px; /* Añade más espacio entre el botón y el texto */
-	}
+    .homePageImage {
+        display: none; /* Oculta la imagen en pantallas pequeñas */
+    }
+
+    .buttons {
+        margin-top: 30px; /* Añade más espacio entre el botón y el texto */
+    }
 }

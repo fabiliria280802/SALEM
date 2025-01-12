@@ -9,6 +9,7 @@ const contractSchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
+	con
 	contracting_company: {
 		type: String,
 		trim: true,

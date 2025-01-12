@@ -1,12 +1,12 @@
+## Lea esto en otro idioma
+- [Read this in English](README.md)
+
 # Proyecto SALEM
 El Proyecto SALEM es una aplicación web avanzada diseñada para la revisión y validación automática de documentos utilizando técnicas de aprendizaje automático de última generación. La aplicación aprovecha Redes Neuronales Convolucionales (CNNs) y Faster R-CNN para tareas de detección y clasificación de objetos, garantizando una alta precisión en el procesamiento de documentos. Al emplear estos algoritmos, SALEM puede extraer y validar de manera eficiente información clave de diversos tipos de documentos, como facturas y hojas de entrega de servicios.
 
 La elección de las CNNs, específicamente ResNet50, permite que la aplicación se beneficie de un modelo de aprendizaje profundo preentrenado en un vasto conjunto de datos, ofreciendo capacidades robustas de extracción de características. Se utiliza Faster R-CNN debido a su rendimiento superior en detección de objetos, lo que permite la identificación precisa de campos en los documentos. Además, la aplicación incorpora técnicas como aumento de datos y early stopping para mejorar la generalización del modelo y evitar el sobreajuste.
 
 La arquitectura de SALEM está construida sobre el patrón MVC (Modelo-Vista-Controlador), asegurando una clara separación de responsabilidades y facilitando el mantenimiento. La integración de Tesseract OCR mejora aún más la capacidad del sistema para extraer información textual de imágenes, convirtiéndolo en una solución integral para la validación de documentos.
-
-## Lea esto en otro idioma
-- [Read this in English](README.md)
 
 ## ¿Qué significa SALEM?
 
@@ -63,7 +63,7 @@ Por: Fabiana Liria & Mateo Ávila
       npm install
       ```
 
-**Note:**Para más información mira [esta página](Readme-backend-esp.md)
+        **Note:**Para más información mira [esta página](Readme-backend-esp.md)
 
     - **Para el Frontend:**
       En la terminal del frontend:

@@ -164,26 +164,44 @@ const LoginPage = () => {
 				</p>
 			</div>
 
+			{/* Pop-up actualizado */}
 			<Dialog
 				visible={showPopup}
-				header="Verificación de correo"
 				modal
 				onHide={() => setShowPopup(false)}
+				style={{ width: '30vw', textAlign: 'center', borderRadius: '10px' }}
 				footer={
-					<div>
+					<div style={{ display: 'flex', justifyContent: 'center', gap: '10px', padding: '10px' }}>
 						<Button
-							label="Sí"
+							label="Continuar"
 							icon="pi pi-check"
+							className="p-button-success"
 							onClick={handlePopupConfirm}
+							style={{ width: '120px' }}
 						/>
-						<Button label="No" icon="pi pi-times" onClick={handlePopupCancel} />
+						<Button
+							label="Volver"
+							icon="pi pi-arrow-left"
+							className="p-button-secondary"
+							onClick={handlePopupCancel}
+							style={{ width: '120px' }}
+						/>
 					</div>
 				}
 			>
-				<p>¿Te llegó el correo de restablecimiento de contraseña?</p>
+				<div style={{ padding: '20px 10px' }}>
+					<p style={{ color: '#555', marginBottom: '15px' }}>
+						Hemos enviado un correo con instrucciones para restablecer tu contraseña.
+					</p>
+					<p style={{ color: '#999', fontSize: '14px' }}>
+						Si no lo encuentras, revisa tu carpeta de spam o correo no deseado.
+					</p>
+				</div>
 			</Dialog>
 		</div>
 	);
 };
 
 export default LoginPage;
+
+

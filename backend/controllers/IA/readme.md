@@ -1,3 +1,8 @@
+
+# Prerequisitos
+- Anaconda lastest version
+- Python
+
 # How to run it locally?
 
 You must cd /home/fls2808/.conda/envs/pytorch-env.

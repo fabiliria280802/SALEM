@@ -29,8 +29,9 @@ const ReviewContractPage = () => {
 	
 				// Asegúrate de que file_path esté definido y sea válido
 				if (response.file_path) {
-					const baseUrl = process.env.REACT_APP_API_URL; 
-					setFilePath(`${baseUrl}/${response.file_path}`);
+					const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost'; 
+					const port = process.env.REACT_APP_API_PORT || '5000';
+					setFilePath(`${baseUrl}:${port}/${response.file_path}`);
 				} else {
 					throw new Error('El archivo no tiene una ruta válida.');
 				}
@@ -136,7 +137,7 @@ const ReviewContractPage = () => {
 						className={
 							documentData.status === 'Denegado'
 								? styles.denied
-								: styles.accepted
+								: styles.approved
 						}
 					>
 						{documentData.status}
@@ -158,7 +159,7 @@ const ReviewContractPage = () => {
 
 			<div className={styles.rightColumn}>
 				{fileType === 'pdf' && filePath ? (
-					<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+					<Worker workerUrl="/pdfjs/pdf.worker.min.js">
 						<div style={{ height: '70vh', width: '100%', overflow: 'auto' }}>
 							<Viewer fileUrl={filePath} renderMode="canvas" />
 						</div>

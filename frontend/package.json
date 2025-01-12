@@ -10,7 +10,7 @@
 		"date-fns": "^4.1.0",
 		"dotenv": "^16.4.7",
 		"jwt-decode": "^4.0.0",
-		"pdfjs-dist": "^3.4.120",
+		"pdfjs-dist": "^3.11.174",
 		"primeicons": "^7.0.0",
 		"primereact": "^10.8.2",
 		"prop-types": "^15.8.1",

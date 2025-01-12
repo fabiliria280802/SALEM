@@ -26,7 +26,9 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: '*', // Permite todas las solicitudes (puedes restringirlo según sea necesario)
+}));
 app.use(express.json());
 
 // Crear estructura de directorios necesaria
@@ -63,6 +65,7 @@ app.use(
 app.use('/api/documents', authMiddleware, documentRoutes);
 
 app.use('/api/report/ia-metrics', authMiddleware, iaMetricsRoutes);
+app.use('/data/docs', express.static(path.join(__dirname, 'data/docs')));
 
 app.use(errorMiddleware);
 

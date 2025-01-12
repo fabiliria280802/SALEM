@@ -252,6 +252,14 @@ def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text
             else:
                 extracted_data["service_table"] = table_data
 
+        if "contract_start_date" in contract_fields:
+            match = re.search(contract_fields["contract_start_date"]["regex"], text)
+            if match:
+                extracted_data["contract_start_date"] = match.group(1).strip()
+            else:
+                missing_fields.append("contract_start_date")
+        
+
         if "signatures" in contract_fields:
             extracted_signatures, missing_signatures = validate_signatures_and_positions(file_path, schema, "signatures")
             extracted_data.update(extracted_signatures)

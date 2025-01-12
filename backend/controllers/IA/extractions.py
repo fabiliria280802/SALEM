@@ -93,6 +93,7 @@ def extract_field_from_xml(xml_tree, field_info):
         return element.text if element is not None else None
     return None
 
+
 def extract_table_data(text, table_schema):
     """
     Extrae datos de una tabla en el texto basado en un esquema.
@@ -100,10 +101,11 @@ def extract_table_data(text, table_schema):
     table_data = []
     lines = text.split("\n")
     
-    # Localizar encabezado de la tabla
+    # Localizar encabezado de la tabla usando regex
     header_found = False
+    header_pattern = r"\b(" + "|".join(re.escape(col["label"]) for col in table_schema["columns"].values()) + r")\b"
     for i, line in enumerate(lines):
-        if all(col["label"] in line for col in table_schema["columns"].values()):
+        if re.search(header_pattern, line, re.IGNORECASE):
             header_found = True
             start_row = i + 1
             break
@@ -116,7 +118,7 @@ def extract_table_data(text, table_schema):
         if line.strip() == "":
             break  # Fin de la tabla
         row = {}
-        row_data = re.split(r"\s*\|\s*", line.strip("|"))
+        row_data = re.split(r"\s{2,}", line.strip())  # Separar por múltiples espacios
         
         if len(row_data) != len(table_schema["columns"]):
             continue  # Ignorar filas mal formateadas
@@ -130,6 +132,7 @@ def extract_table_data(text, table_schema):
         table_data.append(row)
     
     return table_data, []
+
 
 def extract_text_from_document(file_path):
     """Extrae texto de un documento utilizando Tesseract."""
@@ -277,14 +280,13 @@ def extract_section_from_pdf(text, start_marker, end_marker=None):
     if start_idx == -1:
         return None
     return text[start_idx:end_idx].strip()
-
 def extract_text_near_signature(image, position_index):
     """
-    Extrae texto de la región cercana a una firma en la imagen.
+    Extrae texto de una región cercana a una firma en la imagen.
     """
     signature_regions = [
-                (100, 650, 450, 850),  # Primera firma (ampliada hacia arriba y abajo)
-                (500, 650, 850, 850)  # Región ampliada para incluir texto
+        (50, 600, 450, 900),  # Región ampliada para la primera firma
+        (500, 600, 850, 900)  # Región ampliada para la segunda firma
     ]
 
     try:

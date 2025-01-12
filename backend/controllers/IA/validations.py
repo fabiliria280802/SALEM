@@ -189,12 +189,14 @@ def validate_signatures_and_positions(document_path, schema, field_key):
     except Exception as e:
         return {}, [f"Error extrayendo imágenes del PDF: {e}"]
 
+    # Acceder correctamente al campo "signatures"
+    signature_fields = schema["Contract"]["fields"]["signatures"]["fields"]
+
     for idx, signature_field in enumerate(["first_person_signature", "second_person_signature"]):
         if idx < len(images):
             # Verificar si hay una firma presente en la región
             if verify_signature_in_image(images[idx]["image"], idx):
                 extracted_data[signature_field] = f"Firma detectada en página {images[idx]['page']} imagen {images[idx]['index']}"
-                # Extraer texto cercano a la firma
                 text_near_signature = extract_text_near_signature(images[idx]["image"], idx)
                 if text_near_signature:
                     # Validar y extraer nombre y posición
@@ -202,14 +204,14 @@ def validate_signatures_and_positions(document_path, schema, field_key):
                     position_field = "first_person_position" if idx == 0 else "second_person_position"
 
                     # Validar nombre
-                    match = re.search(schema[field_key]["fields"][name_field]["regex"], text_near_signature)
+                    match = re.search(signature_fields[name_field]["regex"], text_near_signature)
                     if match:
                         extracted_data[name_field] = match.group(0).strip()
                     else:
                         missing_fields.append(name_field)
 
                     # Validar posición
-                    valid_positions = schema[field_key]["fields"][position_field]["values"]
+                    valid_positions = signature_fields[position_field]["values"]
                     position_match = re.search(r"\b(" + "|".join(map(re.escape, valid_positions)) + r")\b", text_near_signature, re.IGNORECASE)
                     if position_match:
                         extracted_data[position_field] = position_match.group(0).strip()
@@ -227,8 +229,8 @@ def verify_signature_in_image(image, position_index):
     Verifica si una firma está presente en una región específica de la imagen.
     """
     signature_regions = [
-        (50, 700, 400, 750),  # Coordenadas de la primera firma
-        (450, 700, 800, 750)  # Coordenadas de la segunda firma
+        (50, 600, 450, 900),  # Primera firma y texto relacionado (ampliada hacia arriba y abajo)
+        (500, 600, 850, 900)  # Segunda firma y texto relacionado (ampliada hacia arriba y abajo)
     ]
 
     try:

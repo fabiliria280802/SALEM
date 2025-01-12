@@ -554,7 +554,7 @@
 			},
 			"contract_start_date": {
 				"label": "Fecha de Inicio",
-				"regex": "(?i)\\b(?:date|fecha)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+				"regex": "(?i)\\b(?:date|fecha)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})"
 			}
 		}
 	}

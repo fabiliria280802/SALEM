@@ -102,7 +102,7 @@ const ReviewContractPage = () => {
 					<br />
 					Contrato: {documentData?.contract_number || 'No disponible'}
 					<br />
-					Tipo de documento: {documentData?.tipoDocumento || 'No disponible'}
+					Tipo de documento: {documentData?.contract_type || 'No disponible'}
 					<br />
 					Archivo: {documentData?.file_path || 'No disponible'}
 				</p>

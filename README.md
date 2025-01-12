@@ -63,7 +63,7 @@ By: Fabiana Liria & Mateo Ávila
       npm install
       ```
       
-      **Note:** For more information about backend see [this page](../backend/Readme-backend-ing.md)
+      **Note:** For more information about backend see [this page](https://github.com/fabiliria280802/SALEM/blob/BRANCH/backend/backend/Readme-backend-ing.md)
 
     - **For Frontend:**
       In the frontend terminal:

@@ -120,10 +120,19 @@ const UploadContractPage = () => {
 				life: 5000,
 			});
 
-			setTimeout(
-				() => history.push(`/review-contract/${response.data._id}`),
-				2000,
-			);
+			if (response._id) {
+				setTimeout(
+					() => history.push(`/review-contract/${response._id}`),
+					2000,
+				);
+			} else {
+				toast.current.show({
+					severity: 'error',
+					summary: 'Error',
+					detail: 'No se pudo obtener el ID del contrato. Intente nuevamente.',
+					life: 5000,
+				});
+			}
 		} catch (error) {
 			console.error('Error en handleSubmit:', error);
 			toast.current.show({

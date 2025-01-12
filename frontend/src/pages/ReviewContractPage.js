@@ -21,11 +21,24 @@ const ReviewContractPage = () => {
 
 	const loadDocument = async () => {
 		try {
-			const response = await documentService.getContractById(id);
-			setDocumentData(response.data);
-			setFileType(response.data.file_path.split('.').pop().toLowerCase());
-			setFilePath(response.data.file_path);
+			const response = await documentService.getDocumentById('Contract', id);
+	
+			if (response) {
+				console.log('Datos del contrato:', response); // Depuración
+				setDocumentData(response)
+	
+				// Asegúrate de que file_path esté definido y sea válido
+				if (response.file_path) {
+					const baseUrl = process.env.REACT_APP_API_URL; 
+					setFilePath(`${baseUrl}/${response.file_path}`);
+				} else {
+					throw new Error('El archivo no tiene una ruta válida.');
+				}
+			} else {
+				throw new Error('No se encontraron datos del contrato');
+			}
 		} catch (error) {
+			console.error('Error al cargar el documento:', error);
 			toast.current.show({
 				severity: 'error',
 				summary: 'Error',
@@ -35,6 +48,11 @@ const ReviewContractPage = () => {
 			setLoading(false);
 		}
 	};
+	
+	
+	if (!documentData) {
+		return <div>No se encontraron datos del contrato</div>; // Renderiza un mensaje de error o una alternativa
+	}
 
 	const handleApprove = async () => {
 		try {
@@ -79,13 +97,13 @@ const ReviewContractPage = () => {
 			<div className={styles.leftColumn}>
 				<h1 className={styles.title}>Resultado del análisis</h1>
 				<p className={styles.info}>
-					RUC: {documentData.ruc}
+					RUC: {documentData?.ruc || 'No disponible'}
 					<br />
-					Contrato: {documentData.contrato}
+					Contrato: {documentData?.contract_number || 'No disponible'}
 					<br />
-					Tipo de documento: {documentData.tipoDocumento}
+					Tipo de documento: {documentData?.tipoDocumento || 'No disponible'}
 					<br />
-					Archivo: {documentData.file_path}
+					Archivo: {documentData?.file_path || 'No disponible'}
 				</p>
 
 				<table className={styles.table}>
@@ -139,18 +157,14 @@ const ReviewContractPage = () => {
 			</div>
 
 			<div className={styles.rightColumn}>
-				{fileType === 'pdf' ? (
+				{fileType === 'pdf' && filePath ? (
 					<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
 						<div style={{ height: '70vh', width: '100%', overflow: 'auto' }}>
 							<Viewer fileUrl={filePath} renderMode="canvas" />
 						</div>
 					</Worker>
 				) : (
-					<img
-						src={filePath}
-						alt="Preview del documento"
-						className={styles.preview}
-					/>
+					<p>No se puede cargar el archivo. Verifique que la ruta sea válida.</p>
 				)}
 			</div>
 		</div>

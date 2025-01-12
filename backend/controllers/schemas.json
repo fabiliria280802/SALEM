@@ -414,7 +414,7 @@
 			            "alternatives": ["Code"]
 			        },
 			        "service_description": {
-			            "label": "Descripción del Servicio",
+			            "label": "Descripción",
 			            "regex": ".+",
 			            "alternatives": ["Description"]
 			        },

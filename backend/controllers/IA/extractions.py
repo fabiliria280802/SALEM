@@ -117,16 +117,11 @@ def extract_table_data(text, table_schema):
     """
     table_data = []
     errors = []
+    missing_fields = set(table_schema["columns"].keys())
     lines = text.split("\n")
     
-    # Localizar encabezado de la tabla usando las etiquetas y alternativas
-    header_labels = []
-    for col in table_schema["columns"].values():
-        header_labels.append(re.escape(col["label"]))
-        if "alternatives" in col:
-            header_labels.extend(re.escape(alt) for alt in col["alternatives"])
-
-    header_pattern = r"(?i)\b(" + "|".join(header_labels) + r")\b"
+    # Localizar el inicio de la tabla con encabezado
+    header_pattern = r"(?i)\b(?:Code|Description|HES|Quantity|Unit Cost|Cost)\b"
     start_row = None
     for i, line in enumerate(lines):
         if re.search(header_pattern, line):
@@ -136,34 +131,35 @@ def extract_table_data(text, table_schema):
     if start_row is None:
         return table_data, ["No se encontró el encabezado de la tabla."]
     
-    # Definir patrón de fin de tabla
-    END_OF_TABLE_PATTERN = r"(?i)\b(?:4\. Condiciones de Pago|Payment Terms|Detalles del Contrato|Contract Details)\b|^•+\s*$"
+    # Detectar fin de tabla
+    END_OF_TABLE_PATTERN = r"(?i)^•+\s*$"
 
-    # Procesar las filas de la tabla
     current_row = []
     for line in lines[start_row:]:
-        if re.search(END_OF_TABLE_PATTERN, line):
-            break  # Detener el procesamiento al encontrar el fin de la tabla
+        if re.search(END_OF_TABLE_PATTERN, line):  # Fin de tabla
+            break
 
+        # Si la línea está vacía, procesar la fila acumulada
         if line.strip() == "":
             if current_row:
-                # Procesar la fila acumulada
-                row, row_errors = process_row(" ".join(current_row), table_schema)
-                if any(row.values()):  # Si al menos un campo es válido
+                row = process_row(" ".join(current_row), table_schema)
+                if row:
                     table_data.append(row)
-                errors.extend(row_errors)
-                current_row = []  # Reiniciar acumulador
+                else:
+                    errors.append(f"Fila mal formateada: {' '.join(current_row)}")
+                current_row = []
             continue
 
         current_row.append(line.strip())
 
     # Procesar la última fila acumulada
     if current_row:
-        row, row_errors = process_row(" ".join(current_row), table_schema)
-        if any(row.values()):  # Si al menos un campo es válido
+        row = process_row(" ".join(current_row), table_schema)
+        if row:
             table_data.append(row)
-        errors.extend(row_errors)
-    
+        else:
+            errors.append(f"Fila mal formateada: {' '.join(current_row)}")
+
     return table_data, errors
 
 def process_row(row_text, table_schema):
@@ -171,24 +167,14 @@ def process_row(row_text, table_schema):
     Procesa una fila acumulada y la mapea a las columnas del esquema.
     """
     row = {}
-    row_data = re.split(r"\s{2,}", row_text)  # Separar por espacios múltiples
-    errors = []
+    row_data = re.split(r"\s{2,}", row_text)  # Separar por múltiples espacios
 
     for col_name, col_info in table_schema["columns"].items():
-        if not row_data:
-            row[col_name] = None
-            errors.append(f"Campo faltante: {col_name} en la fila: {row_text}")
-            continue
-
-        cell = row_data.pop(0)
+        cell = row_data.pop(0) if row_data else ""
         match = re.match(col_info["regex"], cell)
-        if match:
-            row[col_name] = match.group(0)
-        else:
-            row[col_name] = None
-            errors.append(f"Campo inválido: {col_name} en la fila: {row_text}")
+        row[col_name] = match.group(0) if match else None
 
-    return row, errors
+    return row
 
 def extract_text_from_document(file_path):
     """Extrae texto de un documento utilizando Tesseract."""

@@ -129,7 +129,12 @@ exports.createContract = [
 
 						const updateData = {
 							...result.extracted_data,
+							_id: newContract._id,
 							status,
+							ruc: req.body.ruc,
+							contract: req.body.ruc,
+							documentType: documentType,
+							missing_fields: result.missing_fields || [],
 							validation_errors: result.validation_errors || [],
 							ai_decision_explanation,
 						};
@@ -145,6 +150,10 @@ exports.createContract = [
 									: 'Contrato procesado con errores',
 							_id: newContract._id,
 							status,
+							ruc: req.body.ruc,
+							contract: req.body.ruc,
+							documentType: documentType,
+							missing_fields: result.missing_fields || [],
 							validation_errors: result.validation_errors || [],
 						});
 					} catch (parseError) {

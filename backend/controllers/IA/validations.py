@@ -96,13 +96,13 @@ def validate_tables_mathematics_logic(table_data):
     for idx, row in enumerate(table_data):
         try:
             # Extraer valores relevantes
-            quantity = float(row.get("service_quantity", 0))
-            unit_cost = float(row.get("service_unit_cost", 0))
-            total_cost = float(row.get("service_cost", 0))
+            quantity = float(row.get("service_quantity") or 0)
+            unit_cost = float(row.get("service_unit_cost") or 0)
+            total_cost = float(row.get("service_cost") or 0)
 
             # Validar la lógica matemática
             expected_total = round(quantity * unit_cost, 2)
-            if total_cost != expected_total:
+            if total_cost and total_cost != expected_total:
                 valid = False
                 errors.append(
                     f"Error en la fila {idx + 1}: Total esperado ({expected_total}) "
@@ -115,18 +115,6 @@ def validate_tables_mathematics_logic(table_data):
     return valid, errors
 
 def validate_totals_logic(extracted_data, table_data):
-    """
-    Valida la lógica numérica de los totales: subtotal, tax_amount y total_due.
-
-    Args:
-        extracted_data (dict): Datos extraídos del documento que incluyen subtotal, tax_rate, tax_amount, y total_due.
-        table_data (list[dict]): Datos de la tabla extraída (filas con costos totales).
-
-    Returns:
-        tuple: (valid (bool), errors (list[str]))
-               - valid: True si todos los cálculos son válidos, False si hay errores.
-               - errors: Lista de errores encontrados, con detalles específicos.
-    """
     valid = True
     errors = []
 

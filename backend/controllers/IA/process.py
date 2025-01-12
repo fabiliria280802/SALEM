@@ -6,14 +6,49 @@ import json
 import sys
 import time
 
-from extractions import extract_field_from_region, extract_relative_field, extract_field_from_xml, extract_sequential_fields, extract_table_data, extract_section
+from extractions import (
+    extract_text_from_document,
+    extract_text_from_pdf,
+    extract_field_from_region, 
+    extract_relative_field, 
+    extract_field_from_xml, 
+    extract_sequential_fields, 
+    extract_table_data, 
+    extract_signatures_from_image,
+    extract_provider_fields
+)
 
-from utils import convert_pdf_to_images, load_document_schema
+from utils import (
+    convert_pdf_to_images, 
+   load_document_schema
+)
 
-from validations import validate_order_number, validate_invoice_number, validate_hes_number, validate_company_name, validate_dates, validate_contract_number, validate_signatures_and_positions, validate_tables_mathematics_logic, validate_totals_logic,validate_company_direction, validate_company_ruc, validate_company_country, validate_company_city, validate_input_vs_extracted, validate_provider_intro, validate_client_intro
+from validations import (
+    validate_order_number, 
+    validate_invoice_number, 
+    validate_hes_number, 
+    validate_company_name, 
+    validate_dates, 
+    validate_contract_number, 
+    validate_signatures_and_positions, 
+    validate_tables_mathematics_logic, 
+    validate_totals_logic,
+    validate_company_direction, 
+    validate_company_ruc, 
+    validate_company_country, 
+    validate_company_city, 
+    validate_input_vs_extracted, 
+    validate_provider_intro, 
+    validate_client_intro, 
+    validate_provider_transaction,
+    validate_payment_terms_intro,
+    validate_service_description_intro,
+    validate_contract_details_intro,
+    validate_signature_intro
+)
 
 # Funciones de procesamiento de documentos específicos
-def process_service_delivery_record_document(images, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
+def process_service_delivery_record_document(file_path, schema, text=None, xml_tree=None):
     """Procesa un documento de acta de recepción y valida sus campos."""
     extracted_data = {}
     confidence_scores = {}
@@ -79,7 +114,7 @@ def process_service_delivery_record_document(images, schema, ruc_input, auxiliar
         "missing_fields": missing_fields
     }
 
-def process_invoice_document(images, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
+def process_invoice_document(file_path, schema, text=None, xml_tree=None):
     extracted_data = {}
     confidence_scores = {}    
     validation_errors = []
@@ -88,7 +123,6 @@ def process_invoice_document(images, schema, ruc_input, auxiliar_input, text=Non
     try:
         if text:
             invoice_fields = schema["Invoice"]["fields"]
-
             if "service_table" in invoice_fields:
                 table_schema = invoice_fields["service_table"]
                 table_data, table_errors = extract_table_data(text, table_schema)
@@ -164,150 +198,116 @@ def process_invoice_document(images, schema, ruc_input, auxiliar_input, text=Non
         "missing_fields": missing_fields,
     }
 
-def process_contract_document(images, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
+def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
     extracted_data = {}
     confidence_scores = {}
     validation_errors = []
     missing_fields = []
 
-    try:
-        if text:
-            # Procesar texto extraído con OCR
-            contract_fields = schema["Contract"]["fields"]
+    # Lista de campos requeridos
+    required_fields = [
+        "provider_info_intro", "provider_name", "provider_ruc", "provider_transaction",
+        "provider_address", "provider_city", "provider_country", "provider_phone",
+        "provider_website", "provider_email", "client_info_intro", "client_name",
+        "client_ruc", "client_direction", "client_city", "client_country",
+        "contract_number", "contract_order_number", "contract_invoice_number",
+        "contract_hes", "contract_end_date", "first_person_name", "first_person_position",
+        "second_person_name", "second_person_position","payment_terms_intro", "service_table", "contract_start_date"
+    ]
 
-            if "service_table" in contract_fields:
-                table_schema = contract_fields["service_table"]
-                table_data, table_errors = extract_table_data(text, table_schema)
-                if table_errors:
-                    validation_errors.extend(table_errors)
-                else:
-                    extracted_data["service_table"] = table_data
+    # Cargar campos del esquema
+    contract_fields = schema["Contract"]["fields"]
 
-
-            # Extraer campos secuenciales
-            client_fields = {
-                key: value for key, value in contract_fields.items()
-                if key.startswith("client_")
-            }
-            extracted_data.update(
-                extract_sequential_fields(text, contract_fields, "client_name", client_fields)
-            )
-
-            # Procesar campos individuales y relativos
-            for field_name, field_info in contract_fields.items():
-                if field_name in extracted_data:  # Evitar procesar duplicados
-                    continue
-                if "region" in field_info:
-                    extracted_data[field_name] = extract_field_from_region(images[0], field_info)  # Usa la primera página
-                elif "relative_to" in field_info:
-                    extracted_data[field_name] = extract_relative_field(images[0], extracted_data, field_info)
-                elif "regex" in field_info:
-                    match = re.search(field_info["regex"], text)
-                    if match:
+    if text:
+    # Procesar texto extraído de PDF
+        for field_name, field_info in contract_fields.items():
+            if "regex" in field_info and "relative_to" not in field_info:
+                match = re.search(field_info["regex"], text)
+                if match:
+                    try:
                         extracted_data[field_name] = match.group(1).strip()
-                    else:
-                        missing_fields.append(field_name)
-
-        elif xml_tree:
-            # Procesar campos desde XML
-            contract_fields = schema["Contract"]["fields"]
-            for field_name, field_info in contract_fields.items():
-                extracted_data[field_name] = extract_field_from_xml(xml_tree, field_info)
-                if not extracted_data[field_name]:
+                    except IndexError:
+                        validation_errors.append(f"El grupo 1 no existe en el patrón de {field_name}")
+                elif field_name in required_fields:
                     missing_fields.append(field_name)
 
-        if "client_name" in extracted_data:
-            valid, error = validate_company_name(extracted_data["client_name"])
-            if not valid:
-                validation_errors.append(error)
-                print(f"Validation Error for 'client_name': {error}")
-        
-        if "client_direction" in extracted_data:
-            valid, error = validate_company_direction(extracted_data["client_direction"])
-            if not valid:
-                validation_errors.append(error)
-                print(f"Validation Error for 'client_direction': {error}")
+        client_fields = {
+            key: value for key, value in contract_fields.items() if key.startswith("client_")
+        }
+        client_data = extract_sequential_fields(text, schema, "client_info_intro", client_fields)
+        extracted_data.update(client_data)
 
-        if "client_ruc" in extracted_data:
-            valid, error = validate_company_ruc(extracted_data["client_ruc"])
-            if not valid:
-                validation_errors.append(error)
-            print(ruc_input)
-            validRuc, error = validate_input_vs_extracted(ruc_input, extracted_data["client_ruc"], "RUC")
-            if not validRuc:
-                validation_errors.append(error)
+        provider_fields = {
+            key: value for key, value in contract_fields.items() if key.startswith("provider_")
+        }
+        provider_data = extract_sequential_fields(text, schema, "provider_info_intro", provider_fields)
+        extracted_data.update(provider_data)
 
-        if "contract_number" in extracted_data:
-            valid, error = validate_contract_number(extracted_data["contract_number"])
-            if not valid:
-                validation_errors.append(error)
-            print(auxiliar_input)
-            validNumber, error = validate_input_vs_extracted(auxiliar_input, extracted_data["contract_number"], "Número de Contrato")
-            if not validNumber:
-                validation_errors.append(error)
-
-        if "client_country" in extracted_data:
-            valid, error = validate_company_country(extracted_data["client_country"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "client_city" in extracted_data:
-            valid, error = validate_company_city(extracted_data["client_city"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "contract_order_number" in extracted_data:
-            valid, error = validate_order_number(extracted_data["contract_order_number"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "contract_invoice_number" in extracted_data:
-            valid, error = validate_invoice_number(extracted_data["contract_invoice_number"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "contract_hes" in extracted_data:
-            valid, error = validate_hes_number(extracted_data["contract_hes"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "service_table" in extracted_data:
-            table_data = extracted_data["service_table"]  
-            valid, errors = validate_tables_mathematics_logic(table_data)
-            if not valid:
-                validation_errors.extend(errors)
-
-        if {"subtotal", "tax_rate", "tax_amount", "total_due"} <= extracted_data.keys():
-            valid_totals, totals_errors = validate_totals_logic(extracted_data, table_data)
-            if not valid_totals:
-                validation_errors.extend(totals_errors)
+        # Procesar tabla de servicios si existe
+        if "service_table" in contract_fields:
+            table_schema = contract_fields["service_table"]
+            table_data, table_errors = extract_table_data(text, table_schema)
+            if table_errors:
+                validation_errors.extend(table_errors)
+            else:
+                extracted_data["service_table"] = table_data
 
         if "signatures" in contract_fields:
-            signature_text = extract_section(text, "Firmas", "Fecha")
-            for field, info in contract_fields["signatures"]["fields"].items():
-                if "regex" in info:
-                    match = re.search(info["regex"], signature_text)
-                    extracted_data[field] = match.group(0) if match else None
-                    if not match:
-                        missing_fields.append(field)
-                        validation_errors.extend(errors)
+            extracted_signatures, missing_signatures = validate_signatures_and_positions(file_path, schema, "signatures")
+            extracted_data.update(extracted_signatures)
+            missing_fields.extend(missing_signatures)
 
-        if "provider_info_intro" in extracted_data:
-            provider_intro = extracted_data["provider_info_intro"]
-            valid, errors = validate_provider_intro(provider_intro)
+
+    elif xml_tree:
+        # Procesar datos desde XML
+        for field_name, field_info in contract_fields.items():
+            value = extract_field_from_xml(xml_tree, field_info)
+            if value:
+                extracted_data[field_name] = value
+            elif field_name in required_fields:
+                missing_fields.append(field_name)
+
+    # Validaciones específicas
+    validations = [
+        ("client_name", validate_company_name),
+        ("client_direction", validate_company_direction),
+        ("provider_ruc", validate_company_ruc),
+        ("contract_number", validate_contract_number),
+        ("client_country", validate_company_country),
+        ("client_city", validate_company_city),
+        ("contract_order_number", validate_order_number),
+        ("contract_invoice_number", validate_invoice_number),
+        ("contract_hes", validate_hes_number),
+        ("provider_transaction", validate_provider_transaction),
+        ("provider_info_intro", validate_provider_intro),
+        ("client_info_intro", validate_client_intro),
+        {"payment_terms_intro", validate_payment_terms_intro},
+        {"service_description_intro", validate_service_description_intro},
+        {"contract_details_intro", validate_contract_details_intro},
+        {"signature_intro", validate_signature_intro},
+    ]
+
+    for field_name, validator in validations:
+        if field_name in extracted_data:
+            valid, error = validator(extracted_data[field_name])
             if not valid:
-                validation_errors.extend(errors)
-                missing_fields.append("provider_info_intro")
+                validation_errors.append(error)
 
-        if "client_info_intro" in extracted_data:
-            client_intro = extracted_data["client_info_intro"]
-            valid, errors = validate_client_intro(client_intro)
-            if not valid:
-                validation_errors.extend(errors)
-                missing_fields.append("client_info_intro")
+    # Validar RUC y Número de Contrato contra entrada del usuario
+    if "client_ruc" in extracted_data:
+        valid_ruc, error = validate_input_vs_extracted(ruc_input, extracted_data["provider_ruc"], "RUC")
+        if not valid_ruc:
+            validation_errors.append(error)
 
-    except Exception as e:
-        validation_errors.append(f"Error general en el procesamiento: {str(e)}")
+    if "contract_number" in extracted_data:
+        valid_number, error = validate_input_vs_extracted(auxiliar_input, extracted_data["contract_number"], "Número de Contrato")
+        if not valid_number:
+            validation_errors.append(error)
+
+    # Verificar campos requeridos faltantes
+    for field in required_fields:
+        if field not in extracted_data and field not in missing_fields:
+            missing_fields.append(field)
 
     return {
         "extracted_data": extracted_data,
@@ -320,40 +320,41 @@ def process_single_document(file_path, document_type, ruc_input, auxiliar_input)
     try:
         start_time = time.time()
         schema = load_document_schema()
+        text = None
+        xml_tree = None
 
+        # Procesar el archivo según su extensión
         if file_path.endswith('.pdf'):
-            images = convert_pdf_to_images(file_path)
-            text = "".join(pytesseract.image_to_string(image, lang='spa') for image in images)
-            xml_tree = None
+            text = extract_text_from_pdf(file_path)  # Extraer texto directamente del PDF
         elif file_path.endswith('.xml'):
             import xml.etree.ElementTree as ET
-            xml_tree = ET.parse(file_path)
-            text = None
+            xml_tree = ET.parse(file_path)  # Procesar XML directamente
+        elif file_path.endswith('.png'):
+            text = extract_text_from_document(file_path)  # Usar OCR para PNG
         else:
-            image = Image.open(file_path).convert('RGB')
-            text = pytesseract.image_to_string(image, lang='spa')
-            xml_tree = None
+            raise ValueError(f"Tipo de archivo no soportado: {file_path}")
 
+        # Procesar según el tipo de documento
         if document_type == "Invoice":
             result = process_invoice_document(file_path, schema, text, xml_tree)
         elif document_type == "ServiceDeliveryRecord":
             result = process_service_delivery_record_document(file_path, schema, text, xml_tree)
         elif document_type == "Contract":
-            result = process_contract_document(file_path, schema,ruc_input, auxiliar_input, text, xml_tree)
-            """ TODO: DELETE
-            result = process_contract_document(file_path, schema, text, xml_tree)
-            """
+            result = process_contract_document(file_path, schema, ruc_input, auxiliar_input, text, xml_tree)
         else:
             raise ValueError(f"Tipo de documento no soportado: {document_type}")
 
+        # Actualizar resultado con metadatos
         result.update({
             "document_type": document_type,
             "processing_time": time.time() - start_time,
             "status": "Denegado" if result["validation_errors"] else "Aceptado",
             "ai_decision_explanation": (
                 "Documento procesado correctamente"
+                if not result['missing_fields'] else f"Documento denegado. Error por campos faltantes: {', '.join(result['missing_fields'])}"
+
                 if not result["validation_errors"]
-                else f"Documento denegado. Errores: {', '.join(result['validation_errors'])}"
+                else f"Documento denegado. Errores de validación: {', '.join(result['validation_errors'])}"
             )
         })
 
@@ -367,5 +368,3 @@ def process_single_document(file_path, document_type, ruc_input, auxiliar_input)
             "ai_decision_explanation": f"Error en el procesamiento: {str(e)}",
             "validation_errors": [str(e)]
         }
-
-

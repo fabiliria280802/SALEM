@@ -37,20 +37,22 @@ exports.createInvoice = [
 			await newInvoice.save();
 
 			const filePath = path.join(process.cwd(), newInvoice.file_path);
-			const pythonProcess = spawn('python3', [
-				'controllers/IA/ia.py',
-				filePath,
-				documentType,
-				req.body.ruc,
-    			req.body.invoice
-
-			], {
-				env: {
-					...process.env,
-					TESSDATA_PREFIX: '/usr/share/tesseract/tessdata', 
+			const pythonProcess = spawn(
+				'python3',
+				[
+					'controllers/IA/ia.py',
+					filePath,
+					documentType,
+					req.body.ruc,
+					req.body.invoice,
+				],
+				{
+					env: {
+						...process.env,
+						TESSDATA_PREFIX: '/usr/share/tesseract/tessdata',
+					},
 				},
-			});
-			
+			);
 
 			let pythonOutput = '';
 			let pythonError = '';
@@ -58,7 +60,7 @@ exports.createInvoice = [
 			pythonProcess.stdout.on('data', data => {
 				pythonOutput += data.toString();
 			});
-			
+
 			pythonProcess.stderr.on('data', data => {
 				console.error('Error de Python:', data.toString());
 				pythonError += data.toString(); // Acumula los errores aquí
@@ -112,7 +114,7 @@ exports.createInvoice = [
 
 						const requiredFields = [];
 						const missingFields = requiredFields.filter(
-							field => !(result.extracted_data && result.extracted_data[field])
+							field => !(result.extracted_data && result.extracted_data[field]),
 						);
 
 						requiredFields.forEach(field => {
@@ -120,7 +122,6 @@ exports.createInvoice = [
 								result.extracted_data[field] = null; // Marca como nulo para claridad
 							}
 						});
-						
 
 						const status = missingFields.length > 0 ? 'Denegado' : 'Aceptado';
 						const validation_errors =
@@ -130,8 +131,11 @@ exports.createInvoice = [
 									)
 								: [];
 
-						console.log("Validation Errors before DB update:", validation_errors);
-	
+						console.log(
+							'Validation Errors before DB update:',
+							validation_errors,
+						);
+
 						const updateData = {
 							...result.extracted_data,
 							status,
@@ -171,7 +175,7 @@ exports.createInvoice = [
 						ai_decision_explanation:
 							'Error al procesar la respuesta: formato inválido',
 					});
-				
+
 					/*
 					res.status(500).json({
 						error: 'Error al procesar la respuesta de la IA',
@@ -188,7 +192,6 @@ exports.createInvoice = [
 			});
 		}
 	},
-
 ];
 
 /*

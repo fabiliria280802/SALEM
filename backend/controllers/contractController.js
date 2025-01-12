@@ -38,20 +38,22 @@ exports.createContract = [
 			await newContract.save();
 
 			const filePath = path.join(process.cwd(), newContract.file_path);
-			const pythonProcess = spawn('python3', [
-				'controllers/IA/ia.py',
-				filePath,
-				documentType,
-				req.body.ruc,
-    			req.body.contract
-
-			], {
-				env: {
-					...process.env,
-					TESSDATA_PREFIX: '/usr/share/tesseract/tessdata', 
+			const pythonProcess = spawn(
+				'python3',
+				[
+					'controllers/IA/ia.py',
+					filePath,
+					documentType,
+					req.body.ruc,
+					req.body.contract,
+				],
+				{
+					env: {
+						...process.env,
+						TESSDATA_PREFIX: '/usr/share/tesseract/tessdata',
+					},
 				},
-			});
-			
+			);
 
 			let pythonOutput = '';
 			let pythonError = '';
@@ -59,7 +61,7 @@ exports.createContract = [
 			pythonProcess.stdout.on('data', data => {
 				pythonOutput += data.toString();
 			});
-			
+
 			pythonProcess.stderr.on('data', data => {
 				console.error('Error de Python:', data.toString());
 				pythonError += data.toString(); // Acumula los errores aquí
@@ -111,13 +113,19 @@ exports.createContract = [
 							});
 						}
 
-						const status = result.validation_errors && result.validation_errors.length > 0 ? 'Denegado' : 'Aceptado';
-						const ai_decision_explanation = status === 'Denegado'
-    						? `Documento denegado. Errores: ${result.validation_errors.join(', ')}`
-   							: 'Documento procesado correctamente';
+						const status =
+							result.validation_errors && result.validation_errors.length > 0
+								? 'Denegado'
+								: 'Aceptado';
+						const ai_decision_explanation =
+							status === 'Denegado'
+								? `Documento denegado. Errores: ${result.validation_errors.join(', ')}`
+								: 'Documento procesado correctamente';
 
-
-						console.log("Validation Errors before DB update:", result.validation_errors);
+						console.log(
+							'Validation Errors before DB update:',
+							result.validation_errors,
+						);
 
 						const updateData = {
 							...result.extracted_data,
@@ -126,7 +134,9 @@ exports.createContract = [
 							ai_decision_explanation,
 						};
 
-						await Contract.findByIdAndUpdate(newContract._id, updateData, { new: true });
+						await Contract.findByIdAndUpdate(newContract._id, updateData, {
+							new: true,
+						});
 
 						res.status(201).json({
 							message:
@@ -135,7 +145,7 @@ exports.createContract = [
 									: 'Contrato procesado con errores',
 							_id: newContract._id,
 							status,
-							validation_errors: result.validation_errors || []
+							validation_errors: result.validation_errors || [],
 						});
 					} catch (parseError) {
 						console.error('Error al parsear JSON:', parseError);
@@ -151,7 +161,7 @@ exports.createContract = [
 						ai_decision_explanation:
 							'Error al procesar la respuesta: formato inválido',
 					});
-				
+
 					/*
 					res.status(500).json({
 						error: 'Error al procesar la respuesta de la IA',

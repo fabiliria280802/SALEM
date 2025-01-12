@@ -3,7 +3,7 @@ from datetime import datetime
 from PIL import ImageOps, ImageChops, Image
 
 from utils import convert_pdf_to_images
-from extractions import extract_text_from_document, extract_section
+from extractions import extract_text_from_document, extract_section, extract_images_from_pdf, extract_text_near_signature
 
 def validate_order_number(order_number):
     """Valida que el número de orden inicie con '34' y tenga 5 cifras más."""
@@ -44,18 +44,15 @@ def validate_company_city(company_city):
     return False, f"company_city '{company_city}' no coincide con '{expected_city}'."
 
 def validate_company_country(company_country):
-    """Valida que la pais de la empresa sea exactamente 'Ecuador'."""
     expected_country= "Ecuador"
     if company_country.strip() == expected_country:
-        return True, None
-    return False, f"company_country '{company_country}' no coincide con '{expected_country}'."
-
+        return True, f"company_country '{company_country}' no coincide con '{expected_country}'."
+    return False, None
+    
 def validate_company_ruc(company_ruc):
-    """Valida que el ruc de la empresa sea exactamente '1791239245001'."""
-    expected_ruc= "1791239245001"
-    if company_ruc.strip() == expected_ruc:
-        return True, None
-    return False, f"company_ruc '{company_ruc}' no coincide con '{expected_ruc}'."
+    if not company_ruc.isdigit() or len(company_ruc) != 13:
+        return False, f"El ruc es '{company_ruc}' no es válido"
+    return True, None
 
 def validate_input_vs_extracted(input_value, extracted_value, field_name):
     if input_value.strip() != extracted_value.strip():
@@ -72,7 +69,7 @@ def validate_company_name(company_name):
 def validate_dates(receiver_date, end_date):
     """Valida que las fechas estén en formato correcto y sean cronológicamente coherentes."""
     errors = []
-    date_format = "%d/%m/%Y"
+    date_format = "%dd/%mm/%YYYY"
     
     try:
         receiver_date_obj = datetime.strptime(receiver_date, date_format)
@@ -93,17 +90,6 @@ def validate_dates(receiver_date, end_date):
     return len(errors) == 0, errors
 
 def validate_tables_mathematics_logic(table_data):
-    """
-    Valida la lógica matemática de la tabla de servicios.
-
-    Args:
-        table_data (list[dict]): Lista de filas de la tabla extraídas.
-
-    Returns:
-        tuple: (valid (bool), errors (list[str]))
-               - valid: True si toda la tabla es válida, False si hay errores.
-               - errors: Lista de errores encontrados, con detalles de las filas incorrectas.
-    """
     valid = True
     errors = []
 
@@ -195,36 +181,51 @@ def validate_totals_logic(extracted_data, table_data):
     return valid, errors
 
 def validate_signatures_and_positions(document_path, schema, field_key):
-    text = extract_text_from_document(document_path)  # Extrae texto del documento
     extracted_data = {}
     missing_fields = []
 
-    # Validar nombres, posiciones y empresa
-    for field, info in schema[field_key]["fields"].items():
-        if "regex" in info:  # Validar con regex
-            match = re.search(info["regex"], text)
-            if match:
-                extracted_data[field] = match.group(0).strip()
-            else:
-                missing_fields.append(field)
-        elif "values" in info:  # Validar posiciones con valores predefinidos
-            match = re.search(r"\b(" + "|".join(map(re.escape, info["values"])) + r")\b", text, re.IGNORECASE)
-            if match:
-                extracted_data[field] = match.group(0).strip()
-            else:
-                missing_fields.append(field)
+    try:
+        images = extract_images_from_pdf(document_path)
+    except Exception as e:
+        return {}, [f"Error extrayendo imágenes del PDF: {e}"]
 
-    # Verificar imágenes de firmas
-    if document_path.endswith(".pdf"):
-        images = convert_pdf_to_images(document_path)
-        for idx, field in enumerate(["first_person_signature", "second_person_signature"]):
-            if not verify_signature_in_image(images[-1], idx):
-                missing_fields.append(field)
+    for idx, signature_field in enumerate(["first_person_signature", "second_person_signature"]):
+        if idx < len(images):
+            # Verificar si hay una firma presente en la región
+            if verify_signature_in_image(images[idx]["image"], idx):
+                extracted_data[signature_field] = f"Firma detectada en página {images[idx]['page']} imagen {images[idx]['index']}"
+                # Extraer texto cercano a la firma
+                text_near_signature = extract_text_near_signature(images[idx]["image"], idx)
+                if text_near_signature:
+                    # Validar y extraer nombre y posición
+                    name_field = "first_person_name" if idx == 0 else "second_person_name"
+                    position_field = "first_person_position" if idx == 0 else "second_person_position"
+
+                    # Validar nombre
+                    match = re.search(schema[field_key]["fields"][name_field]["regex"], text_near_signature)
+                    if match:
+                        extracted_data[name_field] = match.group(0).strip()
+                    else:
+                        missing_fields.append(name_field)
+
+                    # Validar posición
+                    valid_positions = schema[field_key]["fields"][position_field]["values"]
+                    position_match = re.search(r"\b(" + "|".join(map(re.escape, valid_positions)) + r")\b", text_near_signature, re.IGNORECASE)
+                    if position_match:
+                        extracted_data[position_field] = position_match.group(0).strip()
+                    else:
+                        missing_fields.append(position_field)
+            else:
+                missing_fields.append(signature_field)
+        else:
+            missing_fields.append(signature_field)
 
     return extracted_data, missing_fields
 
 def verify_signature_in_image(image, position_index):
-    # Define las regiones donde se esperan las firmas
+    """
+    Verifica si una firma está presente en una región específica de la imagen.
+    """
     signature_regions = [
         (50, 700, 400, 750),  # Coordenadas de la primera firma
         (450, 700, 800, 750)  # Coordenadas de la segunda firma
@@ -236,21 +237,59 @@ def verify_signature_in_image(image, position_index):
         gray_region = ImageOps.grayscale(cropped_region)
         if ImageChops.difference(gray_region, Image.new("L", gray_region.size, 255)).getbbox():
             return True
-    except IndexError:
-        return False  # Manejar errores de índice si no hay más regiones definidas
+    except Exception as e:
+        print(f"Error al verificar la firma en la posición {position_index}: {str(e)}")
+    return False
 
 def validate_provider_intro(provider_info_intro):
-    expected_intro = "1. Información de la Compañía"
-    expected_intro_english = "1. Company Information"
+    expected_intro = "Información de la Compañía"
+    expected_intro_english = "Company Information"
     if provider_info_intro.strip().lower() in {expected_intro.lower(), expected_intro_english.lower()}:
         return True, None
     
     return False, f"provider_info_intro '{provider_info_intro}' no coincide con '{expected_intro}' ni con '{expected_intro_english}'."
 
 def validate_client_intro(client_info_intro):
-    expected_intro = "2. Información del Cliente"
-    expected_intro_english = "2. Client Information"
+    expected_intro = "Información del Cliente"
+    expected_intro_english = "Client Information"
     if client_info_intro.strip().lower() in {expected_intro.lower(), expected_intro_english.lower()}:
         return True, None
     
     return False, f"client_info_intro '{client_info_intro}' no coincide con '{expected_intro}' ni con '{expected_intro_english}'."
+
+def validate_payment_terms_intro(payment_terms_intro):
+    expected_intro = "Condiciones de Pago"
+    expected_intro_english = "Payment Terms"
+    if payment_terms_intro.strip().lower() in {expected_intro.lower(), expected_intro_english.lower()}:
+        return True, None
+    
+    return False, f"payment_terms_intro '{payment_terms_intro}' no coincide con '{expected_intro}' ni con '{expected_intro_english}'."
+
+def validate_service_description_intro(service_description_intro):
+    expected_intro = "Descripción de Servicios e Items"
+    expected_intro_english = "Description of Services & Items"
+    if service_description_intro.strip().lower() in {expected_intro.lower(), expected_intro_english.lower()}:
+        return True, None
+    
+    return False, f"service_description_intro '{service_description_intro}' no coincide con '{expected_intro}' ni con '{expected_intro_english}'."
+
+def validate_contract_details_intro(contract_details_intro):
+    expected_intro = "Detalles del Contrato"
+    expected_intro_english = "Contract Details"
+    if contract_details_intro.strip().lower() in {expected_intro.lower(), expected_intro_english.lower()}:
+        return True, None
+    
+    return False, f"contract_details_intro '{contract_details_intro}' no coincide con '{expected_intro}' ni con '{expected_intro_english}'."
+
+def validate_signature_intro(signature_intro):
+    expected_intro = "Firmas"
+    expected_intro_english = "Signatures"
+    if signature_intro.strip().lower() in {expected_intro.lower(), expected_intro_english.lower()}:
+        return True, None
+    
+    return False, f"signature_intro '{signature_intro}' no coincide con '{expected_intro}' ni con '{expected_intro_english}'."
+
+def validate_provider_transaction(provider_transaction):
+    if not provider_transaction.isdigit() or len(provider_transaction) != 8:
+        return False, f"El Tax ID '{provider_transaction}' no es válido"
+    return True, None

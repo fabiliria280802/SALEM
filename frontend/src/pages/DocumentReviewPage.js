@@ -15,13 +15,11 @@ const DocumentReviewPage = () => {
 	const location = useLocation();
 
 	useEffect(() => {
-		// Obtener datos del documento pasados por location state
 		if (location.state?.documentData) {
 			const data = location.state.documentData;
 			setDocumentData(data);
 			setFilePath(data.file_path);
 
-			// Configurar campos de validación según tipo de documento
 			switch (data.tipoDocumento) {
 				case 'Invoice':
 					setValidationFields([

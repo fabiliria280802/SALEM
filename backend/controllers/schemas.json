@@ -1,376 +1,379 @@
 {
-    "Invoice": {
-        "fields": {
-            "company_logo": {
-                "label": "logo del proveedor",
-                "type": "image",
-                "region": {
-                    "top": 50,
-                    "left": 170,
-                    "width": 90,
-                    "height": 90
-                }
-            },
-            "company_name": {
-                "label": "Nombre de la Empresa",
-                "region": {
-                    "top": 82,
-                    "left": 170,
-                    "width": 300,
-                    "height": 30
-                }
-            },
-            "company_address": {
-                "label": "Dirección de la Empresa",
-                "region": {
-                    "top": 104,
-                    "left": 170,
-                    "width": 300,
-                    "height": 30
-                }
-            },
-            "company_city": {
-                "label": "Ciudad de la Empresa",
-                "region": {
-                    "top": 127,
-                    "left": 170,
-                    "width": 300,
-                    "height": 30
-                }
-            },
-            "company_country": {
-                "label": "País de la Empresa",
-                "region": {
-                    "top": 150,
-                    "left": 170,
-                    "width": 300,
-                    "height": 30
-                }
-            },
-            "company_phone": {
-                "label": "Teléfono de la Empresa",
-                "regex": "(?i)\\b(?:teléfono|phone)\\s*[:\\-]?\\s*(\\+?\\d[\\d\\-\\s]+)",
-                "region": {
-                    "top": 172,
-                    "left": 170,
-                    "width": 300,
-                    "height": 30
-                }
-            },
-            "company_website": {
-                "label": "Página Web de la Empresa",
-                "regex": "(?i)\\b(?:página web|pagina web|website)\\s*[:\\-]?\\s*(https?:\\/\\/[\\w\\.-]+)",
-                "region": {
-                    "top": 194,
-                    "left": 170,
-                    "width": 300,
-                    "height": 30
-                }
-            },
-            "company_email": {
-                "label": "Email de la Empresa",
-                "regex": "(?i)\\b(?:email)\\s*[:\\-]?\\s*([^\\s]+@[\\w\\.-]+)",
-                "region": {
-                    "top": 216,
-                    "left": 170,
-                    "width": 300,
-                    "height": 30
-                }
-            },
-            "company_tax_id": {
-                "label": "ID Fiscal",
-                "regex": "(?i)\\b(?:id fiscal|tax id)\\s*[:\\-]?\\s*([^\\n]+)",
-                "region": {
-                    "top": 238,
-                    "left": 170,
-                    "width": 300,
-                    "height": 30
-                }
-            },
-            "invoice_number": {
-                "label": "Número de Factura",
-                "regex": "(?i)\\b(?:factura n°|invoice no)\\s*[:\\-]?\\s*(\\d+)",
-                "region": {
-                    "top": 236.83880615234375,
-                    "left": 170.69290161132812,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "invoice_date": {
-                "label": "Fecha de Factura",
-                "regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})",
-                "region": {
-                    "top": 259.33880615234375,
-                    "left": 170.69290161132812,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "payable_at": {
-                "label": "Fecha de Vencimiento",
-                "regex": "(?i)\\b(?:vencimiento|payable at)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})",
-                "region": {
-                    "top": 281.83880615234375,
-                    "left": 170.69290161132812,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "order_number": {
-                "label": "Número de Orden",
-                "regex": "(?i)\\b(?:orden n°|order no)\\s*[:\\-]?\\s*(\\d+)",
-                "region": {
-                    "top": 304.33880615234375,
-                    "left": 170.69290161132812,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "client_name": {
-                "label": "Nombre del Cliente",
-                "regex": "(?i)\\b(?:cliente|client name)\\s*[:\\-]?\\s*([^\\n]+)",
-                "region": {
-                    "top": 236.83880615234375,
-                    "left": 303.07281494140625,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "client_ruc": {
-                "label": "RUC del Cliente",
-                "regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d+)",
-                "region": {
-                    "top": 259.33880615234375,
-                    "left": 303.07281494140625,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "client_address": {
-                "label": "Dirección del Cliente",
-                "regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)",
-                "region": {
-                    "top": 281.83880615234375,
-                    "left": 303.07281494140625,
-                    "width": 400,
-                    "height": 40
-                }
-            },
-            "client_city": {
-                "label": "Ciudad del Cliente",
-                "regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)",
-                "region": {
-                    "top": 326.83880615234375,
-                    "left": 303.07281494140625,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "client_country": {
-                "label": "País del Cliente",
-                "regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)",
-                "region": {
-                    "top": 349.33880615234375,
-                    "left": 303.07281494140625,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "service_table": {
-			    "label": "Tabla de Servicios",
-			    "type": "table",
-			    "columns": {
-			        "service_code": {
-			            "label": "Código",
-			            "regex": "\\b(?:\\w{4})\\b"
-			        },
-			        "service_description": {
-			            "label": "Descripción del Servicio",
-			            "regex": ".+"
-			        },
-			        "service_quantity": {
-			            "label": "Cantidad",
-			            "regex": "\\b\\d+\\b"
-			        },
-			        "service_unit_cost": {
-			            "label": "Costo Unitario",
-			            "regex": "\\b\\d+(?:\\.\\d{2})\\b"
-			        },
-			        "service_cost": {
-			            "label": "Costo",
-			            "regex": "\\b\\d+(?:\\.\\d{2})\\b"
-			        }
-			    }
+	"Invoice": {
+		"fields": {
+			"company_logo": {
+				"label": "logo del proveedor",
+				"type": "image",
+				"region": {
+					"top": 50,
+					"left": 170,
+					"width": 90,
+					"height": 90
+				}
 			},
-            "service_hes": {
-                "label": "HES",
-                "regex": "\\b(?:HES:\\s?\\d{8})\\b"
-            },
-            "subtotal": {
-                "label": "Subtotal",
-                "regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
-                "region": {
-                    "top": 582.8453979492188,
-                    "left": 177.9153594970703,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "tax": {
-                "label": "Impuesto",
-                "regex": "(?i)\\b(?:impuesto|tax)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
-                "region": {
-                    "top": 582.8453979492188,
-                    "left": 177.9153594970703,
-                    "width": 200,
-                    "height": 20
-                }
-            },
-            "total_due": {
-                "label": "Total a Pagar",
-                "regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
-                "region": {
-                    "top": 582.8453979492188,
-                    "left": 177.9153594970703,
-                    "width": 200,
-                    "height": 20
-                }
-            }
-        }
-    },
-    "ServiceDeliveryRecord": {
-        "fields": {
-            "delivery_title": {
-                "label": "Título del Acta",
-                "regex": "(?i)\\b(?:acta de recepción|delivery receipt)\\b"
-            },
-            "receiver_date": {
-                "label": "Fecha de Recepción",
-                "regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
-            },
-            "receiving_company": {
-                "label": "Empresa Receptora",
-                "regex": "(?i)\\b(?:empresa|company)\\s*[:\\-]?\\s*([^\\n]+)"
-            },
-            "provider": {
-                "label": "Proveedor",
-                "regex": "(?i)\\b(?:proporcionados por|provided by)\\s*[:\\-]?\\s*([^\\n]+)"
-            },
-            "order_number": {
-                "label": "Número de Orden",
-                "regex": "(?i)\\b(?:pedido identificado con el número|order identified with number)\\s*[:\\-]?\\s*(\\d+)"
-            },
-            "invoice_number": {
-                "label": "Número de Factura",
-                "regex": "(?i)\\b(?:factura número|invoice number)\\s*[:\\-]?\\s*(\\d+)"
-            },
-            "hes_number": {
-                "label": "Número de HES",
-                "regex": "(?i)\\b(?:hes asociado con el número|hes associated with the number)\\s*[:\\-]?\\s*(\\d+)"
-            },
-            "total_value": {
-                "label": "Valor Total",
-                "regex": "(?i)\\b(?:valor total de|total value of)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
-            },
-            "end_date": {
-                "label": "Fecha de Término",
-                "regex": "(?i)\\b(?:finalizó el día|ended on)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
-            },
-            "signatures": {
-                "fields": {
-                    "person_name": {
-                        "label": "Nombre de la Primera Persona",
-                        "regex": "(?i)\\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\\b"
-                    },
-                    "person_signature": {
-                        "label": "Firma de la Primera Persona",
-                        "type": "image"
-                    },
-                    "person_position": {
-                        "label": "Posición de la Primera Persona",
-                        "values": [
-                            "Accounting Manager",
-                            "Accounts Payable Clerk",
-                            "Accounts Receivable Clerk",
-                            "Tax Accountant",
-                            "Payroll Specialist",
-                            "Financial Analyst",
-                            "Internal Auditor",
-                            "Cost Accountant",
-                            "Budget Analyst",
-                            "Financial Controller",
-                            "Gerente de Contabilidad",
-                            "Asistente de Cuentas por Pagar",
-                            "Asistente de Cuentas por Cobrar",
-                            "Contador de Impuestos",
-                            "Especialista de Nómina",
-                            "Analista Financiero",
-                            "Auditor Interno",
-                            "Contador de Costos",
-                            "Analista Presupuestario",
-                            "Controlador Financiero"
-                        ]
-                    },
-                    "person_company": {
-                        "label": "Empresa de la Primera Persona",
-                        "regex": "(?i)\\b(?:empresa|company)\\s*[:\\-]?\\s*([^\\n]+)"
-                    }
-                }
-            }
-        }
-    },
+			"company_name": {
+				"label": "Nombre de la Empresa",
+				"region": {
+					"top": 82,
+					"left": 170,
+					"width": 300,
+					"height": 30
+				}
+			},
+			"company_address": {
+				"label": "Dirección de la Empresa",
+				"region": {
+					"top": 104,
+					"left": 170,
+					"width": 300,
+					"height": 30
+				}
+			},
+			"company_city": {
+				"label": "Ciudad de la Empresa",
+				"region": {
+					"top": 127,
+					"left": 170,
+					"width": 300,
+					"height": 30
+				}
+			},
+			"company_country": {
+				"label": "País de la Empresa",
+				"region": {
+					"top": 150,
+					"left": 170,
+					"width": 300,
+					"height": 30
+				}
+			},
+			"company_phone": {
+				"label": "Teléfono de la Empresa",
+				"regex": "(?i)\\b(?:teléfono|phone)\\s*[:\\-]?\\s*(\\+?\\d[\\d\\-\\s]+)",
+				"region": {
+					"top": 172,
+					"left": 170,
+					"width": 300,
+					"height": 30
+				}
+			},
+			"company_website": {
+				"label": "Página Web de la Empresa",
+				"regex": "(?i)\\b(?:página web|pagina web|website)\\s*[:\\-]?\\s*(https?:\\/\\/[\\w\\.-]+)",
+				"region": {
+					"top": 194,
+					"left": 170,
+					"width": 300,
+					"height": 30
+				}
+			},
+			"company_email": {
+				"label": "Email de la Empresa",
+				"regex": "(?i)\\b(?:email)\\s*[:\\-]?\\s*([^\\s]+@[\\w\\.-]+)",
+				"region": {
+					"top": 216,
+					"left": 170,
+					"width": 300,
+					"height": 30
+				}
+			},
+			"company_tax_id": {
+				"label": "ID Fiscal",
+				"regex": "(?i)\\b(?:id fiscal|tax id)\\s*[:\\-]?\\s*([^\\n]+)",
+				"region": {
+					"top": 238,
+					"left": 170,
+					"width": 300,
+					"height": 30
+				}
+			},
+			"invoice_number": {
+				"label": "Número de Factura",
+				"regex": "(?i)\\b(?:factura n°|invoice no)\\s*[:\\-]?\\s*(\\d+)",
+				"region": {
+					"top": 236.83880615234375,
+					"left": 170.69290161132812,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"invoice_date": {
+				"label": "Fecha de Factura",
+				"regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})",
+				"region": {
+					"top": 259.33880615234375,
+					"left": 170.69290161132812,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"payable_at": {
+				"label": "Fecha de Vencimiento",
+				"regex": "(?i)\\b(?:vencimiento|payable at)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})",
+				"region": {
+					"top": 281.83880615234375,
+					"left": 170.69290161132812,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"order_number": {
+				"label": "Número de Orden",
+				"regex": "(?i)\\b(?:orden n°|order no)\\s*[:\\-]?\\s*(\\d+)",
+				"region": {
+					"top": 304.33880615234375,
+					"left": 170.69290161132812,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"client_name": {
+				"label": "Nombre del Cliente",
+				"regex": "(?i)\\b(?:cliente|client name)\\s*[:\\-]?\\s*([^\\n]+)",
+				"region": {
+					"top": 236.83880615234375,
+					"left": 303.07281494140625,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"client_ruc": {
+				"label": "RUC del Cliente",
+				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d+)",
+				"region": {
+					"top": 259.33880615234375,
+					"left": 303.07281494140625,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"client_address": {
+				"label": "Dirección del Cliente",
+				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)",
+				"region": {
+					"top": 281.83880615234375,
+					"left": 303.07281494140625,
+					"width": 400,
+					"height": 40
+				}
+			},
+			"client_city": {
+				"label": "Ciudad del Cliente",
+				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)",
+				"region": {
+					"top": 326.83880615234375,
+					"left": 303.07281494140625,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"client_country": {
+				"label": "País del Cliente",
+				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)",
+				"region": {
+					"top": 349.33880615234375,
+					"left": 303.07281494140625,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"service_table": {
+				"label": "Tabla de Servicios",
+				"type": "table",
+				"columns": {
+					"service_code": {
+						"label": "Código",
+						"regex": "\\b(?:\\w{4})\\b"
+					},
+					"service_description": {
+						"label": "Descripción del Servicio",
+						"regex": ".+"
+					},
+					"service_quantity": {
+						"label": "Cantidad",
+						"regex": "\\b\\d+\\b"
+					},
+					"service_unit_cost": {
+						"label": "Costo Unitario",
+						"regex": "\\b\\d+(?:\\.\\d{2})\\b"
+					},
+					"service_cost": {
+						"label": "Costo",
+						"regex": "\\b\\d+(?:\\.\\d{2})\\b"
+					}
+				}
+			},
+			"service_hes": {
+				"label": "HES",
+				"regex": "\\b(?:HES:\\s?\\d{8})\\b"
+			},
+			"subtotal": {
+				"label": "Subtotal",
+				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
+				"region": {
+					"top": 582.8453979492188,
+					"left": 177.9153594970703,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"tax": {
+				"label": "Impuesto",
+				"regex": "(?i)\\b(?:impuesto|tax)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
+				"region": {
+					"top": 582.8453979492188,
+					"left": 177.9153594970703,
+					"width": 200,
+					"height": 20
+				}
+			},
+			"total_due": {
+				"label": "Total a Pagar",
+				"regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
+				"region": {
+					"top": 582.8453979492188,
+					"left": 177.9153594970703,
+					"width": 200,
+					"height": 20
+				}
+			}
+		}
+	},
+	"ServiceDeliveryRecord": {
+		"fields": {
+			"delivery_title": {
+				"label": "Título del Acta",
+				"regex": "(?i)\\b(?:acta de recepción|delivery receipt)\\b"
+			},
+			"receiver_date": {
+				"label": "Fecha de Recepción",
+				"regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+			},
+			"receiving_company": {
+				"label": "Empresa Receptora",
+				"regex": "(?i)\\b(?:empresa|company)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"provider": {
+				"label": "Proveedor",
+				"regex": "(?i)\\b(?:proporcionados por|provided by)\\s*[:\\-]?\\s*([^\\n]+)"
+			},
+			"order_number": {
+				"label": "Número de Orden",
+				"regex": "(?i)\\b(?:pedido identificado con el número|order identified with number)\\s*[:\\-]?\\s*(\\d+)"
+			},
+			"invoice_number": {
+				"label": "Número de Factura",
+				"regex": "(?i)\\b(?:factura número|invoice number)\\s*[:\\-]?\\s*(\\d+)"
+			},
+			"hes_number": {
+				"label": "Número de HES",
+				"regex": "(?i)\\b(?:hes asociado con el número|hes associated with the number)\\s*[:\\-]?\\s*(\\d+)"
+			},
+			"total_value": {
+				"label": "Valor Total",
+				"regex": "(?i)\\b(?:valor total de|total value of)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
+			},
+			"end_date": {
+				"label": "Fecha de Término",
+				"regex": "(?i)\\b(?:finalizó el día|ended on)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+			},
+			"signatures": {
+				"fields": {
+					"person_name": {
+						"label": "Nombre de la Primera Persona",
+						"regex": "(?i)\\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\\b"
+					},
+					"person_signature": {
+						"label": "Firma de la Primera Persona",
+						"type": "image"
+					},
+					"person_position": {
+						"label": "Posición de la Primera Persona",
+						"values": [
+							"Accounting Manager",
+							"Accounts Payable Clerk",
+							"Accounts Receivable Clerk",
+							"Tax Accountant",
+							"Payroll Specialist",
+							"Financial Analyst",
+							"Internal Auditor",
+							"Cost Accountant",
+							"Budget Analyst",
+							"Financial Controller",
+							"Gerente de Contabilidad",
+							"Asistente de Cuentas por Pagar",
+							"Asistente de Cuentas por Cobrar",
+							"Contador de Impuestos",
+							"Especialista de Nómina",
+							"Analista Financiero",
+							"Auditor Interno",
+							"Contador de Costos",
+							"Analista Presupuestario",
+							"Controlador Financiero"
+						]
+					},
+					"person_company": {
+						"label": "Empresa de la Primera Persona",
+						"regex": "(?i)\\b(?:empresa|company)\\s*[:\\-]?\\s*([^\\n]+)"
+					}
+				}
+			}
+		}
+	},
 	"Contract": {
 		"fields": {
 			"provider_info_intro": {
 				"label": "Información de la Compañía",
-			    "regex": "(?i)\b1\\.\\s*(?:información de la compañía|company information)\b"
+				"regex": "(?i)\\b1\\.\\s*((?:información de la compañía|company information))\\b"
 			},
 			"provider_name": {
 				"label": "Nombre",
-				"regex": "(?i)\\b(?:nombre|name)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:nombre|name)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "provider_info_intro"
 			},
 			"provider_ruc": {
 				"label": "RUC",
-				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d{13})"
+				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d{13})",
+				"relative_to": "provider_name"
 			},
 			"provider_transaction": {
-                "label": "Transacción",
-                "type": "text",
-                "region": {
-                    "top": 307.39,
-                    "left": 86.69,
-                    "width": 35.13,
-                    "height": 13.41
-                }
+				"label": "Transacción",
+				"regex": "(?i)\\b(?:tax id|transacción)\\s*[:\\-]?\\s*(\\d+)",
+				"relative_to": "provider_ruc"
 			},
 			"provider_address": {
 				"label": "Dirección de la Compañía",
-				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)"
+        		"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)",
+        		"relative_to": "provider_transaction"
 			},
 			"provider_city": {
 				"label": "Ciudad de la Compañía",
-				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "provider_address"
 			},
 			"provider_country": {
 				"label": "País de la Compañía",
-				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)",
+				"relative_to": "provider_city"
 			},
 			"provider_phone": {
 			    "label": "Teléfono de la Compañía",
-			    "regex": "(?i)\b(?:tel[eé]fono|phone)\b\\s*[:\\-]?\\s*((?:\\+?\\d{1,3}[-\\s]?)?(?:\\(?\\d{1,4}\\)?[-\\s]?)?\\d{1,4}(?:[-\\s]?\\d{1,4}){1,3})"
+			    "regex": "(?i)\\b(?:tel[eé]fono|phone)\\s*[:\\-]?\\s*(\\+?[\\d\\-\\s()]+)",
+			    "relative_to": "provider_country"
 			},
 			"provider_website": {
 			    "label": "Página Web de la Compañía",
-			    "regex": "(?i)\\b(?:p[aá]gina\\sweb|website)\\s*[:\\-]?\\s*(www\\.[\\w\\.-]+)"
+			    "regex": "(?i)\\b(?:p[aá]gina\\sweb|website)\\s*[:\\-]?\\s*(www\\.[a-zA-Z0-9.-]+)",
+			    "relative_to": "provider_phone"
 			},
 			"provider_email": {
 			    "label": "Correo Electrónico de la Compañía",
-			    "regex": "(?i)\b(?:correo(?:\\s(?:electr[oó]nico|email)|)|email)\b\\s*[:\\-]?\\s*([\\w._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})"
+			    "regex": "(?i)\\b(?:correo(?:\\s(?:electr[oó]nico|email)|)|email)\\b\\s*[:\\-]?\\s*([\\w._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})",
+			    "relative_to": "provider_website"
 			},
 			"client_info_intro": {
 				"label": "Información del Cliente",
-				"regex": "(?i)\b2\\.\\s*(?:información del cliente|client information)\b"
+				"regex": "(?i)\\b2\\.\\s*((?:información del cliente|client information))\\b"
 			},
 			"client_name": {
 				"label": "Nombre",
@@ -399,91 +402,91 @@
 			},
 			"service_description_intro": {
 				"label": "Descripción del Servicio",
-				"regex": "(?i)\\b(?:descripción de servicios e items|description of services & items)\\b"
+				"regex": "(?i)\\b3\\.\\s*((?:descripción de servicios e items|description of services & items))\\b"
 			},
 			"service_table": {
-			    "label": "Tabla de Servicios",
-			    "type": "table",
-			    "columns": {
-			        "service_code": {
-			            "label": "Código",
-			            "regex": "\b(?:\\w{4})\b"
-			        },
-			        "service_description": {
-			            "label": "Descripción del Servicio",
-			            "regex": ".+"
-			        },
-			        "service_hes": {
-			            "label": "HES",
-			            "regex": "\b(?:\\d{8})\b"
-			        },
-			        "service_quantity": {
-			            "label": "Cantidad",
-			            "regex": "\b\\d+\b"
-			        },
-			        "service_unit_cost": {
-			            "label": "Costo Unitario",
-			            "regex": "\b\\d+(?:\\.\\d{2})\b"
-			        },
-			        "service_cost": {
-			            "label": "Costo",
-			            "regex": "\b\\d+(?:\\.\\d{2})\b"
-			        }
-			    }
+				"label": "Tabla de Servicios",
+				"type": "table",
+				"columns": {
+					"service_code": {
+						"label": "Código",
+						"regex": "\\b(?:\\w{4})\\b"
+					},
+					"service_description": {
+						"label": "Descripción del Servicio",
+						"regex": ".+"
+					},
+					"service_hes": {
+						"label": "HES",
+						"regex": "\\b(?:\\d{8})\\b"
+					},
+					"service_quantity": {
+						"label": "Cantidad",
+						"regex": "\\b\\d+\\b"
+					},
+					"service_unit_cost": {
+						"label": "Costo Unitario",
+						"regex": "\\b\\d+(?:\\.\\d{2})\\b"
+					},
+					"service_cost": {
+						"label": "Costo",
+						"regex": "\\b\\d+(?:\\.\\d{2})\\b"
+					}
+				}
 			},
 			"payment_terms_intro": {
 				"label": "Términos de Pago",
-				"regex": "(?i)\b(?:condiciones de pago|payment terms)\b"
+				"regex": "(?i)\\b4\\.\\s*((?:condiciones de pago|payment terms))\\b"
 			},
 			"subtotal": {
 				"label": "Subtotal",
-				"regex": "(?i)\b(?:subtotal|subtotal \\(sin impuestos|before tax)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:subtotal|subtotal \\(sin impuestos|before tax)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
 			},
 			"tax_rate": {
 				"label": "Tasa de Impuesto",
-				"regex": "(?i)\b(?:tasa de impuesto|tax rate)\\s*[:\\-]?\\s*(\\d+(?:\\.\\d{1,2})?)%"
+				"regex": "(?i)\\b(?:tasa de impuesto|tax rate)\\s*[:\\-]?\\s*(\\d+(?:\\.\\d{1,2})?)%"
 			},
 			"tax_amount": {
 				"label": "Monto de Impuesto",
-				"regex": "(?i)\b(?:monto de impuesto|tax amount)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:monto de impuesto|tax amount)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
 			},
 			"total_due": {
 				"label": "Total a Pagar",
-				"regex": "(?i)\b(?:total a pagar|total due)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
+				"regex": "(?i)\\b(?:total a pagar|total due)\\s*[:\\-]?\\s*USD\\s*(\\d+(?:\\.\\d{2})?)"
 			},
 			"contract_details_intro": {
 				"label": "Detalles del Contrato",
-				"regex": "(?i)\b(?:detalles del contrato||contract details)\\b"
+				"regex": "(?i)\\b5\\.\\s*((?:detalles del Contrato|contract details))\\b"
 			},
 			"contract_number": {
 				"label": "Número de Contrato",
-				"regex": "(?i)\b(?:número de contrato|contract number)\\s*[:\\-]?\\s*(\\d+)"
+				"regex": "(?i)\\b(?:número de contrato|contract number)\\s*[:\\-]?\\s*(\\d+)"
 			},
 			"contract_order_number": {
 				"label": "Número de Orden",
-				"regex": "(?i)\b(?:número de orden|order number)\\s*[:\\-]?\\s*(\\d+)"
+				"regex": "(?i)\\b(?:número de orden|order number)\\s*[:\\-]?\\s*(\\d+)"
 			},
 			"contract_invoice_number": {
 				"label": "Número de Factura",
-				"regex": "(?i)\b(?:número de factura|invoice number)\\s*[:\\-]?\\s*(\\d+)"
+				"regex": "(?i)\\b(?:número de factura|invoice number)\\s*[:\\-]?\\s*(\\d+)"
 			},
 			"contract_hes": {
 				"label": "HES",
-				"regex": "(?i)\b(?:hes)\\s*[:\\-]?\\s*(\\d+)"
+				"regex": "(?i)\\b(?:hes)\\s*[:\\-]?\\s*(\\d+)"
 			},
 			"contract_end_date": {
 				"label": "Fecha de Término",
-				"regex": "(?i)\b(?:fecha de finalización|end date)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})"
+				"regex": "(?i)\\b(?:fecha de finalización|end date)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})"
 			},
 			"signature_intro": {
 				"label": "Firmas",
-				"regex": "(?i)\b(?:firmas|signatures)\b)"
+				"regex": "(?i)\\b9\\.\\s*((?:firmas|signatures))\\b"
 			},
 			"signatures": {
 				"fields": {
 					"first_person_name": {
 						"label": "Nombre de la Primera Persona",
-						"regex": "(?i)\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\b"
+						"regex": "(?i)\\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\\b"
 					},
 					"first_person_signature": {
 						"label": "Firma de la Primera Persona",
@@ -516,7 +519,7 @@
 					},
 					"second_person_name": {
 						"label": "Nombre de la Segunda Persona",
-						"regex": "(?i)\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\b"
+						"regex": "(?i)\\b[A-Z][a-z]+(?:\\s[A-Z][a-z]+)*\\b"
 					},
 					"second_person_signature": {
 						"label": "Firma de la Segunda Persona",
@@ -551,7 +554,7 @@
 			},
 			"contract_start_date": {
 				"label": "Fecha de Inicio",
-				"regex": "(?i)\b(?:date|fecha)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+				"regex": "(?i)\\b(?:date|fecha)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
 			}
 		}
 	}

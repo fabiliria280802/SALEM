@@ -405,34 +405,40 @@
 				"regex": "(?i)\\b3\\.\\s*((?:descripción de servicios e items|description of services & items))\\b"
 			},
 			"service_table": {
-				"label": "Tabla de Servicios",
-				"type": "table",
-				"columns": {
-					"service_code": {
-						"label": "Código",
-						"regex": "\\b(?:\\w{4})\\b"
-					},
-					"service_description": {
-						"label": "Descripción del Servicio",
-						"regex": ".+"
-					},
-					"service_hes": {
-						"label": "HES",
-						"regex": "\\b(?:\\d{8})\\b"
-					},
-					"service_quantity": {
-						"label": "Cantidad",
-						"regex": "\\b\\d+\\b"
-					},
-					"service_unit_cost": {
-						"label": "Costo Unitario",
-						"regex": "\\b\\d+(?:\\.\\d{2})\\b"
-					},
-					"service_cost": {
-						"label": "Costo",
-						"regex": "\\b\\d+(?:\\.\\d{2})\\b"
-					}
-				}
+			    "label": "Tabla de Servicios",
+			    "type": "table",
+			    "columns": {
+			        "service_code": {
+			            "label": "Código",
+			            "regex": "\\b(?:\\w{4})\\b",
+			            "alternatives": ["Code"]
+			        },
+			        "service_description": {
+			            "label": "Descripción del Servicio",
+			            "regex": ".+",
+			            "alternatives": ["Description"]
+			        },
+			        "service_hes": {
+			            "label": "HES",
+			            "regex": "\\b(?:\\d{8})\\b",
+			            "alternatives": ["HES"]
+			        },
+			        "service_quantity": {
+			            "label": "Cantidad",
+			            "regex": "\\b\\d+\\b",
+			            "alternatives": ["Quantity"]
+			        },
+			        "service_unit_cost": {
+			            "label": "Costo Unitario",
+			            "regex": "\\b\\d+(?:\\.\\d{2})\\b",
+			            "alternatives": ["Unit Cost"]
+			        },
+			        "service_cost": {
+			            "label": "Costo",
+			            "regex": "\\b\\d+(?:\\.\\d{2})\\b",
+			            "alternatives": ["Cost"]
+			        }
+			    }
 			},
 			"payment_terms_intro": {
 				"label": "Términos de Pago",

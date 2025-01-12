@@ -5,6 +5,7 @@ from PIL import Image
 import numpy as np
 import cv2
 import io
+import camelot
 
 from utils import load_document_schema
 
@@ -94,45 +95,100 @@ def extract_field_from_xml(xml_tree, field_info):
     return None
 
 
+def extract_table_with_camelot(pdf_path, page_number):
+    """
+    Extrae tablas del PDF utilizando Camelot.
+    """
+    tables = camelot.read_pdf(pdf_path, pages=str(page_number), flavor='stream')  # stream para tablas sin líneas
+    if not tables:
+        return [], ["No se encontraron tablas en la página."]
+    
+    table_data = []
+    for table in tables:
+        df = table.df
+        table_data.extend(df.to_dict(orient="records"))
+    
+    return table_data, []
+
+
 def extract_table_data(text, table_schema):
     """
     Extrae datos de una tabla en el texto basado en un esquema.
     """
     table_data = []
+    errors = []
     lines = text.split("\n")
     
-    # Localizar encabezado de la tabla usando regex
-    header_found = False
-    header_pattern = r"\b(" + "|".join(re.escape(col["label"]) for col in table_schema["columns"].values()) + r")\b"
+    # Localizar encabezado de la tabla usando las etiquetas y alternativas
+    header_labels = []
+    for col in table_schema["columns"].values():
+        header_labels.append(re.escape(col["label"]))
+        if "alternatives" in col:
+            header_labels.extend(re.escape(alt) for alt in col["alternatives"])
+
+    header_pattern = r"(?i)\b(" + "|".join(header_labels) + r")\b"
+    start_row = None
     for i, line in enumerate(lines):
-        if re.search(header_pattern, line, re.IGNORECASE):
-            header_found = True
+        if re.search(header_pattern, line):
             start_row = i + 1
             break
-    
-    if not header_found:
+
+    if start_row is None:
         return table_data, ["No se encontró el encabezado de la tabla."]
     
+    # Definir patrón de fin de tabla
+    END_OF_TABLE_PATTERN = r"(?i)\b(?:4\. Condiciones de Pago|Payment Terms|Detalles del Contrato|Contract Details)\b|^•+\s*$"
+
     # Procesar las filas de la tabla
+    current_row = []
     for line in lines[start_row:]:
+        if re.search(END_OF_TABLE_PATTERN, line):
+            break  # Detener el procesamiento al encontrar el fin de la tabla
+
         if line.strip() == "":
-            break  # Fin de la tabla
-        row = {}
-        row_data = re.split(r"\s{2,}", line.strip())  # Separar por múltiples espacios
-        
-        if len(row_data) != len(table_schema["columns"]):
-            continue  # Ignorar filas mal formateadas
+            if current_row:
+                # Procesar la fila acumulada
+                row, row_errors = process_row(" ".join(current_row), table_schema)
+                if any(row.values()):  # Si al menos un campo es válido
+                    table_data.append(row)
+                errors.extend(row_errors)
+                current_row = []  # Reiniciar acumulador
+            continue
 
-        for col_name, col_info in table_schema["columns"].items():
-            match = re.match(col_info["regex"], row_data.pop(0))
-            if match:
-                row[col_name] = match.group(0)
-            else:
-                row[col_name] = None
-        table_data.append(row)
+        current_row.append(line.strip())
+
+    # Procesar la última fila acumulada
+    if current_row:
+        row, row_errors = process_row(" ".join(current_row), table_schema)
+        if any(row.values()):  # Si al menos un campo es válido
+            table_data.append(row)
+        errors.extend(row_errors)
     
-    return table_data, []
+    return table_data, errors
 
+def process_row(row_text, table_schema):
+    """
+    Procesa una fila acumulada y la mapea a las columnas del esquema.
+    """
+    row = {}
+    row_data = re.split(r"\s{2,}", row_text)  # Separar por espacios múltiples
+    errors = []
+
+    for col_name, col_info in table_schema["columns"].items():
+        if not row_data:
+            row[col_name] = None
+            errors.append(f"Campo faltante: {col_name} en la fila: {row_text}")
+            continue
+
+        cell = row_data.pop(0)
+        match = re.match(col_info["regex"], cell)
+        if match:
+            row[col_name] = match.group(0)
+        else:
+            row[col_name] = None
+            errors.append(f"Campo inválido: {col_name} en la fila: {row_text}")
+
+    return row, errors
 
 def extract_text_from_document(file_path):
     """Extrae texto de un documento utilizando Tesseract."""

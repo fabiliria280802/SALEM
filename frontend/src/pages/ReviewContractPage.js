@@ -58,7 +58,7 @@ const ReviewContractPage = () => {
 	const handleApprove = async () => {
 		try {
 			await documentService.updateDocument(id, 'Contract', {
-				status: 'Accepted',
+				status: 'Aceptado',
 			});
 			toast.current.show({
 				severity: 'success',
@@ -98,11 +98,9 @@ const ReviewContractPage = () => {
 			<div className={styles.leftColumn}>
 				<h1 className={styles.title}>Resultado del análisis</h1>
 				<p className={styles.info}>
-					RUC: {documentData?.ruc || 'No disponible'}
+					RUC: {documentData?.provider_ruc || 'No disponible'}
 					<br />
 					Contrato: {documentData?.contract_number || 'No disponible'}
-					<br />
-					Tipo de documento: {documentData?.tipoDocumento || 'No disponible'}
 					<br />
 					Archivo: {documentData?.file_path || 'No disponible'}
 				</p>

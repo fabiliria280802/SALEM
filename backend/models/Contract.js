@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const contractSchema = new mongoose.Schema({
+	provider_ruc: {
+		type: String,
+		trim: true,
+	},
 	contract_number: {
 		type: String,
 		trim: true,

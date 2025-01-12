@@ -14,8 +14,74 @@ exports.sendPasswordCreationEmail = async user => {
 		const mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: user.email,
-			subject: 'Crea tu contraseña',
-			text: `Hola ${user.name}, por favor crea tu contraseña en el siguiente enlace: ${resetLink}`,
+			subject: '¡Bienvenido a Salem! Crea tu contraseña',
+			html: `
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Crea tu contraseña</title>
+                    <style>
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            background-color: #f3f3f3;
+                            font-family: Arial, sans-serif;
+                            text-align: center;
+                        }
+                        .container {
+                            width: 100%;
+                            padding: 20px;
+                            background-color: #f3f3f3;
+                            display: flex;
+                            justify-content: center;
+                        }
+                        .box {
+                            width: 500px;
+                            background-color: #ffffff;
+                            border-radius: 15px;
+                            padding: 20px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                        }
+                        h1 {
+                            font-size: 24px;
+                            font-weight: bold;
+                            margin: 0;
+                            margin-bottom: 10px;
+                        }
+                        p {
+                            font-size: 16px;
+                            line-height: 1.6;
+                            margin: 0;
+                            margin-bottom: 20px;
+                        }
+                        .button {
+                            background-color: #1e5f74;
+                            color: #ffffff;
+                            font-size: 18px;
+                            font-weight: bold;
+                            padding: 12px 24px;
+                            text-decoration: none;
+                            border-radius: 10px;
+                            display: inline-block;
+                        }
+                        .button:hover {
+                            background-color: #174954;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="box">
+                            <h1>¡Hola ${user.name}!</h1>
+                            <p>Estás a un paso de terminar tu registro. Da clic en el botón a continuación para crear tu contraseña.</p>
+                            <a href="${resetLink}" class="button">Nueva contraseña</a>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `
 		};
 
 		await transporter.sendMail(mailOptions);
@@ -28,6 +94,7 @@ exports.sendPasswordCreationEmail = async user => {
 		);
 	}
 };
+
 
 exports.sendPasswordResetEmail = async user => {
 	try {

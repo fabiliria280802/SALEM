@@ -89,24 +89,4 @@ Debes estar en la carpeta del backend
 npm run dev
 ```
 
-### ¿Cómo correr las pruebas?
-
-Debes estar en la carpeta del backend 
-
-```bash
-npm run test
-```
-
-Para usar ES lint debes correr el comando:
-
-```bash
-npm run lint
-```
-
-### ¿Comó usar prettier?
-
-```bash
-npm run format
-```
-
 **Nota:** Este proyecto fue programado en computadoras con sistema operativo MacOS 15.2.0 y Linux/Fedora 41, para más info contactate con los colaboradores del projecto.

@@ -5,6 +5,10 @@ The choice of CNNs, specifically ResNet50, allows the application to benefit fro
 
 SALEM's architecture is built on the MVC (Model-View-Controller) pattern, ensuring a clean separation of concerns and facilitating maintainability. The integration of Tesseract OCR further enhances the system's ability to extract textual information from images, making it a comprehensive solution for document validation.
 
+## Read this in another language
+- [Lea esto en español](README-frontend-esp.md)
+
+
 ## What does SALEM mean?
 
 - **S** for **Smart Recognition**: Implementing advanced AI algorithms for the automatic recognition of invoices, contracts, and reception reports, ensuring high accuracy in data extraction.
@@ -59,6 +63,7 @@ By: Fabiana Liria & Mateo Ávila
       ```bash
       npm install
       ```
+**Note:** For more information about backend see [this page](Readme-backend-ing.md)
 
     - **For Frontend:**
       In the frontend terminal:

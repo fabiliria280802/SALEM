@@ -133,7 +133,7 @@ exports.createContract = [
 							status,
 							provider_ruc: result.extracted_data?.provider_ruc, 
     						contract_number: result.extracted_data?.contract_number,
-							documentType: documentType,
+							contract_type: documentType,
 							missing_fields: result.missing_fields || [],
 							validation_errors: result.validation_errors || [],
 							ai_decision_explanation,
@@ -152,7 +152,7 @@ exports.createContract = [
 							status,
 							provider_ruc: result.extracted_data?.provider_ruc, 
     						contract_number: result.extracted_data?.contract_number,
-							documentType: documentType,
+							contract_type: documentType,
 							missing_fields: result.missing_fields || [],
 							validation_errors: result.validation_errors || [],
 						});

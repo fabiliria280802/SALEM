@@ -16,72 +16,55 @@ exports.sendPasswordCreationEmail = async user => {
 			to: user.email,
 			subject: '¡Bienvenido a Salem! Crea tu contraseña',
 			html: `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Crea tu contraseña</title>
-                    <style>
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            background-color: #f3f3f3;
-                            font-family: Arial, sans-serif;
-                            text-align: center;
-                        }
-                        .container {
-                            width: 100%;
-                            padding: 20px;
-                            background-color: #f3f3f3;
-                            display: flex;
-                            justify-content: center;
-                        }
-                        .box {
-                            width: 500px;
-                            background-color: #ffffff;
-                            border-radius: 15px;
-                            padding: 20px;
-                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                        }
-                        h1 {
-                            font-size: 24px;
-                            font-weight: bold;
-                            margin: 0;
-                            margin-bottom: 10px;
-                        }
-                        p {
-                            font-size: 16px;
-                            line-height: 1.6;
-                            margin: 0;
-                            margin-bottom: 20px;
-                        }
-                        .button {
-                            background-color: #1e5f74;
-                            color: #ffffff;
-                            font-size: 18px;
-                            font-weight: bold;
-                            padding: 12px 24px;
-                            text-decoration: none;
-                            border-radius: 10px;
-                            display: inline-block;
-                        }
-                        .button:hover {
-                            background-color: #174954;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <div class="box">
-                            <h1>¡Hola ${user.name}!</h1>
-                            <p>Estás a un paso de terminar tu registro. Da clic en el botón a continuación para crear tu contraseña.</p>
-                            <a href="${resetLink}" class="button">Nueva contraseña</a>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `
+				<!DOCTYPE html>
+				<html lang="es">
+				<head>
+				  <meta charset="UTF-8">
+				  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+				</head>
+				<body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
+				  <!-- Tabla principal con fondo gris claro -->
+				  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f2f2f2;">
+				    <tr>
+				      <td align="center" valign="top">
+				        <!-- Tabla interna para contenido centrado -->
+				        <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; margin: auto; padding: 20px; border-radius: 8px;">
+				          <!-- Imagen centrada -->
+				          <tr>
+				            <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+				              <img src="https://i.postimg.cc/1zT2r7ny/salem.png" alt="Te damos la bienvenida" width="200" style="display: block; margin: 0 auto;">
+				            </td>
+				          </tr>
+				          <!-- Cuadrado blanco con texto centrado, tamaño fijo -->
+				          <tr>
+				            <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+				              <div style="width: 200px; height: 200px; background-color: #ffffff; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin: 0 auto; padding: 15px; box-sizing: border-box;">
+				                <!-- Saludo -->
+				                <p style="font-size: 13px; font-weight: bold; color: #000; margin: 5px 0;">¡Hola ${user.name}!</p>
+				                <!-- Texto descriptivo -->
+				                <p style="font-size: 13px; font-weight: normal; color: #000; line-height: 1.3; margin: 5px 0;">
+				                  Estás a un paso de terminar tu registro. Da clic abajo y crea tu contraseña.
+				                </p>
+				                <!-- Botón centrado -->
+				                <div style="margin-top: 10px;">
+				                  <a href="${resetLink}" style="background-color: #0056b3; color: #ffffff; text-decoration: none; padding: 5px 10px; border-radius: 5px; font-size: 10px; font-weight: bold; display: inline-block;">Nueva contraseña</a>
+				                </div>
+				              </div>
+				            </td>
+				          </tr>
+				          <!-- Texto de copyright -->
+				          <tr>
+				            <td align="center" style="padding-top: 15px;">
+				              <p style="font-size: 12px; color: #666; font-weight: normal; margin: 0;">Copyright ® ENAP Ecuador.</p>
+				            </td>
+				          </tr>
+				        </table>
+				      </td>
+				    </tr>
+				  </table>
+				</body>
+				</html>
+			`
 		};
 
 		await transporter.sendMail(mailOptions);
@@ -94,6 +77,7 @@ exports.sendPasswordCreationEmail = async user => {
 		);
 	}
 };
+
 
 
 exports.sendPasswordResetEmail = async user => {

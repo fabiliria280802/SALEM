@@ -212,7 +212,7 @@ def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text
         "client_ruc", "client_direction", "client_city", "client_country",
         "contract_number", "contract_order_number", "contract_invoice_number",
         "contract_hes", "contract_end_date", "first_person_name", "first_person_position",
-        "second_person_name", "second_person_position","payment_terms_intro", "service_table", "contract_start_date"
+        "second_person_name", "second_person_position","payment_terms_intro", "service_table", "contract_start_date", "service_code", "service_description", "service_hes","service_quantity", "service_unit_cost", "service_cost"
     ]
 
     # Cargar campos del esquema

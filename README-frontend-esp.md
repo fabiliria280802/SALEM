@@ -63,7 +63,7 @@ Por: Fabiana Liria & Mateo Ávila
       npm install
       ```
 
-        **Note:**Para más información mira [esta página](Readme-backend-esp.md)
+        **Note:** Para más información mira [esta página](../backend/Readme-backend-esp.md)
 
     - **Para el Frontend:**
       En la terminal del frontend:

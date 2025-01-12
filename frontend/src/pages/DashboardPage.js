@@ -1,199 +1,229 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Chart } from 'primereact/chart';
+import { Calendar } from 'primereact/calendar';
+import { Button } from 'primereact/button';
+import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend } from 'chart.js';
 import styles from '../styles/DashboardPage.module.css';
+import { getAiMetrics } from '../services/aiMetricsService';
+
+// Registrar los controladores de Chart.js
+ChartJS.register(BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
 const DashboardPage = () => {
-	const totalDocsData = {
-		labels: ['11/10/24', '25/10/24', '08/11/24'],
-		datasets: [
-			{
-				label: 'Documentos Procesados',
-				data: [170, 210, 236],
-				backgroundColor: '#42A5F5',
-				borderColor: '#1E88E5',
-				fill: true,
-			},
-		],
-	};
+    const [metricsData, setMetricsData] = useState([]);
+    const [filteredMetrics, setFilteredMetrics] = useState([]);
+    const [dateRange, setDateRange] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-	const errorDistributionData = {
-		labels: ['Factura', 'HES', 'MIGO'],
-		datasets: [
-			{
-				label: 'Falsos Positivos',
-				data: [40, 0, 0],
-				backgroundColor: '#FF6384',
-			},
-			{
-				label: 'Falsos Negativos',
-				data: [25, 0, 0],
-				backgroundColor: '#36A2EB',
-			},
-		],
-	};
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const metrics = await getAiMetrics();
+                setMetricsData(metrics);
+                setFilteredMetrics(metrics);
+            } catch (err) {
+                setError('Error al cargar las métricas de IA.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-	// Datos base
-	const dates = ['11/10/24', '25/10/24', '08/11/24'];
-	const accuracyValues = [59, 73, 75];
+        fetchData();
+    }, []);
 
-	// Calcular Tasa de Reproceso en base a Accuracy
-	const reprocessRates = accuracyValues.map(accuracy =>
-		Math.max((100 - accuracy) * 0.4, 5),
-	); // Mínimo del 5%
+    useEffect(() => {
+        if (dateRange) {
+            const [startDate, endDate] = dateRange;
+            const filtered = metricsData.filter(metric => {
+                const date = new Date(metric.date_recorded);
+                return date >= startDate && date <= endDate;
+            });
+            setFilteredMetrics(filtered);
+        } else {
+            setFilteredMetrics(metricsData);
+        }
+    }, [dateRange, metricsData]);
 
-	const accuracyData = {
-		labels: dates,
-		datasets: [
-			{
-				label: 'Precisión (%)',
-				data: accuracyValues,
-				fill: false,
-				borderColor: '#FF6384',
-				tension: 0.4,
-				pointBackgroundColor: '#81C784',
-			},
-		],
-	};
+    const resetFilters = () => {
+        setDateRange(null);
+        setFilteredMetrics(metricsData);
+    };
 
-	const reprocessRateData = {
-		labels: dates,
-		datasets: [
-			{
-				label: 'Tasa de Reproceso (%)',
-				data: reprocessRates,
-				backgroundColor: '#FFA726',
-				borderColor: '#FB8C00',
-				fill: true,
-			},
-		],
-	};
+    if (loading) {
+        return <div className={styles.dashboard}>Cargando datos...</div>;
+    }
 
-	const errorTypesData = {
-		labels: ['Form. Inválido', 'D. Ausentes', 'Ext. Incorrecta'],
-		datasets: [
-			{
-				label: 'Errores por Campo',
-				data: [30, 45, 25],
-				backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
-			},
-		],
-	};
+    if (error) {
+        return <div className={styles.dashboard}>{error}</div>;
+    }
 
-	const options = {
-		responsive: true,
-		plugins: {
-			legend: {
-				position: 'top',
-			},
-		},
-	};
+    // Preparación de datos para las gráficas
+    const accuracyData = {
+        labels: filteredMetrics.map(m => m.batch_id || 'Sin Lote'),
+        datasets: [
+            {
+                label: 'Precisión (%)',
+                data: filteredMetrics.map(m => m.ai_accuracy),
+                backgroundColor: '#42A5F5',
+                borderColor: '#1E88E5',
+                fill: false,
+                tension: 0.4,
+            },
+        ],
+    };
 
-	const confusionMatrixData = {
-		labels: ['Predicción Negativa', 'Predicción Positiva'],
-		datasets: [
-			{
-				label: 'Real Negativo',
-				data: [110, 40], // VN, FP
-				backgroundColor: '#36A2EB',
-			},
-			{
-				label: 'Real Positivo',
-				data: [25, 150], // FN, VP
-				backgroundColor: '#FF6384',
-			},
-		],
-	};
+    const errorDistributionData = {
+        labels: ['Errores'],
+        datasets: [
+            {
+                label: 'Falsos Positivos',
+                data: [filteredMetrics.reduce((acc, m) => acc + (m.false_positives || 0), 0)],
+                backgroundColor: '#FF6384',
+            },
+            {
+                label: 'Falsos Negativos',
+                data: [filteredMetrics.reduce((acc, m) => acc + (m.false_negatives || 0), 0)],
+                backgroundColor: '#36A2EB',
+            },
+        ],
+    };
 
-	const confusionMatrixOptions = {
-		indexAxis: 'y', // Mostrar horizontalmente
-		responsive: true,
-		plugins: {
-			legend: {
-				position: 'top',
-			},
-			tooltip: {
-				callbacks: {
-					label: function (context) {
-						return `${context.dataset.label}: ${context.raw}`;
-					},
-				},
-			},
-		},
-		scales: {
-			x: {
-				beginAtZero: true,
-				title: {
-					display: true,
-					text: 'Número de Casos',
-				},
-			},
-			y: {
-				title: {
-					display: true,
-					text: 'Valor Real',
-				},
-			},
-		},
-	};
+    const errorDistributionOptions = {
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+        },
+        responsive: true,
+        scales: {
+            x: {
+                stacked: true,
+            },
+            y: {
+                stacked: true,
+            },
+        },
+    };
 
-	const errorTypesOptions = {
-		responsive: true,
-		plugins: {
-			legend: {
-				position: 'left', // Coloca los labels uno al lado del otro
-				labels: {
-					boxWidth: 10,
-					padding: 15,
-				},
-			},
-			tooltip: {
-				callbacks: {
-					label: function (context) {
-						return `${context.label}: ${context.raw}%`;
-					},
-				},
-			},
-		},
-	};
+    const executionTimeData = {
+        labels: filteredMetrics.map(m => new Date(m.date_recorded).toLocaleDateString()),
+        datasets: [
+            {
+                label: 'Tiempo de Ejecución (ms)',
+                data: filteredMetrics.map(m => m.execution_time),
+                borderColor: '#FFCE56',
+                fill: false,
+                tension: 0.4,
+            },
+        ],
+    };
 
-	return (
-		<div className={styles.dashboard}>
-			<div className={styles.grid}>
-				<div className={styles.card}>
-					<h2>Total de Documentos Evaluados</h2>
-					<Chart type="bar" data={totalDocsData} options={options} />
-				</div>
-				<div className={styles.card}>
-					<h2>Porcentaje de Accuracy</h2>
-					<Chart type="line" data={accuracyData} options={options} />
-				</div>
-				<div className={styles.card}>
-					<h2>Distribución de Falsos Positivos y Negativos</h2>
-					<Chart type="bar" data={errorDistributionData} options={options} />
-				</div>
-				<div className={styles.card}>
-					<h2>Tasa de Reproceso</h2>
-					<Chart type="line" data={reprocessRateData} options={options} />
-				</div>
-				<div className={styles.centeredChart}>
-					<h2>Distribución de Tipos de Errores</h2>
-					<Chart
-						type="doughnut"
-						data={errorTypesData}
-						options={errorTypesOptions}
-					/>
-				</div>
-				<div className={styles.card}>
-					<h2>Matriz de Confusión General</h2>
-					<Chart
-						type="bar"
-						data={confusionMatrixData}
-						options={confusionMatrixOptions}
-					/>
-				</div>
-			</div>
-		</div>
-	);
+    const confidenceScoreData = {
+        labels: filteredMetrics.map(m => m.batch_id || 'Sin Lote'),
+        datasets: [
+            {
+                label: 'Puntaje de Confianza',
+                data: filteredMetrics.map(m => m.ai_confidence_score || 0),
+                backgroundColor: '#81C784',
+                borderColor: '#66BB6A',
+                fill: true,
+            },
+        ],
+    };
+
+    const fieldErrorsData = {
+        labels: Object.keys(
+            filteredMetrics.reduce((fields, m) => {
+                Object.keys(m.field_errors || {}).forEach(key => fields[key] = true);
+                return fields;
+            }, {})
+        ),
+        datasets: [
+            {
+                label: 'Errores por Campo',
+                data: Object.keys(
+                    filteredMetrics.reduce((fields, m) => {
+                        Object.keys(m.field_errors || {}).forEach(key => fields[key] = true);
+                        return fields;
+                    }, {})
+                ).map(key =>
+                    filteredMetrics.reduce((acc, m) => acc + (m.field_errors[key] || 0), 0)
+                ),
+                backgroundColor: '#FFA726',
+            },
+        ],
+    };
+
+    return (
+        <div className={styles.dashboard}>
+            <h1 className={styles.pageTitle}>Dashboard de métricas de IA</h1>
+            <p className={styles.pageSubtitle}>
+                Monitorea la precisión, tiempos de ejecución y errores del sistema.
+            </p>
+            <div className={styles.filterContainer}>
+                <h2>Filtrar por fechas:</h2>
+                <div className={styles.filterActions}>
+                    <Calendar
+                        value={dateRange}
+                        onChange={(e) => setDateRange(e.value)}
+                        selectionMode="range"
+                        readOnlyInput
+                        dateFormat="dd/mm/yy"
+                        placeholder="Selecciona las fechas"
+                        className={styles.calendar}
+                        maxDate={new Date()}
+                        showButtonBar
+                    />
+                    <Button
+                        label="Restablecer"
+                        onClick={resetFilters}
+                        className={styles.resetButton}
+                    />
+                </div>
+            </div>
+            <div className={styles.grid}>
+                <div className={styles.card}>
+                    <h2>Precisión por Batch</h2>
+                    <p className={styles.chartDescription}>
+                        Representa la precisión de las predicciones de la IA agrupadas por lote.
+                    </p>
+                    <Chart type="bar" data={accuracyData} />
+                </div>
+                <div className={styles.card}>
+                    <h2>Distribución de Errores</h2>
+                    <p className={styles.chartDescription}>
+                        Proporción de errores falsos positivos y falsos negativos en el sistema.
+                    </p>
+                    <Chart type="bar" data={errorDistributionData} options={errorDistributionOptions} />
+                </div>
+                <div className={styles.card}>
+                    <h2>Tiempo de Ejecución</h2>
+                    <p className={styles.chartDescription}>
+                        Tiempo promedio que toma la IA en procesar cada lote de datos.
+                    </p>
+                    <Chart type="line" data={executionTimeData} />
+                </div>
+                <div className={styles.card}>
+                    <h2>Puntaje de Confianza</h2>
+                    <p className={styles.chartDescription}>
+                        Variabilidad del puntaje de confianza en las predicciones realizadas.
+                    </p>
+                    <Chart type="line" data={confidenceScoreData} />
+                </div>
+                <div className={styles.card}>
+                    <h2>Errores por Campo</h2>
+                    <p className={styles.chartDescription}>
+                        Muestra los campos con mayor cantidad de errores en las predicciones.
+                    </p>
+                    <Chart type="bar" data={fieldErrorsData} options={{ indexAxis: 'y' }} />
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default DashboardPage;
+

@@ -1,87 +1,171 @@
-/* Estilo principal del dashboard */
 .dashboard {
-	display: flex;
-	flex-direction: column;
-	justify-content: center; /* Centra verticalmente las tarjetas */
-	align-items: center; /* Centra horizontalmente las tarjetas */
-	min-height: 100vh; /* Ocupa toda la altura de la pantalla */
-	background-color: #f5f6fa; /* Fondo gris */
-	font-family: 'Arial', sans-serif;
-	margin: 0; /* Elimina márgenes externos */
-	padding: 20px; /* Espaciado interno */
-  }
-  
-  /* Estilo del título */
-  .title {
-	text-align: center;
-	color: #333;
-	margin-bottom: 12px;
-	font-size: 22px;
-  }
-  
-  /* Estilo de la cuadrícula */
-  .grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsivo */
-	gap: 20px; /* Espacio entre las tarjetas */
-	width: 100%;
-	max-width: 1200px; /* Opcional: limitar ancho máximo de la cuadrícula */
-	margin: 0 auto; /* Centra horizontalmente la cuadrícula */
-  }
-  
-  /* Estilo de las tarjetas */
-  .card,
-  .centeredChart {
-	display: flex;
-	flex-direction: column; /* Organiza los elementos en columna */
-	justify-content: center; /* Centra el gráfico verticalmente */
-	align-items: center; /* Centra el gráfico horizontalmente */
-	width: 100%;
-	background-color: #fff;
-	border-radius: 8px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	padding: 20px; /* Espaciado interno */
-	text-align: center;
-	min-height: 250px; /* Asegura que todas las tarjetas tengan la misma altura */
-  }
-  
-  /* Estilo del encabezado en cada tarjeta */
-  .card h2,
-  .centeredChart h2 {
-	font-size: 16px;
-	color: #555;
-	margin-bottom: 10px;
-  }
-  
-  /* Ajuste de los gráficos */
-  .card canvas,
-  .centeredChart canvas {
-	max-width: 100%;
-	height: auto; /* Ajusta automáticamente la altura */
-	flex-shrink: 0; /* Asegura que el gráfico no se deforme */
-  }
-  
-  /* Ajustes globales */
-  body {
-	margin: 0;
-	padding: 0;
-	background-color: #f4f4f9; /* Fondo gris claro */
-  }
-  
-  /* Media queries para pantallas pequeñas */
-  @media (max-width: 768px) {
-	.grid {
-	  grid-template-columns: 1fr; /* Una sola columna en móviles y tablets */
-	}
-  
-	.card,
-	.centeredChart {
-	  margin: 10px auto; /* Espaciado uniforme en dispositivos pequeños */
-	}
-  
-	.card h2,
-	.centeredChart h2 {
-	  font-size: 14px; /* Tamaño de texto más pequeño */
-	}
-  }
-  
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f6fa; /* Fondo consistente */
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+.pageTitle {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.pageSubtitle {
+    font-size: 16px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.filterContainer {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    display: flex; /* Alinear horizontalmente en pantallas grandes */
+    align-items: center;
+    gap: 10px;
+}
+
+.filterContainer h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #2c3e50;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.filterActions {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 10px;
+    flex-wrap: wrap; /* Permitir que los elementos se ajusten en pantallas pequeñas */
+}
+
+.calendar {
+    flex: 1;
+    min-width: 200px; /* Asegurar que el calendario no sea demasiado pequeño */
+}
+
+.resetButton {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 120px; /* Tamaño mínimo del botón */
+}
+
+.resetButton:hover {
+    background-color: #1e88e5;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    height: 400px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card h2 {
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.card canvas {
+    width: 100% !important;
+    height: 85% !important;
+    max-height: 320px;
+}
+
+.loading,
+.error {
+    font-size: 18px;
+    color: #888;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.error {
+    color: #D32F2F;
+}
+
+.chartDescription {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+
+/* Estilo responsivo para tablets y móviles */
+@media (max-width: 768px) {
+    .filterContainer {
+        flex-direction: column; /* Apilar elementos verticalmente */
+        align-items: stretch; /* Alinear elementos al ancho completo */
+    }
+
+    .filterActions {
+        flex-direction: column; /* Cambiar la dirección de los elementos */
+        align-items: stretch;
+        gap: 15px; /* Más espacio entre los elementos */
+    }
+
+    .calendar {
+        width: 100%; /* Asegurar que el calendario ocupe todo el ancho disponible */
+    }
+
+    .resetButton {
+        width: 100%; /* Botón también ocupa el ancho completo */
+    }
+}
+
+@media (min-width: 1024px) {
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}

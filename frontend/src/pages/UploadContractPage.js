@@ -38,13 +38,13 @@ const UploadContractPage = () => {
 			const fileSizeMB = file.size / (1024 * 1024);
 			const fileExtension = file.name.split('.').pop().toLowerCase();
 
-			if (fileExtension === 'pdf' && fileSizeMB <= 50) {
+			if ((fileExtension === 'pdf' || fileExtension === 'xml') && fileSizeMB <= 50) {
 				setDocumentData({ ...documentData, file });
 			} else {
 				toast.current.show({
 					severity: 'error',
 					summary: 'Error',
-					detail: 'Solo se permiten archivos PDF de hasta 50 MB',
+					detail: 'Solo se permiten archivos PDF o XML de hasta 50 MB',
 					life: 5000,
 				});
 			}
@@ -171,13 +171,13 @@ const UploadContractPage = () => {
 					</div>
 
 					<div className={styles.formGroup}>
-						<label htmlFor="file">Cargar archivo (PDF):</label>
+						<label htmlFor="file">Cargar archivo (PDF o XML):</label>
 						<InputText
 							type="file"
 							id="file"
 							name="file"
 							onChange={handleFileChange}
-							accept=".pdf"
+							accept=".pdf,.xml"
 						/>
 					</div>
 				</div>
@@ -200,3 +200,4 @@ const UploadContractPage = () => {
 };
 
 export default UploadContractPage;
+

@@ -11,7 +11,6 @@ import HomePage from './pages/HomePage';
 import ResetPasswordPage from './pages/ResetPassawordPage';
 import CreateUserPage from './pages/CreateUserPage';
 import DashboardPage from './pages/DashboardPage';
-import UploadDocumentsPage from './pages/UploadDocumentsPage';
 import DocumentsListPage from './pages/DocumentsListPage';
 import UserAcountPage from './pages/UserAcountPage';
 import UsersManagementPage from './pages/UsersManagementPage';
@@ -90,11 +89,6 @@ const AppContent = () => {
 					<PrivateRoute
 						path="/review-invoice/:id"
 						component={ReviewInvoicePage}
-						roles={['Administrador', 'Gestor', 'Proveedor']}
-					/>
-					<PrivateRoute
-						path="/upload-document"
-						component={UploadDocumentsPage}
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
 					<PrivateRoute

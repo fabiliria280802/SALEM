@@ -20,30 +20,6 @@ const invoiceSchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
-	service: {
-		type: String,
-		trim: true,
-	},
-	subtotal: {
-		type: Number,
-	},
-	discount_percentage: {
-		type: Number,
-		default: 0,
-	},
-	discount: {
-		type: Number,
-		default: 0,
-	},
-	subtotal_with_discount: {
-		type: Number,
-	},
-	iva: {
-		type: Number,
-	},
-	total: {
-		type: Number,
-	},
 	created_by: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
@@ -61,6 +37,11 @@ const invoiceSchema = new mongoose.Schema({
 	ai_decision_explanation: {
 		type: String,
 	},
+	missing_errors: [
+		{
+			type: String,
+		},
+	],
 	validation_errors: [
 		{
 			type: String,

@@ -5,12 +5,16 @@ import { Toast } from 'primereact/toast';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import documentService from '../services/documentService';
 import styles from '../styles/DocumentReviewPage.module.css';
+import { useLocation } from 'react-router-dom';
 
 const ReviewServiceRecordPage = () => {
+	const location = useLocation();
 	const [documentData, setDocumentData] = useState(null);
 	const [loading, setLoading] = useState(true);
 	const [fileType, setFileType] = useState('pdf');
 	const [filePath, setFilePath] = useState('');
+	const queryParams = new URLSearchParams(location.search);
+    const contractId = queryParams.get('contractId');
 	const toast = useRef(null);
 	const history = useHistory();
 	const { id } = useParams();
@@ -46,7 +50,7 @@ const ReviewServiceRecordPage = () => {
 				summary: 'Éxito',
 				detail: 'Documento aprobado',
 			});
-			history.push(`/upload-invoice/${id}`);
+			history.push(``);
 		} catch (error) {
 			toast.current.show({
 				severity: 'error',

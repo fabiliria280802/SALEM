@@ -1,19 +1,11 @@
 const mongoose = require('mongoose');
 
-const signatureSchema = new mongoose.Schema({
-	name: {
-		type: String,
-	},
-	position: {
-		type: String,
-	},
-	type: {
-		type: String,
-		enum: ['Provider', 'Receiver'],
-	},
-});
-
 const serviceDeliveryRecordSchema = new mongoose.Schema({
+	hes_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Document',
+        required: true,
+	},
 	hes_number: {
 		type: String,
 		trim: true,
@@ -22,20 +14,11 @@ const serviceDeliveryRecordSchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
-	service: {
-		type: String,
-		trim: true,
-	},
-	location: {
-		type: String,
-		trim: true,
-	},
-	signatures: {
-		type: [signatureSchema],
-	},
-	contract: {
-		type: String,
-	},
+	contract_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Contract',
+        required: true,
+    },
 	start_date: {
 		type: Date,
 	},
@@ -59,6 +42,11 @@ const serviceDeliveryRecordSchema = new mongoose.Schema({
 	ai_decision_explanation: {
 		type: String,
 	},
+	missing_errors: [
+		{
+			type: String,
+		},
+	],
 	validation_errors: [
 		{
 			type: String,

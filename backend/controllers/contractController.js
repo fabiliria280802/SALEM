@@ -50,7 +50,7 @@ exports.createContract = [
 				{
 					env: {
 						...process.env,
-						TESSDATA_PREFIX: '/usr/share/tesseract/tessdata',
+						TESSDATA_PREFIX: process.env.TESSDATA_PREFIX,
 					},
 				},
 			);

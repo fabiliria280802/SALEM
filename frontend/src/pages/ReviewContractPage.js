@@ -77,6 +77,10 @@ const ReviewContractPage = () => {
 		}
 	};
 
+	const handleCancel = () => {
+		history.push('/upload-contract');
+	};
+
 	const handleRevalidate = async () => {
 		try {
 			await documentService.requestRevalidation(id);
@@ -91,8 +95,8 @@ const ReviewContractPage = () => {
 	};
 
 	const handleGoToDeliveryRecord = () => {
-		history.push('/upload-service-record');
-	}
+		history.push(`/upload-service-record?contractId=${documentData._id}&ruc=${documentData.provider_ruc}`);
+	};	
 
 	if (loading) {
 		return <div>Cargando...</div>;
@@ -157,6 +161,14 @@ const ReviewContractPage = () => {
                             onClick={handleApprove}
                         />
                     )}
+				{documentData.status === 'Denegado' && 
+					(user.role === 'Proveedor') &&	(							
+						<Button
+							label="Cargar otro documento"
+							className={styles.button}
+							onClick={handleCancel}
+						/>
+				)}
                 {documentData.status === 'Denegado' && (
                     <Button
                         label="Solicitar revalidación"
@@ -164,6 +176,13 @@ const ReviewContractPage = () => {
                         onClick={handleRevalidate}
                     />
                 )}
+				{documentData.status === 'Denegado' && (								
+					<Button
+						label="Cargar otro documento"
+						className={styles.button}
+						onClick={handleCancel}
+					/>
+				)}
 				{documentData.status === 'Aceptado' && (
 					<Button
 						label="Cargar una acta de recepción"

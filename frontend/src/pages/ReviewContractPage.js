@@ -77,8 +77,12 @@ const ReviewContractPage = () => {
 		}
 	};
 
-	const handleCancel = () => {
+	const handleGotoUploadContract = () => {
 		history.push('/upload-contract');
+	};
+
+	const handleCancel = () => {
+		history.push('/');
 	};
 
 	const handleRevalidate = async () => {
@@ -166,7 +170,7 @@ const ReviewContractPage = () => {
 						<Button
 							label="Cargar otro documento"
 							className={styles.button}
-							onClick={handleCancel}
+							onClick={handleGotoUploadContract}
 						/>
 				)}
                 {documentData.status === 'Denegado' && (
@@ -180,7 +184,7 @@ const ReviewContractPage = () => {
 					<Button
 						label="Cargar otro documento"
 						className={styles.button}
-						onClick={handleCancel}
+						onClick={handleGotoUploadContract}
 					/>
 				)}
 				{documentData.status === 'Aceptado' && (
@@ -190,6 +194,11 @@ const ReviewContractPage = () => {
 						onClick={handleGoToDeliveryRecord}
 					/>
 				)}
+				<Button
+                        label="Salir"
+                        className={styles.buttonReverse}
+                        onClick={handleCancel}
+                    />
             </div>
 
             <div className={styles.rightColumn}>

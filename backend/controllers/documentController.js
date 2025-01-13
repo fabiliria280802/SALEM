@@ -2,14 +2,13 @@ const Document = require('../models/Document');
 
 exports.addDocument = async (req, res) => {
 	try {
-		const { number, type, register_date, service_delivery_record_id } =
+		const { number, type, register_date } =
 			req.body;
 
 		const newDocument = new Document({
 			number,
 			type,
 			register_date: new Date(register_date),
-			service_delivery_record_id,
 		});
 
 		const savedDocument = await newDocument.save();
@@ -21,6 +20,37 @@ exports.addDocument = async (req, res) => {
 		});
 	}
 };
+
+exports.addDocuments = async (req, res) => {
+    try {
+        const documents = req.body; // Se espera que req.body sea un arreglo de documentos
+
+        if (!Array.isArray(documents)) {
+            return res.status(400).json({ error: 'Los datos deben ser un arreglo de documentos' });
+        }
+
+        // Validar que todos los documentos tengan los campos requeridos
+        for (const doc of documents) {
+            if (!doc.number || !doc.register_date || !doc.type) {
+                return res.status(400).json({ 
+                    error: 'Todos los documentos deben tener number, register_date y type' 
+                });
+            }
+        }
+
+        const savedDocuments = await Document.insertMany(documents);
+        res.status(201).json({
+            message: 'Documentos creados exitosamente',
+            documents: savedDocuments,
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: 'Error al crear los documentos',
+            details: error.message,
+        });
+    }
+};
+
 
 exports.getDocumentById = async (req, res) => {
 	try {

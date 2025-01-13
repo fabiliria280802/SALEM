@@ -152,9 +152,8 @@ const UploadServiceDeliveryRecordPage = () => {
 			});
 		}
 	};
- 	//TODO: Poner la ruta correcta de la pestaña anterior
 	const handleCancel = () => {
-		history.push('/review-contract');
+		history.push(`/review-contract/${contractId}`);
 	};
 
 	return (

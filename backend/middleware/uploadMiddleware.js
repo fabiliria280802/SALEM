@@ -24,9 +24,9 @@ const fileFilter = (req, file, cb) => {
 	console.log('File recibido:', file);
 
 	const allowedTypes = {
-		Contract: ['.pdf'],
-		ServiceDeliveryRecord: ['.pdf'],
-		Invoice: ['.pdf', '.png'],
+		Contract: ['.pdf', '.xml'],
+		ServiceDeliveryRecord: ['.pdf', '.png','.xml'],
+		Invoice: ['.pdf', '.png','.xml'],
 	};
 
 	const documentType = req.body.documentType;

@@ -14,14 +14,26 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    if len(sys.argv) == 5:
+    if len(sys.argv) >= 5:  # Asegúrate de tener al menos 5 argumentos
         file_path = sys.argv[1]
         document_type = sys.argv[2]
         ruc_input = sys.argv[3]
         auxiliar_input = sys.argv[4]
-        result = process_single_document(file_path, document_type, ruc_input, auxiliar_input )
+        
+        # Verifica si hay un sexto argumento
+        auxiliar_hes_input = sys.argv[5] if len(sys.argv) == 6 else None
+        
+        # Llama a la función con o sin el quinto parámetro según corresponda
+        if auxiliar_hes_input:
+            print(f"Procesando documento {file_path} de tipo {document_type} con RUC {ruc_input}, auxiliar {auxiliar_input} y auxiliar HES {auxiliar_hes_input}")
+            result = process_single_document(file_path, document_type, ruc_input, auxiliar_input, auxiliar_hes_input)
+        else:
+            result = process_single_document(file_path, document_type, ruc_input, auxiliar_input)
+        
         print(json.dumps(result, indent=2, ensure_ascii=False))
+
     else:
+        print(f"Procesando documento ")
         learning_dir = os.path.join(os.path.dirname(__file__), 'learning')
         os.makedirs(learning_dir, exist_ok=True)
 

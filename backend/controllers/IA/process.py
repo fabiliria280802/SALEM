@@ -5,6 +5,7 @@ from PIL import Image
 import json
 import sys
 import time
+import xml.etree.ElementTree as ET
 
 from extractions import (
     extract_text_from_document,
@@ -48,22 +49,21 @@ from validations import (
 )
 
 # Funciones de procesamiento de documentos específicos
-def process_service_delivery_record_document(file_path, schema, text=None, xml_tree=None):
-    """Procesa un documento de acta de recepción y valida sus campos."""
+def process_service_delivery_record_document(file_path, schema,  ruc_input, auxiliar_input,auxiliar_hes_input, text=None, xml_tree=None):
+    print("process_service_delivery_record_document")
     extracted_data = {}
     confidence_scores = {}
     validation_errors = []
     missing_fields = []
 
     try:
-        if text:
-            # Procesar campos definidos en el esquema
-            record_fields = schema["ServiceDeliveryRecord"]["fields"]
+        record_fields = schema["ServiceDeliveryRecord"]["fields"]
 
+        if text:
+            # Procesar campos del esquema basados en texto extraído
             for field_name, field_info in record_fields.items():
-                if "region" in field_info:
-                    extracted_data[field_name] = extract_field_from_region(images[0],  field_info)  # Usa la primera página
-                elif "regex" in field_info:
+                if "regex" in field_info:
+                    # Extraer usando regex
                     match = re.search(field_info["regex"], text)
                     if match:
                         extracted_data[field_name] = match.group(1).strip()
@@ -72,40 +72,60 @@ def process_service_delivery_record_document(file_path, schema, text=None, xml_t
 
         elif xml_tree:
             # Procesar campos desde XML
-            contract_fields = schema["ServiceDeliveryRecord"]["fields"]
-            for field_name, field_info in contract_fields.items():
+            for field_name, field_info in record_fields.items():
                 extracted_data[field_name] = extract_field_from_xml(xml_tree, field_info)
                 if not extracted_data[field_name]:
                     missing_fields.append(field_name)
 
-            # TODO: Validaciones específicas
-            if "order_number" in extracted_data:
-                valid, error = validate_order_number(extracted_data["order_number"])
-                if not valid:
-                    validation_errors.append(error)
+        # Validaciones específicas
+        if "order_number" in extracted_data:
+            valid, error = validate_order_number(extracted_data["order_number"])
+            if not valid:
+                validation_errors.append(error)
 
-            if "invoice_number" in extracted_data:
-                valid, error = validate_invoice_number(extracted_data["invoice_number"])
-                if not valid:
-                    validation_errors.append(error)
+        if "invoice_number" in extracted_data:
+            valid, error = validate_invoice_number(extracted_data["invoice_number"])
+            if not valid:
+                validation_errors.append(error)
 
-            if "hes_number" in extracted_data:
-                valid, error = validate_hes_number(extracted_data["hes_number"])
-                if not valid:
-                    validation_errors.append(error)
+        if "hes_number" in extracted_data:
+            # Validar HES number y compararlo con auxiliar_hes_input
+            valid, error = validate_hes_number(extracted_data["hes_number"])
+            if not valid:
+                validation_errors.append(error)
+            elif extracted_data["hes_number"] != auxiliar_hes_input:
+                validation_errors.append(
+                    f"HES proporcionado ({auxiliar_hes_input}) no coincide con el extraído ({extracted_data['hes_number']})."
+                )
 
-            if "receiving_company" in extracted_data:
-                valid, error = validate_company_name(extracted_data["receiving_company"])
-                if not valid:
-                    validation_errors.append(error)
+        if "receiving_company" in extracted_data:
+            valid, error = validate_company_name(extracted_data["receiving_company"])
+            if not valid:
+                validation_errors.append(error)
 
-            if "receiver_date" in extracted_data and "end_date" in extracted_data:
-                valid, errors = validate_dates(extracted_data["receiver_date"], extracted_data  ["end_date"])
-                if not valid:
-                    validation_errors.extend(errors)
+        if "receiver_date" in extracted_data and "end_date" in extracted_data:
+            valid, errors = validate_dates(extracted_data["receiver_date"], extracted_data["end_date"])
+            if not valid:
+                validation_errors.extend(errors)
+
+        # Validar firmas si existen
+        if "signatures" in record_fields:
+            signatures_info = record_fields["signatures"]["fields"]
+            extracted_signatures = []
+            for signature_field, signature_info in signatures_info.items():
+                if "regex" in signature_info:
+                    match = re.search(signature_info["regex"], text)
+                    if match:
+                        extracted_signatures.append({signature_field: match.group(1).strip()})
+                    else:
+                        missing_fields.append(signature_field)
+
+            if extracted_signatures:
+                extracted_data["signatures"] = extracted_signatures
 
     except Exception as e:
         validation_errors.append(f"Error general en el procesamiento: {str(e)}")
+
 
     return {
         "extracted_data": extracted_data,
@@ -114,7 +134,7 @@ def process_service_delivery_record_document(file_path, schema, text=None, xml_t
         "missing_fields": missing_fields
     }
 
-def process_invoice_document(file_path, schema, text=None, xml_tree=None):
+def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
     extracted_data = {}
     confidence_scores = {}    
     validation_errors = []
@@ -199,6 +219,7 @@ def process_invoice_document(file_path, schema, text=None, xml_tree=None):
     }
 
 def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
+    print("process_contract_document")
     extracted_data = {}
     confidence_scores = {}
     validation_errors = []
@@ -324,7 +345,7 @@ def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text
         "missing_fields": missing_fields
     }
 
-def process_single_document(file_path, document_type, ruc_input, auxiliar_input):
+def process_single_document(file_path, document_type, ruc_input, auxiliar_input, auxiliar_hes_input=None):
     try:
         start_time = time.time()
         schema = load_document_schema()
@@ -335,7 +356,6 @@ def process_single_document(file_path, document_type, ruc_input, auxiliar_input)
         if file_path.endswith('.pdf'):
             text = extract_text_from_pdf(file_path)  # Extraer texto directamente del PDF
         elif file_path.endswith('.xml'):
-            import xml.etree.ElementTree as ET
             xml_tree = ET.parse(file_path)  # Procesar XML directamente
         elif file_path.endswith('.png'):
             text = extract_text_from_document(file_path)  # Usar OCR para PNG
@@ -344,10 +364,11 @@ def process_single_document(file_path, document_type, ruc_input, auxiliar_input)
 
         # Procesar según el tipo de documento
         if document_type == "Invoice":
-            result = process_invoice_document(file_path, schema, text, xml_tree)
+            result = process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text, xml_tree)
         elif document_type == "ServiceDeliveryRecord":
-            result = process_service_delivery_record_document(file_path, schema, text, xml_tree)
+            result = process_service_delivery_record_document(file_path, schema, ruc_input, auxiliar_input, auxiliar_hes_input, text, xml_tree)
         elif document_type == "Contract":
+            # No pasar auxiliar_hes_input a process_contract_document
             result = process_contract_document(file_path, schema, ruc_input, auxiliar_input, text, xml_tree)
         else:
             raise ValueError(f"Tipo de documento no soportado: {document_type}")

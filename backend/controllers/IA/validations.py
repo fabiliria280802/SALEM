@@ -5,6 +5,7 @@ from PIL import ImageOps, ImageChops, Image
 from utils import convert_pdf_to_images
 from extractions import extract_text_from_document, extract_section, extract_images_from_pdf, extract_text_near_signature
 
+# Contract
 def validate_order_number(order_number):
     """Valida que el número de orden inicie con '34' y tenga 5 cifras más."""
     if re.fullmatch(r"34\d{5}", order_number):
@@ -283,3 +284,5 @@ def validate_provider_transaction(provider_transaction):
     if not provider_transaction.isdigit() or len(provider_transaction) != 8:
         return False, f"El Tax ID '{provider_transaction}' no es válido"
     return True, None
+
+# Services delivery record

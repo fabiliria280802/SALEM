@@ -9,6 +9,7 @@ import camelot
 
 from utils import load_document_schema
 
+# Contract
 def extract_field_from_region(image, field_info):
     if "region" in field_info:
         region = field_info["region"]
@@ -94,7 +95,6 @@ def extract_field_from_xml(xml_tree, field_info):
         return element.text if element is not None else None
     return None
 
-
 def extract_table_with_camelot(pdf_path, page_number):
     """
     Extrae tablas del PDF utilizando Camelot.
@@ -109,7 +109,6 @@ def extract_table_with_camelot(pdf_path, page_number):
         table_data.extend(df.to_dict(orient="records"))
     
     return table_data, []
-
 
 def extract_table_data(text, table_schema):
     """
@@ -322,6 +321,7 @@ def extract_section_from_pdf(text, start_marker, end_marker=None):
     if start_idx == -1:
         return None
     return text[start_idx:end_idx].strip()
+
 def extract_text_near_signature(image, position_index):
     """
     Extrae texto de una región cercana a una firma en la imagen.
@@ -340,3 +340,5 @@ def extract_text_near_signature(image, position_index):
     except Exception as e:
         print(f"Error al extraer texto cerca de la firma en la posición {position_index}: {str(e)}")
         return ""
+
+# Services delivery record

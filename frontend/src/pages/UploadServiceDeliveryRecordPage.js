@@ -23,6 +23,7 @@ const UploadServiceDeliveryRecordPage = () => {
         hes: '',
         documentType: 'ServiceDeliveryRecord',
         file: null,
+		contractId: ''
     });
     const [isRucReadOnly, setIsRucReadOnly] = useState(false);
 
@@ -35,6 +36,9 @@ const UploadServiceDeliveryRecordPage = () => {
 		} else if (user && user.role === 'Proveedor') {
 			setDocumentData(prev => ({ ...prev, ruc: user.ruc }));
 			setIsRucReadOnly(true); 
+		}
+		if (contractId) {
+			setDocumentData(prev => ({ ...prev, contractId })); // Asegúrate de incluir el contractId
 		}
 	}, [user, providerRuc]);	
 
@@ -109,7 +113,11 @@ const UploadServiceDeliveryRecordPage = () => {
 		// Debug para verificar que se está enviando correctamente
 		console.log('DocumentType siendo enviado:', formData.get('documentType'));
 
-		if (!documentData.ruc || !documentData.contract || !documentData.file) {
+		for (let [key, value] of formData.entries()) {
+			console.log(`${key}: ${value}`);
+		}
+
+		if (!documentData.ruc || !contractId || !documentData.file) {
 			toast.current.show({
 				severity: 'warn',
 				summary: 'Advertencia',

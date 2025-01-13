@@ -58,7 +58,7 @@ app.use('/api/public', userPublicRoutes);
 app.use('/api/documents/Invoice', authMiddleware, invoiceRoutes);
 app.use('/api/documents/Contract', authMiddleware, contractRoutes);
 app.use(
-	'/api/documents/Service-record',
+	'/api/documents/ServiceDeliveryRecord',
 	authMiddleware,
 	serviceDeliveryRecordRoutes,
 );

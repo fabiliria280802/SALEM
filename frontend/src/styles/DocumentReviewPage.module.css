@@ -65,11 +65,13 @@
 	border: 1px solid black;
 	background-color: white;
 	cursor: pointer;
+	color:black
 }
 
 .buttonReverse {
 	padding: 10px 20px;
 	margin-left: 10px;
+	margin-right: 10px;
 	color: white;
 	background-color: black;
 	cursor: pointer;

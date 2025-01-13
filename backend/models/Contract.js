@@ -13,10 +13,6 @@ const contractSchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
-	contracting_company: {
-		type: String,
-		trim: true,
-	},
 	contracted_company: {
 		type: String,
 		trim: true,
@@ -48,6 +44,11 @@ const contractSchema = new mongoose.Schema({
 	ai_decision_explanation: {
 		type: String,
 	},
+	missing_errors: [
+		{
+			type: String,
+		},
+	],
 	validation_errors: [
 		{
 			type: String,

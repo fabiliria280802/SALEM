@@ -5,6 +5,7 @@ import { Toast } from 'primereact/toast';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import documentService from '../services/documentService';
 import styles from '../styles/DocumentReviewPage.module.css';
+import useAuth from '../hooks/useAuth';
 
 const ReviewContractPage = () => {
 	const [documentData, setDocumentData] = useState(null);
@@ -14,6 +15,7 @@ const ReviewContractPage = () => {
 	const toast = useRef(null);
 	const history = useHistory();
 	const { id } = useParams();
+	const { user } = useAuth();
 
 	useEffect(() => {
 		loadDocument();
@@ -65,7 +67,7 @@ const ReviewContractPage = () => {
 				summary: 'Éxito',
 				detail: 'Documento aprobado',
 			});
-			history.push(`/upload-service-record/${id}`);
+			history.push(`/upload-service-record`);
 		} catch (error) {
 			toast.current.show({
 				severity: 'error',
@@ -88,88 +90,103 @@ const ReviewContractPage = () => {
 		}
 	};
 
+	const handleGoToDeliveryRecord = () => {
+		history.push('/upload-service-record');
+	}
+
 	if (loading) {
 		return <div>Cargando...</div>;
 	}
 
 	return (
-		<div className={styles.container}>
-			<Toast ref={toast} />
-			<div className={styles.leftColumn}>
-				<h1 className={styles.title}>Resultado del análisis</h1>
-				<p className={styles.info}>
-					RUC: {documentData?.provider_ruc || 'No disponible'}
-					<br />
-					Contrato: {documentData?.contract_number || 'No disponible'}
-					<br />
-					Tipo de documento: {documentData?.contract_type || 'No disponible'}
-					<br />
-					Archivo: {documentData?.file_path || 'No disponible'}
-				</p>
+        <div className={styles.container}>
+            <Toast ref={toast} />
+            <div className={styles.leftColumn}>
+                <h1 className={styles.title}>Resultado del análisis</h1>
+                <p className={styles.info}>
+                    RUC: {documentData?.provider_ruc || 'No disponible'}
+                    <br />
+                    Contrato: {documentData?.contract_number || 'No disponible'}
+                    <br />
+                    Tipo de documento: {documentData?.contract_type || 'No disponible'}
+                    <br />
+                    Archivo: {documentData?.file_path || 'No disponible'}
+                </p>
 
-				<table className={styles.table}>
-					<thead>
-						<tr>
-							<th className={styles.tableHeader}>Parámetro</th>
-							<th className={styles.tableHeader}>Cumple</th>
-						</tr>
-					</thead>
-					<tbody>
-						{documentData.validationFields?.map((field, index) => (
-							<tr key={index}>
-								<td className={styles.tableCell}>{field.name}</td>
-								<td className={styles.tableCell}>
-									{documentData.validation_errors?.includes(field.field)
-										? 'No'
-										: 'Sí'}
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-				<p>
-					<strong>Descripción del error:</strong>{' '}
-					{documentData.ai_decision_explanation}
-				</p>
-				<p className={styles.status}>
-					Estado:{' '}
-					<span
-						className={
-							documentData.status === 'Denegado'
-								? styles.denied
-								: styles.approved
-						}
-					>
-						{documentData.status}
-					</span>
-				</p>
-				<Button
-					label="Aprobar"
-					className={styles.button}
-					onClick={handleApprove}
-					disabled={documentData.status === 'Denegado'}
-				/>
-				<Button
-					label="Solicitar revalidación"
-					className={styles.buttonReverse}
-					onClick={handleRevalidate}
-					disabled={documentData.status === 'Aceptado'}
-				/>
-			</div>
-
-			<div className={styles.rightColumn}>
-				{fileType === 'pdf' && filePath ? (
-					<Worker workerUrl="/pdfjs/pdf.worker.min.js">
-						<div style={{ height: '70vh', width: '100%', overflow: 'auto' }}>
-							<Viewer fileUrl={filePath} renderMode="canvas" />
-						</div>
-					</Worker>
-				) : (
-					<p>No se puede cargar el archivo. Verifique que la ruta sea válida.</p>
+                <table className={styles.table}>
+                    <thead>
+                        <tr>
+                            <th className={styles.tableHeader}>Parámetro</th>
+                            <th className={styles.tableHeader}>Cumple</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {documentData.validationFields?.map((field, index) => (
+                            <tr key={index}>
+                                <td className={styles.tableCell}>{field.name}</td>
+                                <td className={styles.tableCell}>
+                                    {documentData.validation_errors?.includes(field.field)
+                                        ? 'No'
+                                        : 'Sí'}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <p>
+                    <strong>Descripción del error:</strong>{' '}
+                    {documentData.ai_decision_explanation}
+                </p>
+                <p className={styles.status}>
+                    Estado:{' '}
+                    <span
+                        className={
+                            documentData.status === 'Denegado'
+                                ? styles.denied
+                                : styles.approved
+                        }
+                    >
+                        {documentData.status}
+                    </span>
+                </p>
+                {documentData.status === 'Denegado' &&
+                    (user.role === 'Administrador' || user.role === 'Gestor') && (
+                        <Button
+                            label="Aprobar"
+                            className={styles.button}
+                            onClick={handleApprove}
+                        />
+                    )}
+                {documentData.status === 'Denegado' && (
+                    <Button
+                        label="Solicitar revalidación"
+                        className={styles.buttonReverse}
+                        onClick={handleRevalidate}
+                    />
+                )}
+				{documentData.status === 'Aceptado' && (
+					<Button
+						label="Cargar una acta de recepción"
+						className={styles.button}
+						onClick={handleGoToDeliveryRecord}
+					/>
 				)}
-			</div>
-		</div>
-	);
+            </div>
+
+            <div className={styles.rightColumn}>
+                {fileType === 'pdf' && filePath ? (
+                    <Worker workerUrl="/pdfjs/pdf.worker.min.js">
+                        <div style={{ height: '70vh', width: '100%', overflow: 'auto' }}>
+                            <Viewer fileUrl={filePath} renderMode="canvas" />
+                        </div>
+                    </Worker>
+                ) : (
+                    <p>No se puede cargar el archivo. Verifique que la ruta sea válida.</p>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default ReviewContractPage;
+

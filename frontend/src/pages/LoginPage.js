@@ -147,23 +147,7 @@ const LoginPage = () => {
 						disabled={failedAttempts >= 3}
 					/>
 				</form>
-				<div className={styles.separator}>
-					<span className={styles.line}></span>
-					<span className={styles.orText}>or</span>
-					<span className={styles.line}></span>
-				</div>
-				<Button
-					type="button"
-					label="Continuar con Microsoft"
-					icon="pi pi-microsoft"
-					className={styles.microsoftButton}
-				/>
-				<p className={styles.footerText}>
-					Inicio de sesión con Microsoft 365 únicamente disponible para
-					colaboradores de ENAP.
-				</p>
 			</div>
-
 			{/* Pop-up actualizado */}
 			<Dialog
 				visible={showPopup}

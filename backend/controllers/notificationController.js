@@ -32,7 +32,7 @@ exports.sendPasswordCreationEmail = async user => {
 				          <!-- Imagen centrada -->
 				          <tr>
 				            <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
-				              <img src="https://i.postimg.cc/1zT2r7ny/salem.png" alt="Te damos la bienvenida" width="200" style="display: block; margin: 0 auto;">
+				              <img src="https://files.catbox.moe/js7pky.png" alt="Te damos la bienvenida" width="200" style="display: block; margin: 0 auto;">
 				            </td>
 				          </tr>
 				          <!-- Cuadrado blanco con texto centrado, tamaño fijo -->
@@ -113,7 +113,7 @@ exports.sendPasswordResetEmail = async user => {
 				          <!-- Imagen centrada -->
 				          <tr>
 				            <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
-				              <img src="https://i.postimg.cc/kG9mWYzB/salemrecover.png" alt="Recupera tu contraseña" width="200" style="display: block; margin: 0 auto;">
+				              <img src="https://files.catbox.moe/jet02c.png" alt="Recupera tu contraseña" width="200" style="display: block; margin: 0 auto;">
 				            </td>
 				          </tr>
 				          <!-- Cuadrado blanco con texto centrado, tamaño fijo -->
@@ -157,6 +157,250 @@ exports.sendPasswordResetEmail = async user => {
 			error
 		);
 	}
+};
+
+exports.sendDocumentApprovalEmail = async (user, approvedDocuments) => {
+    try {
+        // Crear una lista con los nombres de los documentos aprobados
+        const documentList = approvedDocuments.map(doc => `<li>${doc}</li>`).join('');
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: `Documentos aprobados y enviados a ENAP`,
+            html: `
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Documentos Aprobados</title>
+                </head>
+                <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f2f2f2;">
+                        <tr>
+                            <td align="center" valign="top">
+                                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; margin: auto; padding: 20px; border-radius: 8px;">
+                                    <tr>
+                                        <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+                                            <img src="https://files.catbox.moe/hsh3nb.png" alt="Documentos Aprobados" width="200" style="display: block; margin: 0 auto;">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" style="padding: 20px;">
+                                            <h2 style="color: #333;">¡Hola ${user.name}!</h2>
+                                            <p style="color: #666; line-height: 1.5;">
+                                                Nos complace informarte que los siguientes documentos han sido aprobados con éxito y enviados a ENAP:
+                                            </p>
+                                            <ul style="color: #333;">
+                                                ${documentList}
+                                            </ul>
+                                            <p style="color: #666; line-height: 1.5;">
+                                                Gracias por confiar en nuestro sistema.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" style="padding-top: 15px;">
+                                            <p style="font-size: 12px; color: #666; font-weight: normal; margin: 0;">Copyright ® ENAP Ecuador.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `
+        };
+
+        // Enviar el correo
+        await transporter.sendMail(mailOptions);
+        console.log('Correo de aprobación enviado con éxito.');
+    } catch (error) {
+        console.error('Error al enviar el correo de aprobación:', error);
+        throw new Error('No se pudo enviar el correo de aprobación.', error);
+    }
+};
+
+exports.sendDocumentRejectionEmail = async (user, rejectedDocuments) => {
+    try {
+        // Crear una lista con los nombres de los documentos rechazados
+        const documentList = rejectedDocuments.map(doc => `<li>${doc}</li>`).join('');
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: `Documentos rechazados`,
+            html: `
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Documentos Rechazados</title>
+                </head>
+                <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f2f2f2;">
+                        <tr>
+                            <td align="center" valign="top">
+                                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; margin: auto; padding: 20px; border-radius: 8px;">
+                                    <tr>
+                                        <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+                                            <img src="https://files.catbox.moe/9ixwhe.png" alt="Documentos Rechazados" width="200" style="display: block; margin: 0 auto;">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" style="padding: 20px;">
+                                            <h2 style="color: #333;">¡Hola ${user.name}!</h2>
+                                            <p style="color: #666; line-height: 1.5;">
+                                                Lamentamos informarte que los siguientes documentos han sido rechazados:
+                                            </p>
+                                            <ul style="color: #333;">
+                                                ${documentList}
+                                            </ul>
+                                            <p style="color: #666; line-height: 1.5;">
+                                                Por favor revisa los documentos y vuelve a enviarlos con las correcciones necesarias.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" style="padding-top: 15px;">
+                                            <p style="font-size: 12px; color: #666; font-weight: normal; margin: 0;">Copyright ® ENAP Ecuador.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `
+        };
+
+        // Enviar el correo
+        await transporter.sendMail(mailOptions);
+        console.log('Correo de rechazo enviado con éxito.');
+    } catch (error) {
+        console.error('Error al enviar el correo de rechazo:', error);
+        throw new Error('No se pudo enviar el correo de rechazo.', error);
+    }
+};
+
+exports.sendManualReviewRequestEmail = async (user, documentName) => {
+    try {
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: user.email,
+            subject: `Solicitud de revisión manual enviada`,
+            html: `
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Solicitud de Revisión Manual</title>
+                </head>
+                <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f2f2f2;">
+                        <tr>
+                            <td align="center" valign="top">
+                                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; margin: auto; padding: 20px; border-radius: 8px;">
+                                    <tr>
+                                        <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+                                            <img src="https://files.catbox.moe/to69l3.png" alt="Revisión Manual" width="200" style="display: block; margin: 0 auto;">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" style="padding: 20px;">
+                                            <h2 style="color: #333;">¡Hola ${user.name}!</h2>
+                                            <p style="color: #666; line-height: 1.5;">
+                                                Te informamos que la solicitud de revisión manual para el documento <strong>${documentName}</strong> ha sido enviada con éxito.
+                                            </p>
+                                            <p style="color: #666; line-height: 1.5;">
+                                                Gracias por confiar en nuestro sistema.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" style="padding-top: 15px;">
+                                            <p style="font-size: 12px; color: #666; font-weight: normal; margin: 0;">Copyright ® ENAP Ecuador.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `
+        };
+
+        // Enviar el correo
+        await transporter.sendMail(mailOptions);
+        console.log('Correo de solicitud de revisión manual enviado con éxito.');
+    } catch (error) {
+        console.error('Error al enviar el correo de solicitud de revisión manual:', error);
+        throw new Error('No se pudo enviar el correo de solicitud de revisión manual.', error);
+    }
+};
+
+exports.notifyManualReviewRequestRecipient = async (recipient, documentName) => {
+    try {
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: recipient.email,
+            subject: `Solicitud de revisión manual recibida`,
+            html: `
+                <!DOCTYPE html>
+                <html lang="es">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Revisión Manual Recibida</title>
+                </head>
+                <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
+                    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f2f2f2;">
+                        <tr>
+                            <td align="center" valign="top">
+                                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; margin: auto; padding: 20px; border-radius: 8px;">
+                                    <tr>
+                                        <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+                                            <img src="https://files.catbox.moe/to69l3.png" alt="Revisión Manual" width="200" style="display: block; margin: 0 auto;">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="left" style="padding: 20px;">
+                                            <h2 style="color: #333;">¡Hola ${recipient.name}!</h2>
+                                            <p style="color: #666; line-height: 1.5;">
+                                                Se ha solicitado una revisión manual para el documento <strong>${documentName}</strong>.
+                                            </p>
+                                            <p style="color: #666; line-height: 1.5;">
+                                                Por favor, ingresa a Salem para más información y tomar las acciones necesarias.
+                                            </p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" style="padding-top: 15px;">
+                                            <p style="font-size: 12px; color: #666; font-weight: normal; margin: 0;">Copyright ® ENAP Ecuador.</p>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `
+        };
+
+        // Enviar el correo
+        await transporter.sendMail(mailOptions);
+        console.log('Correo de notificación de revisión manual enviado con éxito.');
+    } catch (error) {
+        console.error('Error al enviar el correo de notificación de revisión manual:', error);
+        throw new Error('No se pudo enviar el correo de notificación de revisión manual.', error);
+    }
 };
 
 

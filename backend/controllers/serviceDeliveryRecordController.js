@@ -7,6 +7,7 @@ const ServiceDeliveryRecord = require('../models/ServiceDeliveryRecord');
 const { spawn } = require('child_process');
 const path = require('path');
 const authMiddleware = require('../middleware/authMiddleware');
+const Document = require('../models/Document');
 
 exports.createServiceRecord = [
     authMiddleware,
@@ -25,7 +26,8 @@ exports.createServiceRecord = [
             }
 
             // Buscar el HES correspondiente
-            const hesRecord = await HES.findOne({ number: hes });
+            const hesRecord = await Document.findOne({ number: hes });
+            console.log(hesRecord);
             if (!hesRecord) {
                 return res.status(404).json({ error: `HES con número ${hes} no encontrado` });
             }
@@ -52,6 +54,7 @@ exports.createServiceRecord = [
                     filePath,
                     documentType,
                     ruc,
+                    hesRecord._id,
                     hes,
                 ],
                 {

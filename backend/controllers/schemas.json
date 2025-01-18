@@ -243,15 +243,15 @@
 		"fields": {
 			"delivery_title": {
 				"label": "Título del Acta",
-				"regex": "(?i)\\b(?:acta de recepción|delivery receipt)\\b"
+				"regex": "(?i)\\b((?:acta de recepción|delivery receipt))\\b"
 			},
 			"receiver_date": {
 				"label": "Fecha de Recepción",
-				"regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+				"regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}[/-]\\d{2}[/-]\\d{4})"
 			},
 			"receiving_company": {
 				"label": "Empresa Receptora",
-				"regex": "(?i)\\b(?:empresa|company)\\s*[:\\-]?\\s*([^\\n]+)"
+				"regex": "(?i)\\b(?:la empresa|client)\\s+(ENAP SIPETROL S\\.A\\. ENAP SIPEC)\\b"
 			},
 			"provider": {
 				"label": "Proveedor",
@@ -275,7 +275,7 @@
 			},
 			"end_date": {
 				"label": "Fecha de Término",
-				"regex": "(?i)\\b(?:finalizó el día|ended on)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
+				"regex": "(?i)\\b(?:finalizó el día|el día|ended on)\\s*[:\\-]?\\s*(\\d{2}[/-]\\d{2}[/-]\\d{4})"
 			},
 			"signatures": {
 				"fields": {

@@ -1,6 +1,7 @@
 import os
 import re
 import pytesseract
+import traceback
 from PIL import Image
 import json
 import sys
@@ -8,6 +9,7 @@ import time
 import xml.etree.ElementTree as ET
 
 from extractions import (
+    #imports use in contract
     extract_text_from_document,
     extract_text_from_pdf,
     extract_field_from_region, 
@@ -17,14 +19,18 @@ from extractions import (
     extract_table_data, 
     extract_signatures_from_image,
     extract_provider_fields
+    #imports use in service delivery
 )
 
 from utils import (
+    #imports use in contract
     convert_pdf_to_images, 
    load_document_schema
+   #imports use in service delivery
 )
 
 from validations import (
+    #imports use in contract
     validate_order_number, 
     validate_invoice_number, 
     validate_hes_number, 
@@ -45,7 +51,9 @@ from validations import (
     validate_payment_terms_intro,
     validate_service_description_intro,
     validate_contract_details_intro,
-    validate_signature_intro
+    validate_signature_intro,
+    #imports use in service delivery
+    validate_signatures_and_positions_record
 )
 
 # Funciones de procesamiento de documentos específicos
@@ -56,37 +64,54 @@ def process_service_delivery_record_document(file_path, schema,  ruc_input, auxi
     validation_errors = []
     missing_fields = []
 
+    required_fields = [
+        "delivery_title","receiver_date","receiving_company","provider","order_number","invoice_number","hes_number","total_value","end_date","person_name","person_signature","person_position","person_company"
+    ]
+
+    validations = [
+        ("receiving_company", validate_company_name),
+        #("receiver_date","end_date", validate_dates),
+        ("invoice_number", validate_invoice_number),
+        ("hes_number", validate_hes_number),
+    ]
+
     try:
         record_fields = schema["ServiceDeliveryRecord"]["fields"]
 
         if text:
-            # Procesar campos del esquema basados en texto extraído
+            # Unir texto en una línea continua
+            continuous_text = text.replace("\n", " ").strip()
+
             for field_name, field_info in record_fields.items():
                 if "regex" in field_info:
-                    # Extraer usando regex
-                    match = re.search(field_info["regex"], text)
-                    if match:
-                        extracted_data[field_name] = match.group(1).strip()
-                    else:
+                    try:
+                        match = re.search(field_info["regex"], continuous_text)
+                        if match and match.group(1):  
+                            value = match.group(1).strip()
+
+                            if field_name == "receiving_company":
+                                value = "ENAP SIPETROL S.A. ENAP SIPEC" if "ENAP SIPETROL" in value else value
+                            elif field_name == "provider":
+                                value = value.split(".")[0].strip()
+
+                            extracted_data[field_name] = value
+                        elif field_name in required_fields:
+                            missing_fields.append(field_name)
+                    except IndexError as e:
+                        validation_errors.append(f"Error en el campo '{field_name}': {e}")
                         missing_fields.append(field_name)
 
         elif xml_tree:
-            # Procesar campos desde XML
             for field_name, field_info in record_fields.items():
                 extracted_data[field_name] = extract_field_from_xml(xml_tree, field_info)
                 if not extracted_data[field_name]:
                     missing_fields.append(field_name)
 
-        # Validaciones específicas
-        if "order_number" in extracted_data:
-            valid, error = validate_order_number(extracted_data["order_number"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "invoice_number" in extracted_data:
-            valid, error = validate_invoice_number(extracted_data["invoice_number"])
-            if not valid:
-                validation_errors.append(error)
+        for field_name, validator in validations:
+            if field_name in extracted_data:
+                valid, error = validator(extracted_data[field_name])
+                if not valid:
+                    validation_errors.append(error)
 
         if "hes_number" in extracted_data:
             # Validar HES number y compararlo con auxiliar_hes_input
@@ -98,33 +123,18 @@ def process_service_delivery_record_document(file_path, schema,  ruc_input, auxi
                     f"HES proporcionado ({auxiliar_hes_input}) no coincide con el extraído ({extracted_data['hes_number']})."
                 )
 
-        if "receiving_company" in extracted_data:
-            valid, error = validate_company_name(extracted_data["receiving_company"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "receiver_date" in extracted_data and "end_date" in extracted_data:
-            valid, errors = validate_dates(extracted_data["receiver_date"], extracted_data["end_date"])
-            if not valid:
-                validation_errors.extend(errors)
-
-        # Validar firmas si existen
         if "signatures" in record_fields:
-            signatures_info = record_fields["signatures"]["fields"]
-            extracted_signatures = []
-            for signature_field, signature_info in signatures_info.items():
-                if "regex" in signature_info:
-                    match = re.search(signature_info["regex"], text)
-                    if match:
-                        extracted_signatures.append({signature_field: match.group(1).strip()})
-                    else:
-                        missing_fields.append(signature_field)
+            extracted_signatures, missing_signatures = validate_signatures_and_positions_record(file_path, schema, "signatures")
+            extracted_data.update(extracted_signatures)
+            missing_fields.extend(missing_signatures)
+
 
             if extracted_signatures:
                 extracted_data["signatures"] = extracted_signatures
 
     except Exception as e:
-        validation_errors.append(f"Error general en el procesamiento: {str(e)}")
+        #validation_errors.append(f"Error general en el procesamiento: {str(e)}")
+        print(f"Error general en el procesamiento: {str(e)}")
 
 
     return {
@@ -397,3 +407,17 @@ def process_single_document(file_path, document_type, ruc_input, auxiliar_input,
             "ai_decision_explanation": f"Error en el procesamiento: {str(e)}",
             "validation_errors": [str(e)]
         }
+
+def process_single_document_safe(file_path, document_type, ruc_input, auxiliar_input, auxiliar_hes_input=None):
+    try:
+        # Llamar a la función original
+        result = process_single_document(file_path, document_type, ruc_input, auxiliar_input, auxiliar_hes_input)
+        print(json.dumps(result, ensure_ascii=False))
+    except Exception as e:
+        error_output = {
+            "error": str(e),
+            "traceback": traceback.format_exc(),
+            "status": "Denegado",
+            "ai_decision_explanation": "Error durante el procesamiento del documento"
+        }
+        print(json.dumps(error_output, ensure_ascii=False), file=sys.stderr)

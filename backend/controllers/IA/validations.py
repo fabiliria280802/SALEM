@@ -286,3 +286,75 @@ def validate_provider_transaction(provider_transaction):
     return True, None
 
 # Services delivery record
+def validate_signatures_and_positions_record(document_path, schema, field_key):
+    """
+    Valida y extrae información sobre las firmas en un documento de tipo ServiceDeliveryRecord.
+    """
+    extracted_data = {}
+    missing_fields = []
+
+    try:
+        images = extract_images_from_pdf(document_path)
+    except Exception as e:
+        return {}, [f"Error extrayendo imágenes del PDF: {e}"]
+
+    # Acceder correctamente al campo "signatures"
+    signature_fields = schema["ServiceDeliveryRecord"]["fields"]["signatures"]["fields"]
+
+    for idx, signature_field in enumerate(["person_signature"]):
+        if idx < len(images):
+            # Verificar si hay una firma presente en la región
+            if verify_signature_in_image_record(images[idx]["image"], idx):
+                extracted_data[signature_field] = f"Firma detectada en página {images[idx]['page']} imagen {images[idx]['index']}"
+                text_near_signature = extract_text_near_signature(images[idx]["image"], idx)
+                if text_near_signature:
+                    # Validar y extraer nombre y posición
+                    name_field = "person_name"
+                    position_field = "person_position"
+                    company_field = "person_company"
+
+                    # Validar nombre
+                    match = re.search(signature_fields[name_field]["regex"], text_near_signature)
+                    if match:
+                        extracted_data[name_field] = match.group(0).strip()
+                    else:
+                        missing_fields.append(name_field)
+
+                    # Validar posición
+                    valid_positions = signature_fields[position_field]["values"]
+                    position_match = re.search(r"\b(" + "|".join(map(re.escape, valid_positions)) + r")\b", text_near_signature, re.IGNORECASE)
+                    if position_match:
+                        extracted_data[position_field] = position_match.group(0).strip()
+                    else:
+                        missing_fields.append(position_field)
+
+                    # Validar compañía
+                    company_match = re.search(signature_fields[company_field]["regex"], text_near_signature)
+                    if company_match:
+                        extracted_data[company_field] = company_match.group(1).strip()
+                    else:
+                        missing_fields.append(company_field)
+            else:
+                missing_fields.append(signature_field)
+        else:
+            missing_fields.append(signature_field)
+
+    return extracted_data, missing_fields
+
+def verify_signature_in_image_record(image, position_index):
+    """
+    Verifica si una firma está presente en una región específica de la imagen.
+    """
+    signature_regions = [
+        (50, 600, 450, 900)
+    ]
+
+    try:
+        region = signature_regions[position_index]
+        cropped_region = image.crop(region)
+        gray_region = ImageOps.grayscale(cropped_region)
+        if ImageChops.difference(gray_region, Image.new("L", gray_region.size, 255)).getbbox():
+            return True
+    except Exception as e:
+        print(f"Error al verificar la firma en la posición {position_index}: {str(e)}")
+    return False

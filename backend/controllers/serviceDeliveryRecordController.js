@@ -48,7 +48,7 @@ exports.createServiceRecord = [
                 });
 
                 await newRecord.save();
-                console.log("guardado en DB", newRecord);
+                //console.log("guardado en DB", newRecord);
             } catch (error) {
                 console.error("Error al guardar en la base de datos:", error);
             }            
@@ -61,8 +61,8 @@ exports.createServiceRecord = [
                     filePath,
                     documentType,
                     ruc,
-                    hesRecord._id,
                     contractNumber.contract_number,
+                    hes,
                 ],
                 {
                     env: {
@@ -76,64 +76,114 @@ exports.createServiceRecord = [
             let pythonError = '';
 
             pythonProcess.stdout.on('data', data => {
-                console.log('Error de Python:', data.toString());
+                console.log('Salida de Python (stdout):', data.toString());
                 pythonOutput += data.toString();
             });
-
+            
             pythonProcess.stderr.on('data', data => {
-                console.error('Error de Python:', data.toString());
+                console.error('Salida de Python (stderr):', data.toString());
                 pythonError += data.toString();
-            });
+            });            
 
             pythonProcess.on('close', async code => {
                 if (code !== 0) {
-                    console.log("this is the code",code)
+                    console.error('Python script error:', pythonError);
                     await ServiceDeliveryRecord.findByIdAndUpdate(newRecord._id, {
                         status: 'Denegado',
                         ai_decision_explanation: `Error en el procesamiento: ${pythonError}`,
                     });
-                    console.log("hay un error en line close pythonProcess")
                     return res.status(500).json({
                         error: 'Error al procesar el documento con IA',
                         details: pythonError,
                     });
                 }
-
+            
                 try {
-                    console.log("esperando valid")
-                    console.log("retorn:",pythonOutput)
-                    const result = JSON.parse(pythonOutput);
-
-                    const status = result.validation_errors?.length > 0 ? 'Denegado' : 'Aceptado';
-                    const updateData = {
-                        ...result.extracted_data,
-                        status,
-                        ai_decision_explanation: result.ai_decision_explanation,
-                    };
-
-                    await ServiceDeliveryRecord.findByIdAndUpdate(newRecord._id, updateData, {
-                        new: true,
-                    });
-
-                    res.status(201).json({
-                        message: status === 'Aceptado'
-                            ? 'Registro procesado correctamente'
-                            : 'Registro procesado con errores',
-                        _id: newRecord._id,
-                        ...updateData,
-                    });
-                } catch (parseError) {
+                    let jsonStr = pythonOutput;
+            
+                    // Intentar limpiar la salida de Python
+                    try {
+                        const matches = pythonOutput.match(/({[\s\S]*?})\s*$/); // Buscar JSON válido al final
+                        if (matches) {
+                            jsonStr = matches[1];
+                        }
+            
+                        jsonStr = jsonStr
+                            .replace(/\n/g, ' ')
+                            .replace(/\r/g, '')
+                            .replace(/\s+/g, ' ')
+                            .replace(/\\\\/g, '\\')
+                            .replace(/\\"/g, '"')
+                            .replace(/"\s*:\s*"([^"]*?)\\*"/g, '": "$1"')
+                            .trim();
+            
+                        console.log('JSON limpio:', jsonStr);
+                        const result = JSON.parse(jsonStr);
+            
+                        if (result.extracted_data) {
+                            Object.keys(result.extracted_data).forEach(key => {
+                                if (typeof result.extracted_data[key] === 'string') {
+                                    result.extracted_data[key] = result.extracted_data[key]
+                                        .replace(/\\+/g, '')
+                                        .replace(/"{2,}/g, '"')
+                                        .replace(/^"|"$/g, '')
+                                        .replace(/\\n/g, ' ')
+                                        .trim();
+                                }
+                            });
+                        }
+            
+                        const status =
+                            result.validation_errors && result.validation_errors.length > 0
+                                ? 'Denegado'
+                                : 'Aceptado';
+            
+                        const ai_decision_explanation =
+                            status === 'Denegado'
+                                ? `Documento denegado. Errores: ${result.validation_errors.join(', ')}`
+                                : 'Documento procesado correctamente';
+            
+                        const updateData = {
+                            ...result.extracted_data,
+                            _id: newRecord._id,
+                            status,
+                            ai_decision_explanation,
+                        };
+            
+                        await ServiceDeliveryRecord.findByIdAndUpdate(newRecord._id, updateData, {
+                            new: true,
+                        });
+            
+                        res.status(201).json({
+                            message:
+                                status === 'Aceptado'
+                                    ? 'Registro procesado correctamente'
+                                    : 'Registro procesado con errores',
+                            _id: newRecord._id,
+                            status,
+                            ...updateData,
+                        });
+                    } catch (parseError) {
+                        console.error('Error al parsear JSON:', parseError);
+                        console.error('JSON intentado parsear:', jsonStr);
+                        throw new Error(`Error al parsear JSON: ${parseError.message}`);
+                    }
+                } catch (error) {
+                    console.error('Error completo al procesar la respuesta:', error);
+                    console.error('Salida completa de Python:', pythonOutput);
+            
                     await ServiceDeliveryRecord.findByIdAndUpdate(newRecord._id, {
                         status: 'Denegado',
-                        ai_decision_explanation: 'Error al procesar la respuesta de la IA',
+                        ai_decision_explanation: 'Error al procesar la respuesta: formato inválido',
                     });
-				/*
-                    res.status(500).json({
+            
+                    return res.status(500).json({
                         error: 'Error al procesar la respuesta de la IA',
-                        details: parseError.message,
-                    });*/
+                        details: error.message,
+                    });
                 }
             });
+            
         } catch (error) {
             res.status(500).json({ error: 'Error interno del servidor', details: error.message });
         }

@@ -8,10 +8,11 @@ const { spawn } = require('child_process');
 const path = require('path');
 const authMiddleware = require('../middleware/authMiddleware');
 const Document = require('../models/Document');
+const Contract = require('../models/Contract');
 
 exports.createServiceRecord = [
     authMiddleware,
-    async (req, res) => {
+    async (req, res, next) => {
         try {
             const { ruc, hes, documentType, contractId } = req.body;
             const file = req.file;
@@ -20,32 +21,38 @@ exports.createServiceRecord = [
                 return res.status(400).json({ error: 'No se ha proporcionado un archivo' });
             }
 
-            // Validar contract_id
             if (!contractId) {
                 return res.status(400).json({ error: 'El contract_id es obligatorio' });
             }
 
-            // Buscar el HES correspondiente
             const hesRecord = await Document.findOne({ number: hes });
-            console.log(hesRecord);
             if (!hesRecord) {
                 return res.status(404).json({ error: `HES con número ${hes} no encontrado` });
             }
 
-            // Crear el nuevo registro
-            const newRecord = new ServiceDeliveryRecord({
-                ruc: ruc,
-                hes_id: hesRecord._id,
-                hes_number: hes, // También guardamos el número HES
-                contract_id: contractId,
-                file_path: path.join('data', 'docs', file.filename),
-                status: 'Analizando',
-                created_by: req.user.id,
-            });
+            const contractNumber = await Contract.findById(contractId);
+            if (!contractNumber) {
+                return res.status(404).json({ error: `HES con número ${contractId} no encontrado` });
+            }
+            let newRecord;
+            try {
 
-            await newRecord.save();
+                newRecord = new ServiceDeliveryRecord({
+                    ruc: ruc,
+                    hes_id: hesRecord._id,
+                    hes_number: hes,
+                    contract_id: contractId,
+                    file_path: path.join('data', 'docs', file.filename),
+                    status: 'Analizando',
+                    created_by: req.user.id,
+                });
 
-            // Procesar con IA
+                await newRecord.save();
+                console.log("guardado en DB", newRecord);
+            } catch (error) {
+                console.error("Error al guardar en la base de datos:", error);
+            }            
+
             const filePath = path.join(process.cwd(), newRecord.file_path);
             const pythonProcess = spawn(
                 'python3',
@@ -55,7 +62,7 @@ exports.createServiceRecord = [
                     documentType,
                     ruc,
                     hesRecord._id,
-                    hes,
+                    contractNumber.contract_number,
                 ],
                 {
                     env: {
@@ -69,19 +76,23 @@ exports.createServiceRecord = [
             let pythonError = '';
 
             pythonProcess.stdout.on('data', data => {
+                console.log('Error de Python:', data.toString());
                 pythonOutput += data.toString();
             });
 
             pythonProcess.stderr.on('data', data => {
+                console.error('Error de Python:', data.toString());
                 pythonError += data.toString();
             });
 
             pythonProcess.on('close', async code => {
                 if (code !== 0) {
+                    console.log("this is the code",code)
                     await ServiceDeliveryRecord.findByIdAndUpdate(newRecord._id, {
                         status: 'Denegado',
                         ai_decision_explanation: `Error en el procesamiento: ${pythonError}`,
                     });
+                    console.log("hay un error en line close pythonProcess")
                     return res.status(500).json({
                         error: 'Error al procesar el documento con IA',
                         details: pythonError,
@@ -89,6 +100,8 @@ exports.createServiceRecord = [
                 }
 
                 try {
+                    console.log("esperando valid")
+                    console.log("retorn:",pythonOutput)
                     const result = JSON.parse(pythonOutput);
 
                     const status = result.validation_errors?.length > 0 ? 'Denegado' : 'Aceptado';

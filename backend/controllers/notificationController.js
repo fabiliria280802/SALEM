@@ -372,6 +372,77 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
     }
   };
 
+  exports.sendManualReviewNotificationEmail = async (enapUser, documentName, contractNumber, senderName) => {
+    try {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: enapUser.email,
+        subject: `Nuevo documento en revisión manual: ${documentName} del contrato ${contractNumber}`,
+        html: `
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Notificación de Revisión Manual</title>
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
+            <!-- Tabla principal con fondo gris claro -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f2f2f2;">
+              <tr>
+                <td align="center" valign="top">
+                  <!-- Tabla interna para contenido centrado -->
+                  <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; margin: auto; padding: 20px; border-radius: 8px;">
+                    <!-- Imagen centrada -->
+                    <tr>
+                      <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+                        <img src="https://files.catbox.moe/oq0o8s.png" alt="Documento en Revisión Manual" width="200" style="display: block; margin: 0 auto;">
+                      </td>
+                    </tr>
+                    <!-- Cuadro blanco con texto centrado -->
+                    <tr>
+                      <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+                        <div style="width: 200px; background-color: #ffffff; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin: 0 auto; padding: 15px; box-sizing: border-box;">
+                          <!-- Saludo -->
+                          <p style="font-size: 13px; font-weight: bold; color: #000; margin: 5px 0;">¡Hola ${enapUser.name}!</p>
+                          <!-- Texto descriptivo -->
+                          <p style="font-size: 13px; font-weight: normal; color: #000; line-height: 1.3; margin: 5px 0;">
+                            Has recibido un nuevo documento <strong>${documentName}</strong>, asociado al contrato número <strong>${contractNumber}</strong>, para revisión manual.
+                          </p>
+                          <!-- Instrucción -->
+                          <p style="font-size: 13px; font-weight: normal; color: #000; line-height: 1.3; margin: 5px 0;">
+                            Por favor, revisa el documento y toma una decisión: <strong>aprobarlo</strong> o <strong>rechazarlo</strong>.
+                          </p>
+                          <!-- Mensaje adicional -->
+                          <p style="font-size: 13px; font-weight: normal; color: #000; line-height: 1.3; margin: 5px 0;">
+                            El documento fue enviado por <strong>${companyName}</strong>.
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- Texto de copyright -->
+                    <tr>
+                      <td align="center" style="padding-top: 15px;">
+                        <p style="font-size: 12px; color: #666; font-weight: normal; margin: 0;">Copyright ® ENAP Ecuador.</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `,
+      };
+  
+      await transporter.sendMail(mailOptions);
+      console.log('Correo de notificación para revisión manual enviado con éxito.');
+    } catch (error) {
+      console.error('Error al enviar el correo de notificación de revisión manual:', error);
+      throw new Error('No se pudo enviar el correo de notificación de revisión manual.');
+    }
+  };
+
 //TODO: CREAR ESTA FUNCIONALIDAD. Función para enviar correo cuando faltan campos en un documento
 /*exports.sendMissingFieldsEmail = async (analysisResult, fileName) => {
   const subject = `Campos faltantes en el documento: ${fileName}`;

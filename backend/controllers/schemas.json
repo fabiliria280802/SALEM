@@ -79,7 +79,7 @@
 			},
 			"company_tax_id": {
 				"label": "ID Fiscal",
-				"regex": "(?i)\\b(?:id fiscal|tax id)\\s*[:\\-]?\\s*([^\\n]+)",
+				"regex": "(?i)\\b(?:id fiscal|tax id|ruc)\\s*[:\\-]?\\s*(\\d{8})",
 				"region": {
 					"top": 238,
 					"left": 170,
@@ -180,26 +180,37 @@
 			"service_table": {
 				"label": "Tabla de Servicios",
 				"type": "table",
+				"region": {
+					"top": 400,
+					"left": 50,
+					"width": 500,
+					"height": 200
+				},
 				"columns": {
 					"service_code": {
 						"label": "Código",
-						"regex": "\\b(?:\\w{4})\\b"
+						"regex": "\\b(?:\\w{4})\\b",
+						"alternatives": ["Code"]
 					},
 					"service_description": {
-						"label": "Descripción del Servicio",
-						"regex": ".+"
+						"label": "Descripción",
+						"regex": ".+",
+						"alternatives": ["Description"]
 					},
 					"service_quantity": {
 						"label": "Cantidad",
-						"regex": "\\b\\d+\\b"
+						"regex": "\\b\\d+\\b",
+						"alternatives": ["Quantity"]
 					},
 					"service_unit_cost": {
 						"label": "Costo Unitario",
-						"regex": "\\b\\d+(?:\\.\\d{2})\\b"
+						"regex": "\\b\\d+(?:\\.\\d{2})\\b",
+						"alternatives": ["Unit Cost"]
 					},
 					"service_cost": {
-						"label": "Costo",
-						"regex": "\\b\\d+(?:\\.\\d{2})\\b"
+						"label": "Costo Total",
+						"regex": "\\b\\d+(?:\\.\\d{2})\\b",
+						"alternatives": ["Total Cost"]
 					}
 				}
 			},

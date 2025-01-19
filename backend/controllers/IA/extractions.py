@@ -342,3 +342,88 @@ def extract_text_near_signature(image, position_index):
         return ""
 
 # Services delivery record
+
+# Invoice
+def extract_table_data_invoice(text, table_schema):
+    """
+    Extrae datos de una tabla en el texto basado en un esquema.
+    """
+    table_data = []
+    errors = []
+    missing_fields = set(table_schema["columns"].keys())
+    lines = text.split("\n")
+    
+    # Localizar el inicio de la tabla con encabezado
+    header_pattern = r"(?i)\b(?:Code|Description|Quantity|Unit Cost|Total Cost)\b"
+    start_row = None
+    for i, line in enumerate(lines):
+        if re.search(header_pattern, line):
+            start_row = i + 1
+            break
+
+    if start_row is None:
+        return table_data, ["No se encontró el encabezado de la tabla."]
+    
+    # Detectar fin de tabla
+    END_OF_TABLE_PATTERN = r"(?i)^•+\s*$"
+
+    current_row = []
+    for line in lines[start_row:]:
+        if re.search(END_OF_TABLE_PATTERN, line):  # Fin de tabla
+            break
+
+        # Si la línea está vacía, procesar la fila acumulada
+        if line.strip() == "":
+            if current_row:
+                row = process_row(" ".join(current_row), table_schema)
+                if row:
+                    table_data.append(row)
+                else:
+                    errors.append(f"Fila mal formateada: {' '.join(current_row)}")
+                current_row = []
+            continue
+
+        current_row.append(line.strip())
+
+    # Procesar la última fila acumulada
+    if current_row:
+        row = process_row(" ".join(current_row), table_schema)
+        if row:
+            table_data.append(row)
+        else:
+            errors.append(f"Fila mal formateada: {' '.join(current_row)}")
+
+def extract_region_text(pdf_path, region, page_number=0):
+    """
+    Extrae texto de una región específica en un PDF usando PyMuPDF (fitz).
+
+    Args:
+        pdf_path (str): Ruta al archivo PDF.
+        region (dict): Región especificada como un diccionario con keys: top, left, width, height.
+        page_number (int): Número de la página (0-indexed) de donde extraer el texto.
+
+    Returns:
+        str: Texto extraído de la región o un mensaje de error.
+    """
+    try:
+        pdf_document = fitz.open(pdf_path)
+        page = pdf_document[page_number]
+
+        # Coordenadas absolutas de la región
+        x0 = region["left"]
+        y0 = region["top"]
+        x1 = region["width"]
+        y1 = region["height"]
+
+        # Extraer texto
+        clip = fitz.Rect(x0, y0, x1, y1)
+        extracted_text = page.get_text("text", clip=clip)
+
+        pdf_document.close()
+        if not extracted_text:
+            return "No se encontró texto en la región especificada."
+
+        return extracted_text.strip()
+
+    except Exception as e:
+        return f"Error al procesar el PDF: {e}"

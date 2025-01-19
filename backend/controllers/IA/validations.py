@@ -358,3 +358,8 @@ def verify_signature_in_image_record(image, position_index):
     except Exception as e:
         print(f"Error al verificar la firma en la posición {position_index}: {str(e)}")
     return False
+
+# Invoice
+def validate_tax_id(extracted_value):
+    match = re.search(r"\b\d{8}\b", extracted_value)
+    return match.group(0) if match else None

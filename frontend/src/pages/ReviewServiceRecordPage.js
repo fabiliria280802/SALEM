@@ -23,17 +23,15 @@ const ReviewServiceRecordPage = () => {
 
     useEffect(() => {
         loadDocument();
-        console.log('ID:', id);
-        console.log('HES:', hes);
-        console.log('Contract:', contract);
-    }, [id, hes, contract]);
-
+    }, [id]);
 
     const loadDocument = async () => {
         try {
             const response = await documentService.getDocumentById('ServiceDeliveryRecord', id);
+            console.log('API Response:', response); 
             if (response) {
                 setDocumentData(response);
+                console.log('Document Data State:', response); 
                 if (response.file_path) {
                     const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost';
                     const port = process.env.REACT_APP_API_PORT || '5000';
@@ -89,7 +87,7 @@ const ReviewServiceRecordPage = () => {
     };
 
     if (loading) return <div>Cargando...</div>;
-    if (!documentData) return <div>No se encontraron datos del contrato</div>;
+    if (!documentData) return <div>No se encontraron datos del acta de servicio</div>;
 
 	return (
 		<div className={styles.container}>
@@ -99,12 +97,16 @@ const ReviewServiceRecordPage = () => {
 				<div className={styles.card}>
 					<p className={styles.cardHeader}>Información del acta de servicio:</p>
 					<p className={styles.cardContent}>
-						HES: {hes || 'No disponible'}
-						<br />
-						Contrato: {contract || 'No disponible'}
-						<br />
-						Tipo de documento: Acta de recepción de servicio
-					</p>
+                    HES: {hes || 'No disponible'}
+                        <br />
+                        Contrato: {contract || 'No disponible'}
+                        <br />
+                        Orden: {documentData.order_number || 'No disponible'}
+                        <br />
+                        Factura N°: {documentData.invoice_number || 'No disponible'}
+                        <br />
+                        Tipo de documento: Acta de recepción de servicio
+                    </p>
 				</div>
 				<div
 					className={

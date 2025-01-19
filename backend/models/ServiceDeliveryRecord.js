@@ -34,6 +34,14 @@ const serviceDeliveryRecordSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now,
 	},
+	invoice_number: {
+		type: String,
+		trim: true,
+	},
+	order_number: {
+		type: String,
+		trim: true,
+	},
 	status: {
 		type: String,
 		enum: ['Aceptado', 'Denegado', 'Pendiente', 'Revalidación', 'Analizando'],

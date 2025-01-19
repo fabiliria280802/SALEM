@@ -153,6 +153,8 @@ exports.createServiceRecord = [
                             hes_number: hes,
                             contract_id: contractId,
                             end_date: result.extracted_data.end_date,
+                            order_number: result.extracted_data.order_number,
+                            invoice_number: result.extracted_data.invoice_number,
                             missing_fields: result.missing_fields || [],
 							validation_errors: result.validation_errors || [],
                         };
@@ -217,6 +219,7 @@ exports.getServiceDeliveryRecordById = [
 			if (!record) {
 				return res.status(404).json({ message: 'Registro no encontrado' });
 			}
+            //console.log("record",record);
 			res.status(200).json(record);
 		} catch (error) {
 			res.status(500).json({ message: error.message });

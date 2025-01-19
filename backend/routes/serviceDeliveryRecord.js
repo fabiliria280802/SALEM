@@ -1,7 +1,7 @@
 const express = require('express');
 const {
 	createServiceRecord,
-	getServiceRecordById,
+	getServiceDeliveryRecordById,
 	updateServiceRecord,
 	getAllServiceDeliveryRecords,
 	deleteServiceDeliveryRecord,
@@ -13,7 +13,7 @@ const router = express.Router();
 
 router.post('/', upload.single('file'), createServiceRecord);
 router.get('/', getAllServiceDeliveryRecords);
-router.get('/:id', getServiceRecordById);
+router.get('/:id', getServiceDeliveryRecordById);
 router.put('/:id', updateServiceRecord);
 router.delete('/:id', deleteServiceDeliveryRecord);
 

@@ -95,12 +95,12 @@ const UploadInvoicePage = () => {
 		formData.append('documentType', documentData.documentType);
 		formData.append('file', documentData.file);
 		formData.append('ruc', documentData.ruc);
-		formData.append('invoice', documentData.invoice);
+		formData.append('contract', documentData.contract);
 
 		// Debug para verificar que se está enviando correctamente
 		console.log('DocumentType siendo enviado:', formData.get('documentType'));
 
-		if (!documentData.ruc || !documentData.invoice || !documentData.file) {
+		if (!documentData.ruc || !documentData.contract || !documentData.file) {
 			toast.current.show({
 				severity: 'warn',
 				summary: 'Advertencia',

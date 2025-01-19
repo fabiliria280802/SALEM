@@ -20,6 +20,19 @@ const invoiceSchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
+	contract_number: {
+		type: String,
+		trim: true,
+	},
+	contract_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Contract',
+        required: true,
+    },
+	serviceDeliveryRecord_id: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'ServiceDeliveryRecord',
+	},
 	created_by: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',

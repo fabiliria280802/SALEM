@@ -18,15 +18,21 @@ from extractions import (
     extract_sequential_fields, 
     extract_table_data, 
     extract_signatures_from_image,
-    extract_provider_fields
+    extract_provider_fields,
     #imports use in service delivery
+
+    #imports use in invoice
+    extract_table_data_invoice,
+    extract_region_text,
 )
 
 from utils import (
     #imports use in contract
     convert_pdf_to_images, 
-   load_document_schema
-   #imports use in service delivery
+    load_document_schema,
+    #imports use in service delivery
+
+    #imports use in invoice
 )
 
 from validations import (
@@ -53,7 +59,9 @@ from validations import (
     validate_contract_details_intro,
     validate_signature_intro,
     #imports use in service delivery
-    validate_signatures_and_positions_record
+    validate_signatures_and_positions_record,
+    #imports use in invoice
+    validate_tax_id,
 )
 
 # Funciones de procesamiento de documentos específicos
@@ -150,71 +158,57 @@ def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=
     validation_errors = []
     missing_fields = []
 
+
+    required_fields = [
+        "company_name","company_address","company_city","company_country", "company_phone","company_website","company_email","company_tax_id","invoice_number","invoice_date","payable_at","order_number","client_name", "client_ruc", "client_address", "client_city", "client_country", "service_code", "service_description","service_quantity","service_unit_cost","service_cost","service_hes","subtotal","tax", "total_due"
+    ]
+
+    validations = [
+        ("company_tax_id", validate_tax_id),
+        ("", ),
+        ("", ),
+    ]
+
     try:
+        invoice_fields = schema["Invoice"]["fields"]
         if text:
-            invoice_fields = schema["Invoice"]["fields"]
+            continuous_text = text.replace("\n", " ").strip()
+            if "region" in invoice_fields["service_table"]:
+                region = invoice_fields["service_table"]["region"]
+                table_text = extract_region_text(text, region)
+            else:
+                table_text = text
+
             if "service_table" in invoice_fields:
                 table_schema = invoice_fields["service_table"]
-                table_data, table_errors = extract_table_data(text, table_schema)
+                table_data, table_errors = extract_table_data_invoice(text, table_schema)
                 if table_errors:
                     validation_errors.extend(table_errors)
                 else:
                     extracted_data["service_table"] = table_data
 
             for field_name, field_info in invoice_fields.items():
-                if "region" in field_info:
-                    extracted_data[field_name] = extract_field_from_region(images[0], field_info)
-                elif "relative_to" in field_info:
-                    extracted_data[field_name] = extract_relative_field(images[0], extracted_data, field_info)
-                elif "regex" in field_info:
-                    match = re.search(field_info["regex"], text)
-                    if match:
-                        extracted_data[field_name] = match.group(1).strip()
-                    else:
+                if "regex" in field_info:
+                    try:
+                        match = re.search(field_info["regex"], continuous_text)
+                        if match and match.group(1):  
+                            value = match.group(1).strip()
+                            extracted_data[field_name] = value
+                        elif field_name in required_fields:
+                            missing_fields.append(field_name)
+                    except IndexError as e:
+                        validation_errors.append(f"Error en el campo '{field_name}': {e}")
                         missing_fields.append(field_name)
 
         elif xml_tree:
-            # Procesar campos desde XML
-            contract_fields = schema["Invoice"]["fields"]
-            for field_name, field_info in contract_fields.items():
+            for field_name, field_info in invoice_fields.items():
                 extracted_data[field_name] = extract_field_from_xml(xml_tree, field_info)
                 if not extracted_data[field_name]:
                     missing_fields.append(field_name)
 
-
-        # TODO: Validar campos específicos
-        if "service_table" in extracted_data:
-            table_data = extracted_data["service_table"]  
-            valid, errors = validate_tables_mathematics_logic(table_data)
-            if not valid:
-                validation_errors.extend(errors)
-
-        if "company_name" in extracted_data:
-            valid, error = validate_company_name(extracted_data["company_name"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "client_ruc" in extracted_data:
-            valid, error = validate_company_ruc(extracted_data["client_ruc"])
-            if not valid:
-                validation_errors.append(error)
-            print(ruc_input)
-            validRuc, error = validate_input_vs_extracted(ruc_input, extracted_data["client_ruc"], "RUC")
-            if not validRuc:
-                validation_errors.append(error)
-
-        if "invoice_date" in extracted_data and "payable_at" in extracted_data:
-            valid, error = validate_dates(extracted_data["invoice_date"], extracted_data["payable_at"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "invoice_number" in extracted_data:
-            valid, error = validate_invoice_number(extracted_data["invoice_number"])
-            if not valid:
-                validation_errors.append(error)
-
-        if "order_number" in extracted_data:
-                valid, error = validate_hes_number(extracted_data["order_number"])
+        for field_name, validator in validations:
+            if field_name in extracted_data:
+                valid, error = validator(extracted_data[field_name])
                 if not valid:
                     validation_errors.append(error)
 

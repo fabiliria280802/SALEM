@@ -101,9 +101,8 @@ exports.createServiceRecord = [
                 try {
                     let jsonStr = pythonOutput;
             
-                    // Intentar limpiar la salida de Python
                     try {
-                        const matches = pythonOutput.match(/({[\s\S]*?})\s*$/); // Buscar JSON válido al final
+                        const matches = pythonOutput.match(/({[\s\S]*?})\s*$/); 
                         if (matches) {
                             jsonStr = matches[1];
                         }
@@ -129,6 +128,8 @@ exports.createServiceRecord = [
                                         .replace(/^"|"$/g, '')
                                         .replace(/\\n/g, ' ')
                                         .trim();
+                                } else if (result.extracted_data[key] == null) {
+                                    result.extracted_data[key] = 'N/A';
                                 }
                             });
                         }
@@ -148,10 +149,10 @@ exports.createServiceRecord = [
                             _id: newRecord._id,
                             status,
                             ai_decision_explanation,
-                            hes_id: result.hes_id,
-                            hes_number: result.hes_number,
-                            contract_id: result.contract_id,
-                            end_date: result.end_date,
+                            hes_id: hesRecord,
+                            hes_number: hes,
+                            contract_id: contractId,
+                            end_date: result.extracted_data.end_date,
                             missing_fields: result.missing_fields || [],
 							validation_errors: result.validation_errors || [],
                         };

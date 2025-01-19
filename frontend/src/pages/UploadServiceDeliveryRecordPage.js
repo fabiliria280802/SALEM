@@ -19,12 +19,12 @@ const UploadServiceDeliveryRecordPage = () => {
     const { user } = useAuth();
 
     const [documentData, setDocumentData] = useState({
-        ruc: '',
         hes: '',
         documentType: 'ServiceDeliveryRecord',
         file: null,
 		contractId: ''
     });
+
     const [isRucReadOnly, setIsRucReadOnly] = useState(false);
 
 	useEffect(() => {
@@ -38,7 +38,7 @@ const UploadServiceDeliveryRecordPage = () => {
 			setIsRucReadOnly(true); 
 		}
 		if (contractId) {
-			setDocumentData(prev => ({ ...prev, contractId })); // Asegúrate de incluir el contractId
+			setDocumentData(prev => ({ ...prev, contractId }));
 		}
 	}, [user, providerRuc]);	
 
@@ -139,7 +139,7 @@ const UploadServiceDeliveryRecordPage = () => {
 
 			if (response._id) {
 				setTimeout(
-					() => history.push(`/review-service-record/${response._id}`),
+					() => history.push(`/review-service-record/${response._id}?hes=${response.hes_number}&contract=${response.contract_id}`),
 					2000,
 				);
 			} else {

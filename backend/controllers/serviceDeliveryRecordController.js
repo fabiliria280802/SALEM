@@ -148,8 +148,14 @@ exports.createServiceRecord = [
                             _id: newRecord._id,
                             status,
                             ai_decision_explanation,
+                            hes_id: result.hes_id,
+                            hes_number: result.hes_number,
+                            contract_id: result.contract_id,
+                            end_date: result.end_date,
+                            missing_fields: result.missing_fields || [],
+							validation_errors: result.validation_errors || [],
                         };
-            
+                        console.log('Datos actualizados:', updateData);
                         await ServiceDeliveryRecord.findByIdAndUpdate(newRecord._id, updateData, {
                             new: true,
                         });

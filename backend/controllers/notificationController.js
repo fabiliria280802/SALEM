@@ -230,7 +230,77 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
 	}
   };
   
- 
+  exports.sendDocumentRejectionEmail = async (user, documentName, contractNumber) => {
+    try {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: `Tu documento ${documentName} del contrato ${contractNumber} ha sido rechazado`,
+        html: `
+          <!DOCTYPE html>
+          <html lang="es">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Documento Rechazado</title>
+          </head>
+          <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
+            <!-- Tabla principal con fondo gris claro -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f2f2f2;">
+              <tr>
+                <td align="center" valign="top">
+                  <!-- Tabla interna para contenido centrado -->
+                  <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff; margin: auto; padding: 20px; border-radius: 8px;">
+                    <!-- Imagen centrada -->
+                    <tr>
+                      <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+                        <img src="https://files.catbox.moe/man26w.png" alt="Documento Rechazado" width="200" style="display: block; margin: 0 auto;">
+                      </td>
+                    </tr>
+                    <!-- Cuadro blanco con texto centrado -->
+                    <tr>
+                      <td align="center" valign="top" style="background-color: #f2f2f2; padding: 10px;">
+                        <div style="width: 200px; background-color: #ffffff; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin: 0 auto; padding: 15px; box-sizing: border-box;">
+                          <!-- Saludo -->
+                          <p style="font-size: 13px; font-weight: bold; color: #000; margin: 5px 0;">¡Hola ${user.name}!</p>
+                          <!-- Texto descriptivo -->
+                          <p style="font-size: 13px; font-weight: normal; color: #000; line-height: 1.3; margin: 5px 0;">
+                            Lamentamos informarte que tu documento <strong>${documentName}</strong>, asociado al contrato número <strong>${contractNumber}</strong>, ha sido rechazado.
+                          </p>
+                          <!-- Instrucciones adicionales -->
+                          <p style="font-size: 13px; font-weight: normal; color: #000; line-height: 1.3; margin: 5px 0;">
+                            Por favor, revisa los errores indicados en el sistema, corrige el documento y vuelve a cargarlo. Si lo prefieres, también puedes solicitar una revisión manual.
+                          </p>
+                          <!-- Mensaje de ayuda -->
+                          <p style="font-size: 13px; font-weight: normal; color: #000; line-height: 1.3; margin: 5px 0;">
+                            Si necesitas ayuda, no dudes en contactarnos. ¡Estamos aquí para apoyarte!
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                    <!-- Texto de copyright -->
+                    <tr>
+                      <td align="center" style="padding-top: 15px;">
+                        <p style="font-size: 12px; color: #666; font-weight: normal; margin: 0;">Copyright ® ENAP Ecuador.</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `,
+      };
+  
+      await transporter.sendMail(mailOptions);
+      console.log('Correo de rechazo enviado con éxito.');
+    } catch (error) {
+      console.error('Error al enviar el correo de rechazo:', error);
+      throw new Error('No se pudo enviar el correo de rechazo.');
+    }
+  };
+  
   
 
 //TODO: CREAR ESTA FUNCIONALIDAD. Función para enviar correo cuando faltan campos en un documento

@@ -171,7 +171,6 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
 		  <head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Documento Aprobado</title>
 		  </head>
 		  <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
 			<!-- Tabla principal con fondo gris claro -->
@@ -242,7 +241,6 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Documento Rechazado</title>
           </head>
           <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
             <!-- Tabla principal con fondo gris claro -->
@@ -313,7 +311,6 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Documento en Revisión Manual</title>
           </head>
           <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
             <!-- Tabla principal con fondo gris claro -->
@@ -384,7 +381,6 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Notificación de Revisión Manual</title>
           </head>
           <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
             <!-- Tabla principal con fondo gris claro -->
@@ -455,7 +451,6 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
           <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Notificación de Flujo Completado</title>
           </head>
           <body style="margin: 0; padding: 0; background-color: #f2f2f2; font-family: Arial, sans-serif;">
             <!-- Tabla principal con fondo gris claro -->

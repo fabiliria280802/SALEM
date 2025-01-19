@@ -143,7 +143,7 @@ const UploadInvoicePage = () => {
 		<div className={styles.container}>
 			<Toast ref={toast} />
 			<div className={styles.formContainer}>
-				<h1 className={styles.formTitle}>Nuevo contrato</h1>
+				<h1 className={styles.formTitle}>Nueva factura</h1>
 				<p className={styles.formSubtitle}>Completa la información</p>
 
 				<div className={styles.formGrid}>

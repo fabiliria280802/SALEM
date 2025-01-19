@@ -131,7 +131,7 @@ const ReviewServiceRecordPage = () => {
 				<div className={styles.buttonGroup}>
 					{documentData.status === 'Aceptado' && (
 						<Button
-							label="Subir acta de recepción"
+							label="Subir una factura"
 							className={styles.button}
 							onClick={() => history.push(`/upload-invoice?contract=${documentData._id}`)}
 						/>

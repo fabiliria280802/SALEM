@@ -89,93 +89,39 @@
 			},
 			"invoice_number": {
 				"label": "Número de Factura",
-				"regex": "(?i)\\b(?:factura n°|invoice no|invoice n°)\\s*[:\\-]?\\s*(\\d+)",
-				"region": {
-					"top": 236.83880615234375,
-					"left": 170.69290161132812,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:factura n°|invoice no|invoice n°)\\s*[:\\-]?\\s*(\\d+)"
 			},
 			"invoice_date": {
 				"label": "Fecha de Factura",
-				"regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})",
-				"region": {
-					"top": 259.33880615234375,
-					"left": 170.69290161132812,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:fecha|date)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})"
 			},
 			"payable_at": {
 				"label": "Fecha de Vencimiento",
-				"regex": "(?i)\\b(?:vencimiento|payable at)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})",
-				"region": {
-					"top": 281.83880615234375,
-					"left": 170.69290161132812,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:vencimiento|payable at)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})"
 			},
 			"order_number": {
 				"label": "Número de Orden",
-				"regex": "(?i)\\b(?:orden n°|order no|order n°)\\s*[:\\-]?\\s*(\\d+)",
-				"region": {
-					"top": 304.33880615234375,
-					"left": 170.69290161132812,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:orden n°|order no|order n°)\\s*[:\\-]?\\s*(\\d+)"
 			},
 			"client_name": {
 				"label": "Nombre del Cliente",
-				"regex": "(?i)\\b(?:cliente|client name)\\s*[:\\-]?\\s*([^\\n]+)",
-				"region": {
-					"top": 236.83880615234375,
-					"left": 303.07281494140625,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:cliente|client name)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
 			"client_ruc": {
 				"label": "RUC del Cliente",
-				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d+)",
-				"region": {
-					"top": 259.33880615234375,
-					"left": 303.07281494140625,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:ruc)\\s*[:\\-]?\\s*(\\d+)"
 			},
 			"client_address": {
 				"label": "Dirección del Cliente",
-				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)",
-				"region": {
-					"top": 281.83880615234375,
-					"left": 303.07281494140625,
-					"width": 400,
-					"height": 40
-				}
+				"regex": "(?i)\\b(?:dirección|address)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
 			"client_city": {
 				"label": "Ciudad del Cliente",
-				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)",
-				"region": {
-					"top": 326.83880615234375,
-					"left": 303.07281494140625,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:ciudad|city)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
 			"client_country": {
 				"label": "País del Cliente",
-				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)",
-				"region": {
-					"top": 349.33880615234375,
-					"left": 303.07281494140625,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:país|country)\\s*[:\\-]?\\s*([^\\n]+)"
 			},
 			"service_table": {
 				"label": "Tabla de Servicios",

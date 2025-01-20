@@ -24,6 +24,7 @@ from extractions import (
     #imports use in invoice
     extract_table_data_invoice,
     extract_region_text,
+    process_invoice_document_with_camelot
 )
 
 from utils import (
@@ -62,6 +63,7 @@ from validations import (
     validate_signatures_and_positions_record,
     #imports use in invoice
     validate_tax_id,
+    
 )
 
 # Funciones de procesamiento de documentos específicos
@@ -169,10 +171,18 @@ def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=
         ("", ),
     ]
 
+    fields_order = [
+       {"field": "invoice_number", "pattern": r"(?i)\b(?:invoice no|factura n°)\s*[:\-]?\s*(\d+)"},
+       {"field": "invoice_date", "pattern": r"(?i)\b(?:date|fecha)\s*[:\-]?\s*(\d{2}-\d{2}-\d{4})"},
+       {"field": "payable_at", "pattern": r"(?i)\b(?:payable at|vencimiento)\s*[:\-]?\s*(\d{2}-\d{2}-\d{4})"},
+       {"field": "order_number", "pattern": r"(?i)\b(?:order no|orden n°)\s*[:\-]?\s*(\d+)"}
+    ]
+
     try:
         invoice_fields = schema["Invoice"]["fields"]
         if text:
             continuous_text = text.replace("\n", " ").strip()
+            print("continuous text:",continuous_text)
             if "service_table" in invoice_fields:
                 table_schema = invoice_fields["service_table"]
                 table_data, table_errors = extract_table_data_invoice(text, table_schema)
@@ -210,6 +220,16 @@ def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=
                 if not extracted_data[field_name]:
                     missing_fields.append(field_name)
 
+
+       # Si no se logra extraer datos clave, intenta con Camelot
+        if not all(key in extracted_data for key in ["invoice_number", "invoice_date", "payable_at", "order_number"]):
+            camelot_result = process_invoice_document_with_camelot(file_path, schema, page_number=1)
+            if "extracted_data" in camelot_result:
+                extracted_data.update(camelot_result["extracted_data"])
+            if "validation_errors" in camelot_result:
+                validation_errors.extend(camelot_result["validation_errors"])
+
+        # Validar campos requeridos
         for field_name, validator in validations:
             if field_name in extracted_data:
                 valid, error = validator(extracted_data[field_name])

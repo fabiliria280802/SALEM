@@ -468,3 +468,63 @@ def extract_region_text(pdf_path, region, page_number=1):
         return extracted_text.strip()
     except Exception as e:
         return f"Error extrayendo texto de la región: {e}"
+    
+
+def extract_invoice_data_with_camelot_tablet_two(pdf_path, page_number=1):
+    try:
+        # Leer el PDF con Camelot
+        tables = camelot.read_pdf(pdf_path, pages=str(page_number), flavor="stream")
+
+        if not tables or len(tables) == 0:
+            return {}, ["No se encontraron tablas en la página especificada."]
+
+        # Suponiendo que los datos clave-valor están en la primera tabla
+        table = tables[0].df
+        extracted_data = {}
+
+        # Iterar sobre las filas y mapear etiquetas con valores
+        for i in range(len(table)):
+            row = table.iloc[i].tolist()
+            if len(row) > 1:  # Verificar que la fila tiene más de una celda
+                key, value = row[0].strip(), row[1].strip()
+                if key and value:
+                    extracted_data[key.lower()] = value
+
+        return extracted_data, []
+    except Exception as e:
+        return {}, [f"Error al extraer datos con Camelot: {e}"]
+    
+
+def process_invoice_document_with_camelot(file_path, schema, page_number=1):
+    extracted_data, validation_errors = extract_invoice_data_with_camelot_tablet_two(file_path, page_number)
+
+    if validation_errors:
+        print("Errores:", validation_errors)
+        return {"validation_errors": validation_errors}
+
+    # Mapear datos extraídos al esquema
+    mapped_data = map_extracted_data_to_schema(extracted_data)
+
+    return {
+        "extracted_data": mapped_data,
+        "validation_errors": validation_errors,
+    }
+
+
+def map_extracted_data_to_schema(extracted_data):
+    mapping = {
+        "invoice no": "invoice_number",
+        "date": "invoice_date",
+        "payable at": "payable_at",
+        "order no": "order_number",
+        "client name": "client_name",
+        "client address": "client_address",
+        "client city": "client_city",
+        "client country": "client_country",
+    }
+
+    result = {}
+    for key, value in mapping.items():
+        result[value] = extracted_data.get(key.lower(), "No encontrado")
+
+    return result

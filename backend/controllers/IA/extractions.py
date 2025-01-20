@@ -344,86 +344,127 @@ def extract_text_near_signature(image, position_index):
 # Services delivery record
 
 # Invoice
-def extract_table_data_invoice(text, table_schema):
+def extract_table_data_invoice(text, table_schema, pdf_path=None, page_number=1):
     """
-    Extrae datos de una tabla en el texto basado en un esquema.
+    Extrae datos de una tabla desde un texto o PDF basado en un esquema.
+
+    Args:
+        text (str): Texto extraído del PDF.
+        table_schema (dict): Esquema que define los encabezados y sus alternativas.
+        pdf_path (str, optional): Ruta al archivo PDF si se utiliza Camelot.
+        page_number (int, optional): Número de página donde buscar la tabla (1-indexed).
+
+    Returns:
+        tuple: (lista de datos extraídos, lista de errores)
     """
     table_data = []
     errors = []
-    missing_fields = set(table_schema["columns"].keys())
-    lines = text.split("\n")
-    
-    # Localizar el inicio de la tabla con encabezado
-    header_pattern = r"(?i)\b(?:Code|Description|Quantity|Unit Cost|Total Cost)\b"
-    start_row = None
-    for i, line in enumerate(lines):
-        if re.search(header_pattern, line):
-            start_row = i + 1
-            break
 
-    if start_row is None:
-        return table_data, ["No se encontró el encabezado de la tabla."]
-    
-    # Detectar fin de tabla
-    END_OF_TABLE_PATTERN = r"(?i)^•+\s*$"
-
-    current_row = []
-    for line in lines[start_row:]:
-        if re.search(END_OF_TABLE_PATTERN, line):  # Fin de tabla
-            break
-
-        # Si la línea está vacía, procesar la fila acumulada
-        if line.strip() == "":
-            if current_row:
-                row = process_row(" ".join(current_row), table_schema)
-                if row:
-                    table_data.append(row)
-                else:
-                    errors.append(f"Fila mal formateada: {' '.join(current_row)}")
-                current_row = []
-            continue
-
-        current_row.append(line.strip())
-
-    # Procesar la última fila acumulada
-    if current_row:
-        row = process_row(" ".join(current_row), table_schema)
-        if row:
-            table_data.append(row)
-        else:
-            errors.append(f"Fila mal formateada: {' '.join(current_row)}")
-
-def extract_region_text(pdf_path, region, page_number=0):
-    """
-    Extrae texto de una región específica en un PDF usando PyMuPDF (fitz).
-
-    Args:
-        pdf_path (str): Ruta al archivo PDF.
-        region (dict): Región especificada como un diccionario con keys: top, left, width, height.
-        page_number (int): Número de la página (0-indexed) de donde extraer el texto.
-
-    Returns:
-        str: Texto extraído de la región o un mensaje de error.
-    """
     try:
-        pdf_document = fitz.open(pdf_path)
-        page = pdf_document[page_number]
+        # Si hay un archivo PDF, intenta usar Camelot
+        if pdf_path:
+            # Usar Camelot para extraer tablas
+            import camelot
+            tables = camelot.read_pdf(pdf_path, pages=str(page_number), flavor="stream")
 
-        # Coordenadas absolutas de la región
-        x0 = region["left"]
-        y0 = region["top"]
-        x1 = region["width"]
-        y1 = region["height"]
+            if len(tables) == 0:
+                return [], ["No se encontraron tablas en la página especificada con Camelot."]
 
-        # Extraer texto
-        clip = fitz.Rect(x0, y0, x1, y1)
-        extracted_text = page.get_text("text", clip=clip)
+            # Tomar la primera tabla detectada
+            table = tables[0].df
 
-        pdf_document.close()
-        if not extracted_text:
-            return "No se encontró texto en la región especificada."
+            # Mapear encabezados
+            headers = table.iloc[0].str.strip().tolist()
+            header_mapping = {}
+            for schema_key, schema_value in table_schema["columns"].items():
+                for alternative in schema_value.get("alternatives", []):
+                    if alternative in headers:
+                        header_mapping[headers.index(alternative)] = schema_key
 
-        return extracted_text.strip()
+            if not header_mapping:
+                return [], ["No se encontraron encabezados que coincidan con el esquema en el PDF."]
+
+            # Extraer filas
+            for _, row in table.iterrows():
+                if row.equals(table.iloc[0]):  # Ignorar fila de encabezados
+                    continue
+
+                extracted_row = {}
+                for index, schema_key in header_mapping.items():
+                    extracted_row[schema_key] = row[index].strip() if index < len(row) else None
+
+                # Validar fila vacía
+                if any(value for value in extracted_row.values()):
+                    table_data.append(extracted_row)
+                else:
+                    break  # Terminar si la fila está completamente vacía
+
+            return table_data, []
+
+        # Si no hay PDF, trabajar directamente con texto
+        lines = text.split("\n")
+        header_pattern = r"(?i)\b(?:Code|Description|HES|Quantity|Unit Cost|Cost)\b"
+        start_row = None
+
+        # Buscar inicio de la tabla
+        for i, line in enumerate(lines):
+            if re.search(header_pattern, line):
+                start_row = i + 1
+                break
+
+        if start_row is None:
+            return table_data, ["No se encontró el encabezado de la tabla en el texto."]
+
+        # Detectar fin de tabla
+        END_OF_TABLE_PATTERN = r"(?i)^•+\s*$"
+        current_row = []
+
+        for line in lines[start_row:]:
+            if re.search(END_OF_TABLE_PATTERN, line):  # Fin de tabla
+                break
+
+            if line.strip() == "":  # Procesar filas acumuladas
+                if current_row:
+                    row = process_row(" ".join(current_row), table_schema)
+                    if row:
+                        table_data.append(row)
+                    else:
+                        errors.append(f"Fila mal formateada: {' '.join(current_row)}")
+                    current_row = []
+                continue
+
+            current_row.append(line.strip())
+
+        # Procesar la última fila acumulada
+        if current_row:
+            row = process_row(" ".join(current_row), table_schema)
+            if row:
+                table_data.append(row)
+            else:
+                errors.append(f"Fila mal formateada: {' '.join(current_row)}")
+
+        return table_data, errors
 
     except Exception as e:
-        return f"Error al procesar el PDF: {e}"
+        return [], [f"Error general al extraer la tabla: {e}"]
+
+def extract_region_text(pdf_path, region, page_number=1):
+    try:
+        doc = fitz.open(pdf_path)
+        page = doc[page_number - 1]
+
+        # Convertir las coordenadas de la región a un rectángulo
+        rect = fitz.Rect(
+            region["left"],
+            region["top"],
+            region["left"] + region["width"],
+            region["top"] + region["height"]
+        )
+
+        # Extraer texto de la región
+        extracted_text = page.get_text("text", clip=rect)
+        doc.close()
+
+        return extracted_text.strip()
+    except Exception as e:
+        return f"Error extrayendo texto de la región: {e}"

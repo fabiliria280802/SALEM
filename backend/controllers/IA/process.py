@@ -173,12 +173,6 @@ def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=
         invoice_fields = schema["Invoice"]["fields"]
         if text:
             continuous_text = text.replace("\n", " ").strip()
-            if "region" in invoice_fields["service_table"]:
-                region = invoice_fields["service_table"]["region"]
-                table_text = extract_region_text(text, region)
-            else:
-                table_text = text
-
             if "service_table" in invoice_fields:
                 table_schema = invoice_fields["service_table"]
                 table_data, table_errors = extract_table_data_invoice(text, table_schema)
@@ -186,19 +180,29 @@ def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=
                     validation_errors.extend(table_errors)
                 else:
                     extracted_data["service_table"] = table_data
+          
+
 
             for field_name, field_info in invoice_fields.items():
                 if "regex" in field_info:
                     try:
                         match = re.search(field_info["regex"], continuous_text)
                         if match and match.group(1):  
-                            value = match.group(1).strip()
+                            value = match.group(1).strip() if match.groups() else None
                             extracted_data[field_name] = value
                         elif field_name in required_fields:
                             missing_fields.append(field_name)
                     except IndexError as e:
                         validation_errors.append(f"Error en el campo '{field_name}': {e}")
                         missing_fields.append(field_name)
+                if "region" in field_info:
+                    region = field_info["region"]
+                    field_text = extract_region_text(file_path, region)
+                    if not field_text or field_text.strip() == "":
+                        validation_errors.append(f"No se encontró texto en la región de {field_name}.")
+                else:
+                    field_text = text
+
 
         elif xml_tree:
             for field_name, field_info in invoice_fields.items():

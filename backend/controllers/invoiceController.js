@@ -127,17 +127,25 @@ exports.createInvoice = [
                             });
                         }
             
-                        const status =
-                            result.validation_errors && result.validation_errors.length > 0
-                                ? 'Denegado'
-                                : 'Aceptado';
-            
-                        const ai_decision_explanation =
-                            status === 'Denegado'
-                                ? `Documento denegado. Errores: ${result.validation_errors.join(', ')}`
-                                : 'Documento procesado correctamente';
-
-
+						const status =
+						(result.validation_errors && result.validation_errors.length > 0) ||
+						(result.missing_fields && result.missing_fields.length > 0)
+							? 'Denegado'
+							: 'Aceptado';
+					
+						const ai_decision_explanation =
+							status === 'Denegado'
+								? `Documento denegado. ${
+									  result.missing_fields && result.missing_fields.length > 0
+										  ? `Campos faltantes: ${result.missing_fields.join(', ')}. `
+										  : ''
+								  }${
+									  result.validation_errors && result.validation_errors.length > 0
+										  ? `Errores de validación: ${result.validation_errors.join(', 	')}.`
+										  : ''
+								  }`
+								: 'Documento procesado correctamente';
+							  
 						const updateData = {
 							...result.extracted_data,
 							_id: newInvoice._id,

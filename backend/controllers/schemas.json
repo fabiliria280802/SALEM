@@ -89,7 +89,7 @@
 			},
 			"invoice_number": {
 				"label": "Número de Factura",
-				"regex": "(?i)\\b(?:factura n°|invoice no)\\s*[:\\-]?\\s*(\\d+)",
+				"regex": "(?i)\\b(?:factura n°|invoice no|invoice n°)\\s*[:\\-]?\\s*(\\d+)",
 				"region": {
 					"top": 236.83880615234375,
 					"left": 170.69290161132812,
@@ -109,7 +109,7 @@
 			},
 			"payable_at": {
 				"label": "Fecha de Vencimiento",
-				"regex": "(?i)\\b(?:vencimiento|payable at)\\s*[:\\-]?\\s*(\\d{2}/\\d{2}/\\d{4})",
+				"regex": "(?i)\\b(?:vencimiento|payable at)\\s*[:\\-]?\\s*(\\d{2}-\\d{2}-\\d{4})",
 				"region": {
 					"top": 281.83880615234375,
 					"left": 170.69290161132812,
@@ -119,7 +119,7 @@
 			},
 			"order_number": {
 				"label": "Número de Orden",
-				"regex": "(?i)\\b(?:orden n°|order no)\\s*[:\\-]?\\s*(\\d+)",
+				"regex": "(?i)\\b(?:orden n°|order no|order n°)\\s*[:\\-]?\\s*(\\d+)",
 				"region": {
 					"top": 304.33880615234375,
 					"left": 170.69290161132812,
@@ -216,37 +216,19 @@
 			},
 			"service_hes": {
 				"label": "HES",
-				"regex": "\\b(?:HES:\\s?\\d{8})\\b"
+				"regex": "(?i)HES:\\s*(\\d+)"
 			},
 			"subtotal": {
 				"label": "Subtotal",
-				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
-				"region": {
-					"top": 582.8453979492188,
-					"left": 177.9153594970703,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:subtotal)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
 			},
 			"tax": {
 				"label": "Impuesto",
-				"regex": "(?i)\\b(?:impuesto|tax)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
-				"region": {
-					"top": 582.8453979492188,
-					"left": 177.9153594970703,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:impuesto|tax)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
 			},
 			"total_due": {
 				"label": "Total a Pagar",
-				"regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)",
-				"region": {
-					"top": 582.8453979492188,
-					"left": 177.9153594970703,
-					"width": 200,
-					"height": 20
-				}
+				"regex": "(?i)\\b(?:total)\\s*[:\\-]?\\s*\\$?\\s*(\\d+(?:\\.\\d{2})?)"
 			}
 		}
 	},

@@ -7,7 +7,7 @@ import publicService from '../services/publicService';
 import { Toast } from 'primereact/toast';
 import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
-import LoadingScreen from '../components/Layout/LoadingScreen'; // Importa la pantalla de carga
+import LoadingScreen from '../components/Layout/LoadingScreen';
 
 const UploadContractPage = () => {
     const history = useHistory();
@@ -20,7 +20,7 @@ const UploadContractPage = () => {
         file: null,
     });
     const [isRucReadOnly, setIsRucReadOnly] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // Estado para la pantalla de carga
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user && user.role === 'Proveedor') {
@@ -53,40 +53,6 @@ const UploadContractPage = () => {
         }
     };
 
-    const handleRucBlur = async () => {
-        if (user.role !== 'Proveedor' && documentData.ruc.trim().length === 13) {
-            try {
-                const rucUser = await publicService.getUserByRuc(documentData.ruc);
-                if (rucUser) {
-                    if (rucUser.role !== 'Proveedor') {
-                        toast.current.show({
-                            severity: 'error',
-                            summary: 'Error',
-                            detail: 'El RUC debe pertenecer a un usuario proveedor',
-                            life: 5000,
-                        });
-                        setDocumentData(prev => ({ ...prev, ruc: '' }));
-                    } else {
-                        toast.current.show({
-                            severity: 'success',
-                            summary: 'RUC Válido',
-                            detail: `Proveedor: ${rucUser.name} ${rucUser.last_name}`,
-                            life: 3000,
-                        });
-                    }
-                }
-            } catch (error) {
-                toast.current.show({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'El RUC no está registrado o no pertenece a un proveedor',
-                    life: 5000,
-                });
-                setDocumentData(prev => ({ ...prev, ruc: '' }));
-            }
-        }
-    };
-
     const handleSubmit = async e => {
         e.preventDefault();
 
@@ -100,9 +66,8 @@ const UploadContractPage = () => {
             return;
         }
 
-        setIsLoading(true); // Activa la pantalla de carga
+        setIsLoading(true);
 
-        // Crear FormData y agregar los campos
         const formData = new FormData();
         formData.append('documentType', documentData.documentType);
         formData.append('file', documentData.file);
@@ -113,7 +78,7 @@ const UploadContractPage = () => {
             const response = await documentService.uploadDocument(documentData.documentType, formData);
 
             if (response._id) {
-                setTimeout(() => history.push(`/review-contract/${response._id}`), 2000);
+                history.push(`/review-contract/${response._id}`);
             } else {
                 toast.current.show({
                     severity: 'error',
@@ -121,6 +86,7 @@ const UploadContractPage = () => {
                     detail: 'No se pudo obtener el ID del contrato. Intente nuevamente.',
                     life: 5000,
                 });
+                setIsLoading(false);
             }
         } catch (error) {
             console.error('Error en handleSubmit:', error);
@@ -130,8 +96,7 @@ const UploadContractPage = () => {
                 detail: error.message || 'Error al cargar el contrato',
                 life: 10000,
             });
-        } finally {
-            setIsLoading(false); // Desactiva la pantalla de carga
+            setIsLoading(false);
         }
     };
 
@@ -140,7 +105,7 @@ const UploadContractPage = () => {
     };
 
     if (isLoading) {
-        return <LoadingScreen />; // Muestra la pantalla de carga
+        return <LoadingScreen />;
     }
 
     return (
@@ -158,7 +123,6 @@ const UploadContractPage = () => {
                             name="ruc"
                             value={documentData.ruc}
                             onChange={handleInputChange}
-                            onBlur={handleRucBlur}
                             maxLength={13}
                             disabled={isRucReadOnly}
                             placeholder={isRucReadOnly ? '' : 'Ingrese el RUC del proveedor'}

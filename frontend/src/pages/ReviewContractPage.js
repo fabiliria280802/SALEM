@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import documentService from '../services/documentService';
+import LoadingScreen from '../components/Layout/LoadingScreen';
 import styles from '../styles/DocumentReviewPage.module.css';
 import useAuth from '../hooks/useAuth';
 
@@ -33,16 +34,16 @@ const ReviewContractPage = () => {
                     throw new Error('El archivo no tiene una ruta válida.');
                 }
             } else {
-                throw new Error('No se encontraron datos del contrato');
+                throw new Error('No se encontraron datos del contrato.');
             }
         } catch (error) {
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error al cargar el documento',
+                detail: 'Error al cargar el documento.',
             });
         } finally {
-            setLoading(false);
+            setLoading(false); // Desactiva la pantalla de carga después del proceso
         }
     };
 
@@ -59,7 +60,7 @@ const ReviewContractPage = () => {
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error al aprobar el documento',
+                detail: 'Error al aprobar el documento.',
             });
         }
     };
@@ -72,7 +73,7 @@ const ReviewContractPage = () => {
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error al solicitar revalidación',
+                detail: 'Error al solicitar revalidación.',
             });
         }
     };
@@ -80,8 +81,8 @@ const ReviewContractPage = () => {
     const handleGoToDocuments = () => history.push('/documents');
     const handleGoBack = () => history.goBack();
 
-    if (loading) return <div>Cargando...</div>;
-    if (!documentData) return <div>No se encontraron datos del contrato</div>;
+    if (loading) return <LoadingScreen />; // Muestra la pantalla de carga mientras loading es true
+    if (!documentData) return <div>No se encontraron datos del contrato.</div>;
 
     return (
         <div className={styles.container}>
@@ -118,7 +119,16 @@ const ReviewContractPage = () => {
                     </p>
                 </div>
                 <p className={styles.status}>
-                    Estado: <span className={documentData.status === 'Denegado' ? styles.denied : styles.approved}>{documentData.status}</span>
+                    Estado:{' '}
+                    <span
+                        className={
+                            documentData.status === 'Denegado'
+                                ? styles.denied
+                                : styles.approved
+                        }
+                    >
+                        {documentData.status}
+                    </span>
                 </p>
                 <div className={styles.buttonGroup}>
                     {documentData.status === 'Aceptado' && (
@@ -126,7 +136,11 @@ const ReviewContractPage = () => {
                             <Button
                                 label="Cargar acta de recepción"
                                 className={styles.button}
-                                onClick={() => history.push(`/upload-service-record?contractId=${documentData._id}`)}
+                                onClick={() =>
+                                    history.push(
+                                        `/upload-service-record?contractId=${documentData._id}`
+                                    )
+                                }
                             />
                             <Button
                                 label="Guardar y salir"
@@ -154,7 +168,9 @@ const ReviewContractPage = () => {
                                     <Button
                                         label="Volver a cargar el documento"
                                         className={styles.buttonReverse}
-                                        onClick={() => history.push('/upload-contract')}
+                                        onClick={() =>
+                                            history.push('/upload-contract')
+                                        }
                                     />
                                 </>
                             )}
@@ -187,4 +203,3 @@ const ReviewContractPage = () => {
 };
 
 export default ReviewContractPage;
-

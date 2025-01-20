@@ -112,12 +112,12 @@ const UploadContractPage = () => {
         try {
             const response = await documentService.uploadDocument(documentData.documentType, formData);
 
-            toast.current.show({
+            /*toast.current.show({
                 severity: 'success',
                 summary: 'Éxito',
                 detail: 'Contrato cargado correctamente',
                 life: 5000,
-            });
+            });*/
 
             if (response._id) {
                 setTimeout(() => history.push(`/review-contract/${response._id}`), 2000);

@@ -105,6 +105,14 @@
     justify-content: center;
     gap: 10px;
     margin-top: 20px;
+    flex-wrap: wrap; /* Permite que los botones se ajusten al ancho disponible */
+}
+
+@media (max-width: 768px) {
+    .buttonGroup {
+        flex-direction: column; /* Apila los botones de arriba hacia abajo */
+        gap: 15px; /* Espaciado entre botones */
+    }
 }
 
 .button {
@@ -135,5 +143,6 @@
     background-color: #f0f0f0;
     color: #333333;
 }
+
 
 

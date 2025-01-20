@@ -64,8 +64,6 @@ const ReviewContractPage = () => {
         }
     };
 
-    const handleGotoUploadContract = () => history.push('/upload-contract');
-    const handleCancel = () => history.push('/');
     const handleRevalidate = async () => {
         try {
             await documentService.requestRevalidation(id);
@@ -78,6 +76,9 @@ const ReviewContractPage = () => {
             });
         }
     };
+
+    const handleGoToDocuments = () => history.push('/documents');
+    const handleGoBack = () => history.goBack();
 
     if (loading) return <div>Cargando...</div>;
     if (!documentData) return <div>No se encontraron datos del contrato</div>;
@@ -113,7 +114,7 @@ const ReviewContractPage = () => {
                         {documentData.ai_decision_explanation ||
                             (documentData.status === 'Aceptado'
                                 ? 'El documento fue procesado correctamente.'
-                                : 'No se encontraron errores.')}
+                                : 'No se encontraron errores.')} 
                     </p>
                 </div>
                 <p className={styles.status}>
@@ -121,19 +122,54 @@ const ReviewContractPage = () => {
                 </p>
                 <div className={styles.buttonGroup}>
                     {documentData.status === 'Aceptado' && (
-                        <Button
-                            label="Subir acta de recepción"
-                            className={styles.button}
-                            onClick={() => history.push(`/upload-service-record?contractId=${documentData._id}`)}
-                        />
-                    )}
-                    {documentData.status === 'Denegado' && user.role === 'Administrador' && (
-                        <Button label="Aprobar" className={styles.button} onClick={handleApprove} />
+                        <>
+                            <Button
+                                label="Cargar acta de recepción"
+                                className={styles.button}
+                                onClick={() => history.push(`/upload-service-record?contractId=${documentData._id}`)}
+                            />
+                            <Button
+                                label="Guardar y salir"
+                                className={styles.buttonReverse}
+                                onClick={handleGoToDocuments}
+                            />
+                        </>
                     )}
                     {documentData.status === 'Denegado' && (
-                        <Button label="Solicitar revalidación" className={styles.buttonReverse} onClick={handleRevalidate} />
+                        <>
+                            {user.role === 'Administrador' && (
+                                <Button
+                                    label="Aprobar"
+                                    className={styles.button}
+                                    onClick={handleApprove}
+                                />
+                            )}
+                            {user.role === 'Proveedor' && (
+                                <>
+                                    <Button
+                                        label="Solicitar validación manual"
+                                        className={styles.buttonReverse}
+                                        onClick={handleRevalidate}
+                                    />
+                                    <Button
+                                        label="Volver a cargar el documento"
+                                        className={styles.buttonReverse}
+                                        onClick={() => history.push('/upload-contract')}
+                                    />
+                                </>
+                            )}
+                            <Button
+                                label="Guardar y salir"
+                                className={styles.buttonReverse}
+                                onClick={handleGoToDocuments}
+                            />
+                        </>
                     )}
-                    <Button label="Salir" className={styles.buttonReverse} onClick={handleCancel} />
+                    <Button
+                        label="Volver"
+                        className={styles.buttonReverse}
+                        onClick={handleGoBack}
+                    />
                 </div>
             </div>
 
@@ -151,3 +187,4 @@ const ReviewContractPage = () => {
 };
 
 export default ReviewContractPage;
+

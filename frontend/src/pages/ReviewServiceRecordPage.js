@@ -8,7 +8,7 @@ import styles from '../styles/DocumentReviewPage.module.css';
 import useAuth from '../hooks/useAuth';
 
 const ReviewServiceRecordPage = () => {
-	const [documentData, setDocumentData] = useState(null);
+    const [documentData, setDocumentData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [filePath, setFilePath] = useState('');
     const toast = useRef(null);
@@ -28,10 +28,8 @@ const ReviewServiceRecordPage = () => {
     const loadDocument = async () => {
         try {
             const response = await documentService.getDocumentById('ServiceDeliveryRecord', id);
-            console.log('API Response:', response); 
             if (response) {
                 setDocumentData(response);
-                console.log('Document Data State:', response); 
                 if (response.file_path) {
                     const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost';
                     const port = process.env.REACT_APP_API_PORT || '5000';
@@ -40,13 +38,13 @@ const ReviewServiceRecordPage = () => {
                     throw new Error('El archivo no tiene una ruta válida.');
                 }
             } else {
-                throw new Error('No se encontraron datos del contrato');
+                throw new Error('No se encontraron datos del acta de servicio.');
             }
         } catch (error) {
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error al cargar el documento',
+                detail: 'Error al cargar el documento.',
             });
         } finally {
             setLoading(false);
@@ -59,20 +57,19 @@ const ReviewServiceRecordPage = () => {
             toast.current.show({
                 severity: 'success',
                 summary: 'Éxito',
-                detail: 'Documento aprobado',
+                detail: 'Documento aprobado.',
             });
-            history.push(`/upload-service-record`);
+            history.push(`/documents`);
         } catch (error) {
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error al aprobar el documento',
+                detail: 'Error al aprobar el documento.',
             });
         }
     };
 
-    const handleGotoUploadDelivery = () => history.push('/upload-service-record');
-    const handleCancel = () => history.push('/');
+    const handleCancel = () => history.push('/documents');
     const handleRevalidate = async () => {
         try {
             await documentService.requestRevalidation(id);
@@ -81,23 +78,23 @@ const ReviewServiceRecordPage = () => {
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: 'Error al solicitar revalidación',
+                detail: 'Error al solicitar revalidación.',
             });
         }
     };
 
     if (loading) return <div>Cargando...</div>;
-    if (!documentData) return <div>No se encontraron datos del acta de servicio</div>;
+    if (!documentData) return <div>No se encontraron datos del acta de servicio.</div>;
 
-	return (
-		<div className={styles.container}>
-			<Toast ref={toast} />
-			<div className={styles.leftColumn}>
-				<h1 className={styles.title}>Resultado del análisis</h1>
-				<div className={styles.card}>
-					<p className={styles.cardHeader}>Información del acta de servicio:</p>
-					<p className={styles.cardContent}>
-                    HES: {hes || 'No disponible'}
+    return (
+        <div className={styles.container}>
+            <Toast ref={toast} />
+            <div className={styles.leftColumn}>
+                <h1 className={styles.title}>Resultado del análisis</h1>
+                <div className={styles.card}>
+                    <p className={styles.cardHeader}>Información del acta de servicio:</p>
+                    <p className={styles.cardContent}>
+                        HES: {hes || 'No disponible'}
                         <br />
                         Contrato: {contract || 'No disponible'}
                         <br />
@@ -107,58 +104,83 @@ const ReviewServiceRecordPage = () => {
                         <br />
                         Tipo de documento: Acta de recepción de servicio
                     </p>
-				</div>
-				<div
-					className={
-						documentData.status === 'Aceptado'
-							? styles.cardSuccess
-							: styles.cardError
-					}
-				>
-					<p className={styles.cardHeader}>
-						{documentData.status === 'Aceptado'
-							? 'Descripción del proceso:'
-							: 'Descripción del error:'}
-					</p>
-					<p className={styles.cardContent}>
-						{documentData.ai_decision_explanation ||
-							(documentData.status === 'Aceptado'
-								? 'El documento fue procesado correctamente.'
-								: 'No se encontraron errores.')}
-					</p>
-				</div>
-				<p className={styles.status}>
-					Estado: <span className={documentData.status === 'Denegado' ? styles.denied : styles.approved}>{documentData.status}</span>
-				</p>
-				<div className={styles.buttonGroup}>
-					{documentData.status === 'Aceptado' && (
-						<Button
-							label="Subir una factura"
-							className={styles.button}
-							onClick={() => history.push(`/upload-invoice?contract=${documentData._id}`)}
-						/>
-					)}
-					{documentData.status === 'Denegado' && user.role === 'Administrador' && (
-						<Button label="Aprobar" className={styles.button} onClick={handleApprove} />
-					)}
-					{documentData.status === 'Denegado' && (
-						<Button label="Solicitar revalidación" className={styles.buttonReverse} onClick={handleRevalidate} />
-					)}
-					<Button label="Salir" className={styles.buttonReverse} onClick={handleCancel} />
-				</div>
-			</div>
-
-			<div className={styles.rightColumn}>
-				{filePath ? (
-					<Worker workerUrl="/pdfjs/pdf.worker.min.js">
-						<Viewer fileUrl={filePath} />
-					</Worker>
-				) : (
-					<p>No se puede cargar el archivo. Verifique que la ruta sea válida.</p>
-				)}
-			</div>
-		</div>
-	);
+                </div>
+                <div
+                    className={
+                        documentData.status === 'Aceptado'
+                            ? styles.cardSuccess
+                            : styles.cardError
+                    }
+                >
+                    <p className={styles.cardHeader}>
+                        {documentData.status === 'Aceptado'
+                            ? 'Descripción del proceso:'
+                            : 'Descripción del error:'}
+                    </p>
+                    <p className={styles.cardContent}>
+                        {documentData.ai_decision_explanation ||
+                            (documentData.status === 'Aceptado'
+                                ? 'El documento fue procesado correctamente.'
+                                : 'No se encontraron errores.')}
+                    </p>
+                </div>
+                <p className={styles.status}>
+                    Estado:{' '}
+                    <span
+                        className={
+                            documentData.status === 'Denegado'
+                                ? styles.denied
+                                : styles.approved
+                        }
+                    >
+                        {documentData.status}
+                    </span>
+                </p>
+                <div className={styles.buttonGroup}>
+                    {documentData.status === 'Aceptado' && (
+                        <Button
+                            label="Cargar factura"
+                            className={styles.button}
+                            onClick={() => history.push(`/upload-invoice?contract=${documentData._id}`)}
+                        />
+                    )}
+                    {documentData.status === 'Denegado' && user.role === 'Administrador' && (
+                        <Button
+                            label="Aprobar (Administrador y gestor)"
+                            className={styles.button}
+                            onClick={handleApprove}
+                        />
+                    )}
+                    {documentData.status === 'Denegado' && user.role === 'Proveedor' && (
+                        <>
+                            <Button
+                                label="Solicitar validación manual"
+                                className={styles.buttonReverse}
+                                onClick={handleRevalidate}
+                            />
+                            <Button
+                                label="Volver a cargar el documento"
+                                className={styles.buttonReverse}
+                                onClick={() => history.push('/upload-service-record')}
+                            />
+                        </>
+                    )}
+                    <Button label="Guardar y salir" className={styles.buttonReverse} onClick={handleCancel} />
+                    <Button label="Volver" className={styles.buttonReverse} onClick={() => history.goBack()} />
+                </div>
+            </div>
+            <div className={styles.rightColumn}>
+                {filePath ? (
+                    <Worker workerUrl="/pdfjs/pdf.worker.min.js">
+                        <Viewer fileUrl={filePath} />
+                    </Worker>
+                ) : (
+                    <p>No se puede cargar el archivo. Verifique que la ruta sea válida.</p>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default ReviewServiceRecordPage;
+

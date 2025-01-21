@@ -14,7 +14,7 @@ const router = express.Router();
 router.post('/', upload.single('file'), createServiceRecord);
 router.post('/getAll', getAllServiceDeliveryRecords);
 router.get('/:id', getServiceDeliveryRecordById);
-router.put('/:id', updateServiceRecord);
+router.put('/:id',upload.single('file'), updateServiceRecord);
 router.delete('/:id', deleteServiceDeliveryRecord);
 
 module.exports = router;

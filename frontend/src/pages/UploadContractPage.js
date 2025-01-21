@@ -5,11 +5,12 @@ import styles from '../styles/EditUserPage.module.css';
 import documentService from '../services/documentService';
 import publicService from '../services/publicService';
 import { Toast } from 'primereact/toast';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import LoadingScreen from '../components/Layout/LoadingScreen';
 
 const UploadContractPage = () => {
+    const { id } = useParams();
     const history = useHistory();
     const toast = useRef(null);
     const { user } = useAuth();
@@ -23,11 +24,44 @@ const UploadContractPage = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        if (user && user.role === 'Proveedor') {
+        if (id) {
+            console.log(id)
+            // Cargar datos del contrato existente
+            const fetchDocument = async () => {
+                try {
+                    const response = await documentService.getDocumentById('Contract', id);
+                    if (response) {
+                        setDocumentData({
+                            ruc: response.provider_ruc || '',
+                            contract: response.contract_number || '',
+                            documentType: 'Contract',
+                            file: null,
+                            filePath: response.file_path || '', 
+                        });
+                    } else {
+                        toast.current.show({
+                            severity: 'error',
+                            summary: 'Error',
+                            detail: 'No se encontraron datos del contrato.',
+                            life: 5000,
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error al cargar el contrato:', error);
+                    toast.current.show({
+                        severity: 'error',
+                        summary: 'Error',
+                        detail: 'Error al cargar los datos del contrato.',
+                        life: 5000,
+                    });
+                }
+            };
+            fetchDocument();
+        } else if (user && user.role === 'Proveedor') {
             setDocumentData(prev => ({ ...prev, ruc: user.ruc }));
             setIsRucReadOnly(true);
         }
-    }, [user]);
+    }, [id, user]);
 
     const handleInputChange = e => {
         const { name, value } = e.target;
@@ -53,10 +87,10 @@ const UploadContractPage = () => {
         }
     };
 
-    const handleSubmit = async e => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!documentData.ruc || !documentData.contract || !documentData.file) {
+    
+        if (!documentData.ruc || !documentData.contract || (!id && !documentData.file)) {
             toast.current.show({
                 severity: 'warn',
                 summary: 'Advertencia',
@@ -65,37 +99,45 @@ const UploadContractPage = () => {
             });
             return;
         }
-
+    
         setIsLoading(true);
-
-        const formData = new FormData();
-        formData.append('documentType', documentData.documentType);
-        formData.append('file', documentData.file);
-        formData.append('ruc', documentData.ruc);
-        formData.append('contract', documentData.contract);
-
+    
         try {
-            const response = await documentService.uploadDocument(documentData.documentType, formData);
-
+            let response;
+            const formData = new FormData();
+            formData.append('documentType', documentData.documentType);
+            if (documentData.file) formData.append('file', documentData.file); // Agrega el archivo si existe
+            formData.append('ruc', documentData.ruc);
+            formData.append('contract', documentData.contract);
+            formData.append('filePath', documentData.filePath); // Agrega el filePath actual
+    
+            if (id) {
+                // Actualizar el contrato existente
+                response = await documentService.updateDocument('Contract', id, formData);
+            } else {
+                // Crear un nuevo contrato
+                response = await documentService.uploadDocument(documentData.documentType, formData);
+            }
+    
             if (response._id) {
                 history.push(`/review-contract/${response._id}`);
             } else {
                 toast.current.show({
                     severity: 'error',
                     summary: 'Error',
-                    detail: 'No se pudo obtener el ID del contrato. Intente nuevamente.',
+                    detail: 'No se pudo procesar el contrato. Intente nuevamente.',
                     life: 5000,
                 });
-                setIsLoading(false);
             }
         } catch (error) {
             console.error('Error en handleSubmit:', error);
             toast.current.show({
                 severity: 'error',
                 summary: 'Error',
-                detail: error.message || 'Error al cargar el contrato',
+                detail: error.message || 'Error al procesar el contrato',
                 life: 10000,
             });
+        } finally {
             setIsLoading(false);
         }
     };
@@ -112,7 +154,7 @@ const UploadContractPage = () => {
         <div className={styles.container}>
             <Toast ref={toast} />
             <div className={styles.formContainer}>
-                <h1 className={styles.formTitle}>Nuevo contrato</h1>
+                <h1 className={styles.formTitle}>{id ? 'Actualizar contrato' : 'Nuevo contrato'}</h1>
                 <p className={styles.formSubtitle}>Completa la información</p>
 
                 <div className={styles.formGrid}>
@@ -137,22 +179,22 @@ const UploadContractPage = () => {
                             onChange={handleInputChange}
                         />
                     </div>
-
                     <div className={styles.formGroup}>
-                        <label htmlFor="file">Cargar archivo (PDF o XML):</label>
-                        <InputText
-                            type="file"
-                            id="file"
-                            name="file"
-                            onChange={handleFileChange}
-                            accept=".pdf,.xml"
-                        />
+                            <label htmlFor="file">Cargar archivo (PDF o XML):</label>
+                            <InputText
+                                type="file"
+                                id="file"
+                                name="file"
+                                onChange={handleFileChange}
+                                accept=".pdf,.xml"
+                            />
                     </div>
+
                 </div>
 
                 <div className={styles.buttonContainer}>
                     <Button
-                        label="Cargar"
+                        label={id ? 'Actualizar' : 'Cargar'}
                         className={styles.saveButton}
                         onClick={handleSubmit}
                     />

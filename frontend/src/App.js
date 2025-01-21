@@ -62,7 +62,7 @@ const AppContent = () => {
 
 					{/* Rutas privadas */}
 					<PrivateRoute
-						path="/upload-contract"
+						path="/upload-contract/:id?"
 						component={UploadContractPage}
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
@@ -72,7 +72,7 @@ const AppContent = () => {
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
 					<PrivateRoute
-						path="/upload-service-record"
+						path="/upload-service-record/:id?"
 						component={UploadServiceDeliveryRecordPage}
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
@@ -82,7 +82,7 @@ const AppContent = () => {
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>
 					<PrivateRoute
-						path="/upload-invoice"
+						path="/upload-invoice/:id?"
 						component={UploadInvoicePage}
 						roles={['Administrador', 'Gestor', 'Proveedor']}
 					/>

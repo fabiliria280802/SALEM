@@ -219,6 +219,146 @@ exports.getContractById = [
 ];
 
 exports.updateContract = [
+    authMiddleware,
+    async (req, res) => {
+        const { ai_decision_explanation, status, documentType, ruc, contract} = req.body;
+
+        let filePath = req.body.filePath;
+		
+        try {
+            // Verificar el tipo de documento si está presente
+            if (documentType && documentType !== 'Contract') {
+                return res.status(400).json({
+                    error: 'Tipo de documento inválido',
+                    details: `Se esperaba 'Contract', se recibió '${documentType}'`,
+                });
+            }
+
+            // Obtener el contrato existente
+            const existingContract = await Contract.findById(req.params.id);
+            if (!existingContract) {
+                console.error('Contrato no encontrado:', req.params.id);
+                return res.status(404).json({ error: 'Contrato no encontrado' });
+            }
+
+            console.log('Contrato existente encontrado:', existingContract);
+            if (req.file) {
+                filePath = path.join('data', 'docs', req.file.filename);
+                console.log('Nuevo archivo cargado:', filePath);
+            }
+            // Determinar si se deben revalidar los datos con la IA
+            const isIARequired = ruc && contract && documentType === 'Contract';
+
+            if (isIARequired) {
+                console.log('Iniciando validación con IA...');
+
+                const pythonProcess = spawn(
+                    'python3',
+                    [
+                        'controllers/IA/ia.py',
+                        filePath,
+                        documentType,
+                        ruc,
+                        contract,
+                    ],
+                    {
+                        env: {
+                            ...process.env,
+                            TESSDATA_PREFIX: process.env.TESSDATA_PREFIX,
+                        },
+                    }
+                );
+
+                let pythonOutput = '';
+                let pythonError = '';
+
+				pythonProcess.stdout.on('data', (data) => {
+					pythonOutput += data.toString();
+				});
+				
+				pythonProcess.stderr.on('data', (data) => {
+					console.error('Error de Python:', data.toString());
+					pythonError += data.toString();
+				});
+				
+				pythonProcess.on('close', async (code) => {
+					if (code !== 0) {
+						console.error('Python script error:', pythonError);
+						await Contract.findByIdAndUpdate(existingContract._id, {
+							status: 'Denegado',
+							ai_decision_explanation: `Error en el procesamiento: ${pythonError}`,
+						});
+						return res.status(500).json({
+							error: 'Error al procesar el documento con IA',
+							details: pythonError,
+						});
+					}
+				
+					try {
+						// Filtra posibles mensajes no JSON
+						const jsonMatch = pythonOutput.match(/({[\s\S]*})/); // Captura solo JSON
+						if (!jsonMatch) throw new Error('Salida no válida del script de Python');
+				
+						const result = JSON.parse(jsonMatch[1]);
+				
+						const newStatus =
+							result.validation_errors && result.validation_errors.length > 0
+								? 'Denegado'
+								: 'Aceptado';
+				
+						const newExplanation =
+							newStatus === 'Denegado'
+								? `Documento denegado. Errores: ${result.validation_errors.join(', ')}`
+								: 'Documento procesado correctamente';
+				
+						const updateData = {
+							...result.extracted_data,
+							status: newStatus,
+							provider_ruc: result.extracted_data?.provider_ruc,
+							contract_number: result.extracted_data?.contract_number,
+							contracted_company: result.extracted_data?.provider_name,
+							missing_fields: result.missing_fields || [],
+							validation_errors: result.validation_errors || [],
+							ai_decision_explanation: newExplanation,
+						};
+				
+						const updatedContract = await Contract.findByIdAndUpdate(
+							existingContract._id,
+							updateData,
+							{ new: true }
+						);
+				
+						return res.status(200).json(updatedContract);
+					} catch (error) {
+						console.error('Error al procesar la salida de la IA:', error);
+						return res.status(500).json({
+							error: 'Error al procesar la salida de la IA',
+							details: error.message,
+						});
+					}
+				});				
+            } else {
+                // Actualizar solo el estado
+                const updatedContract = await Contract.findByIdAndUpdate(
+                    req.params.id,
+                    { 
+						status,         
+						ai_decision_explanation:`${ai_decision_explanation}<br><strong>Nota:</strong> Se hizo una validación manual por un Gestor de ENAP.`
+					},
+                    { new: true }
+                );
+                return res.status(200).json(updatedContract);
+            }
+        } catch (error) {
+            console.error('Error interno:', error);
+            return res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    },
+];
+
+/* TODO: Delete
+
+exports.updateContract = [
 	authMiddleware,
 	async (req, res) => {
 		try {
@@ -235,7 +375,7 @@ exports.updateContract = [
 			res.status(500).json({ error: 'Error al actualizar el contrato' });
 		}
 	},
-];
+];*/
 
 exports.deleteContract = [
 	authMiddleware,

@@ -49,13 +49,18 @@ const ReviewContractPage = () => {
 
     const handleApprove = async () => {
         try {
-            await documentService.updateDocument(id, 'Contract', { status: 'Aceptado' });
+            const updateData = {
+                status: 'Aceptado', // Solo se envía el status
+                ai_decision_explanation: documentData.ai_decision_explanation,
+            };
+    
+            await documentService.updateDocument('Contract', id, updateData);
             toast.current.show({
                 severity: 'success',
                 summary: 'Éxito',
                 detail: 'Documento aprobado',
             });
-            history.push(`/upload-service-record`);
+            history.push(`/documents`);
         } catch (error) {
             toast.current.show({
                 severity: 'error',
@@ -79,7 +84,10 @@ const ReviewContractPage = () => {
     };
 
     const handleGoToDocuments = () => history.push('/documents');
-    const handleGoBack = () => history.goBack();
+
+    const handleGoBack = () => {
+        history.push(`/upload-contract/${id}`);
+    };
 
     if (loading) return <LoadingScreen />; // Muestra la pantalla de carga mientras loading es true
     if (!documentData) return <div>No se encontraron datos del contrato.</div>;
@@ -112,10 +120,7 @@ const ReviewContractPage = () => {
                             : 'Descripción del error:'}
                     </p>
                     <p className={styles.cardContent}>
-                        {documentData.ai_decision_explanation ||
-                            (documentData.status === 'Aceptado'
-                                ? 'El documento fue procesado correctamente.'
-                                : 'No se encontraron errores.')} 
+                    <div dangerouslySetInnerHTML={{ __html: documentData.ai_decision_explanation }} />
                     </p>
                 </div>
                 <p className={styles.status}>
@@ -166,11 +171,9 @@ const ReviewContractPage = () => {
                                         onClick={handleRevalidate}
                                     />
                                     <Button
-                                        label="Volver a cargar el documento"
+                                        label="Cargar otro documento"
                                         className={styles.buttonReverse}
-                                        onClick={() =>
-                                            history.push('/upload-contract')
-                                        }
+                                        onClick={handleGoBack}
                                     />
                                 </>
                             )}
@@ -182,7 +185,7 @@ const ReviewContractPage = () => {
                         </>
                     )}
                     <Button
-                        label="Volver"
+                        label="Cargar otro documento"
                         className={styles.buttonReverse}
                         onClick={handleGoBack}
                     />

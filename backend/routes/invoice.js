@@ -15,6 +15,6 @@ router.post('/', upload.single('file'), createInvoice);
 router.post('/getAll', getAllInvoices);
 router.get('/:id', getInvoiceById);
 router.get('/number/:invoice_number', getInvoiceByNumber);
-router.put('/:id', updateInvoice);
+router.put('/:id',upload.single('file'), updateInvoice);
 router.delete('/:id', deleteInvoice);
 module.exports = router;

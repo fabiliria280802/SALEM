@@ -16,20 +16,20 @@ const DocumentsListPage = () => {
 	const toast = useRef(null);
 
 	const fieldMap = {
-		ruc: 'ruc',
-		contrato: 'contrato',
-		tipo: 'tipoDocumento',
+		ruc: 'provider_ruc',
+		contrato: 'contract_number', 
+		tipo: 'document_type',
 		estado: 'status',
 		fecha: 'created_at',
-	};
+	};	
 
 	useEffect(() => {
 		const fetchDocuments = async () => {
 			try {
 				const [contractsResponse, invoicesResponse, serviceRecordsResponse] = await Promise.all([
 					documentService.getAllContracts(),
-					documentService.getAllInvoices(),
 					documentService.getAllServiceDeliveryRecords(),
+					documentService.getAllInvoices(),
 				]);
 	
 				const combinedData = [
@@ -217,25 +217,38 @@ const DocumentsListPage = () => {
 								>
 								  {doc.status}
 								</td>
-								<td>{doc.ai_decision_explanation}</td>
+								<td> <div dangerouslySetInnerHTML={{ __html: doc.ai_decision_explanation }} /></td>
 								<td>
-									{user.role === 'Proveedor' && doc.status === 'Denegado' && (
-										<button
-											className={styles.revalidateButton}
-											onClick={() => handleRequestRevalidation(doc._id)}
-										>
-											Solicitar Revalidación
-										</button>
-									)}
-									{(user.role === 'Administrador' ||
-										user.role === 'Gestor') && (
-										<button
-											className={styles.viewButton}
-											onClick={() => history.push(`/document/${doc._id}`)}
-										>
-											Ver Detalles
-										</button>
-									)}
+								  {user.role === 'Proveedor' && doc.status === 'Denegado' && (
+								    <button
+								      className={styles.revalidateButton}
+								      onClick={() => handleRequestRevalidation(doc._id)}
+								    >
+								      Solicitar Revalidación
+								    </button>
+								  )}
+								    <button
+								      className={styles.viewButton}
+								      onClick={() => {
+								        let route = '';
+								        switch (doc.document_type) {
+								          case 'Contrato':
+								            route = `/review-contract/${doc._id}`;
+								            break;
+								          case 'Factura':
+								            route = `/review-invoice/${doc._id}`;
+								            break;
+								          case 'Acta de entrega':
+								            route = `/review-service-record/${doc._id}`;
+								            break;
+								          default:
+								            route = '/';
+								        }
+								        history.push(route);
+								      }}
+								    >
+								      Ver Detalles
+								    </button>
 								</td>
 							</tr>
 						))}

@@ -53,7 +53,11 @@ const ReviewServiceRecordPage = () => {
 
     const handleApprove = async () => {
         try {
-            await documentService.updateDocument(id, 'ServiceDeliveryRecord', { status: 'Aceptado' });
+            const updateData = {
+                status: 'Aceptado', 
+                ai_decision_explanation: documentData.ai_decision_explanation,
+            };
+            await documentService.updateDocument('ServiceDeliveryRecord', id, updateData);
             toast.current.show({
                 severity: 'success',
                 summary: 'Éxito',
@@ -81,6 +85,10 @@ const ReviewServiceRecordPage = () => {
                 detail: 'Error al solicitar revalidación.',
             });
         }
+    };
+
+    const handleBack = () => {
+        history.push(`/upload-service-record/${id}`);
     };
 
     if (loading) return <div>Cargando...</div>;
@@ -159,14 +167,14 @@ const ReviewServiceRecordPage = () => {
                                 onClick={handleRevalidate}
                             />
                             <Button
-                                label="Volver a cargar el documento"
+                                label="Cargar otro documento"
                                 className={styles.buttonReverse}
-                                onClick={() => history.push('/upload-service-record')}
+                                onClick={handleBack}
                             />
                         </>
                     )}
                     <Button label="Guardar y salir" className={styles.buttonReverse} onClick={handleCancel} />
-                    <Button label="Volver" className={styles.buttonReverse} onClick={() => history.goBack()} />
+                    <Button label="Cargar otro documento" className={styles.buttonReverse} onClick={handleBack} />
                 </div>
             </div>
             <div className={styles.rightColumn}>

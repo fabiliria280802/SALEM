@@ -54,9 +54,11 @@ const ReviewInvoicePage = () => {
 
 	const handleApprove = async () => {
 		try {
-			await documentService.updateDocument(id, 'Invoice', {
-				status: 'Aceptado',
-			});
+            const updateData = {
+                status: 'Aceptado', // Solo se envía el status
+                ai_decision_explanation: documentData.ai_decision_explanation,
+            };
+			await documentService.updateDocument('Invoice', id, updateData);
 			toast.current.show({
 				severity: 'success',
 				summary: 'Éxito',
@@ -90,8 +92,11 @@ const ReviewInvoicePage = () => {
 		}
 	};
 
+    const handleGoBack = () => {
+        history.push(`/upload-invoice/${id}`);
+    };
+
     const handleGoToDocuments = () => history.push('/documents');
-	const handleGoBack = () => history.goBack();
 	if (loading) return <LoadingScreen />; 
     if (!documentData) return <div>No se encontraron datos del contrato.</div>;
 
@@ -168,11 +173,9 @@ const ReviewInvoicePage = () => {
                                         onClick={handleRevalidate}
                                     />
                                     <Button
-                                        label="Volver a cargar el documento"
+                                        label="Cargar otro documento"
                                         className={styles.buttonReverse}
-                                        onClick={() =>
-                                            history.push('/upload-invoice')
-                                        }
+                                        onClick={handleGoBack}
                                     />
                                 </>
                             )}
@@ -184,7 +187,7 @@ const ReviewInvoicePage = () => {
                         </>
                     )}
                     <Button
-                        label="Volver"
+                        label="Cargar otro documento"
                         className={styles.buttonReverse}
                         onClick={handleGoBack}
                     />

@@ -62,6 +62,7 @@ const updateDocument = async (documentType, documentId, data) => {
 	}
 };
 
+
 /*const getAllDocuments = async () => {
 	try {
 		const token = authService.getToken();

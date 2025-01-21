@@ -344,187 +344,190 @@ def extract_text_near_signature(image, position_index):
 # Services delivery record
 
 # Invoice
-def extract_table_data_invoice(text, table_schema, pdf_path=None, page_number=1):
-    """
-    Extrae datos de una tabla desde un texto o PDF basado en un esquema.
+def normalize_text(text):
+    normalized = re.sub(r"\s+", " ", text.strip())
+    print("Texto normalizado:", normalized)
+    return normalized
 
-    Args:
-        text (str): Texto extraído del PDF.
-        table_schema (dict): Esquema que define los encabezados y sus alternativas.
-        pdf_path (str, optional): Ruta al archivo PDF si se utiliza Camelot.
-        page_number (int, optional): Número de página donde buscar la tabla (1-indexed).
+def extract_invoice_data(pdf_path):
+    extracted_data = {}
 
-    Returns:
-        tuple: (lista de datos extraídos, lista de errores)
-    """
-    table_data = []
-    errors = []
-
-    try:
-        # Si hay un archivo PDF, intenta usar Camelot
-        if pdf_path:
-            # Usar Camelot para extraer tablas
-            import camelot
-            tables = camelot.read_pdf(pdf_path, pages=str(page_number), flavor="stream")
-
-            if len(tables) == 0:
-                return [], ["No se encontraron tablas en la página especificada con Camelot."]
-
-            # Tomar la primera tabla detectada
-            table = tables[0].df
-
-            # Mapear encabezados
-            headers = table.iloc[0].str.strip().tolist()
-            header_mapping = {}
-            for schema_key, schema_value in table_schema["columns"].items():
-                for alternative in schema_value.get("alternatives", []):
-                    if alternative in headers:
-                        header_mapping[headers.index(alternative)] = schema_key
-
-            if not header_mapping:
-                return [], ["No se encontraron encabezados que coincidan con el esquema en el PDF."]
-
-            # Extraer filas
-            for _, row in table.iterrows():
-                if row.equals(table.iloc[0]):  # Ignorar fila de encabezados
-                    continue
-
-                extracted_row = {}
-                for index, schema_key in header_mapping.items():
-                    extracted_row[schema_key] = row[index].strip() if index < len(row) else None
-
-                # Validar fila vacía
-                if any(value for value in extracted_row.values()):
-                    table_data.append(extracted_row)
-                else:
-                    break  # Terminar si la fila está completamente vacía
-
-            return table_data, []
-
-        # Si no hay PDF, trabajar directamente con texto
-        lines = text.split("\n")
-        header_pattern = r"(?i)\b(?:Code|Description|HES|Quantity|Unit Cost|Cost)\b"
-        start_row = None
-
-        # Buscar inicio de la tabla
-        for i, line in enumerate(lines):
-            if re.search(header_pattern, line):
-                start_row = i + 1
-                break
-
-        if start_row is None:
-            return table_data, ["No se encontró el encabezado de la tabla en el texto."]
-
-        # Detectar fin de tabla
-        END_OF_TABLE_PATTERN = r"(?i)^•+\s*$"
-        current_row = []
-
-        for line in lines[start_row:]:
-            if re.search(END_OF_TABLE_PATTERN, line):  # Fin de tabla
-                break
-
-            if line.strip() == "":  # Procesar filas acumuladas
-                if current_row:
-                    row = process_row(" ".join(current_row), table_schema)
-                    if row:
-                        table_data.append(row)
-                    else:
-                        errors.append(f"Fila mal formateada: {' '.join(current_row)}")
-                    current_row = []
-                continue
-
-            current_row.append(line.strip())
-
-        # Procesar la última fila acumulada
-        if current_row:
-            row = process_row(" ".join(current_row), table_schema)
-            if row:
-                table_data.append(row)
-            else:
-                errors.append(f"Fila mal formateada: {' '.join(current_row)}")
-
-        return table_data, errors
-
-    except Exception as e:
-        return [], [f"Error general al extraer la tabla: {e}"]
-
-def extract_region_text(pdf_path, region, page_number=1):
     try:
         doc = fitz.open(pdf_path)
-        page = doc[page_number - 1]
 
-        # Convertir las coordenadas de la región a un rectángulo
-        rect = fitz.Rect(
-            region["left"],
-            region["top"],
-            region["left"] + region["width"],
-            region["top"] + region["height"]
-        )
+        # Bloque 1: Información de la empresa
+        page = doc[0]
+        company_block = page.get_text("blocks")
+        company_text = " ".join(block[4] for block in company_block if block[1] < 200)
+        #fix: print("Texto de la empresa:", company_text)
+        company_data = extract_company_info(company_text)
+        extracted_data.update(company_data)
 
-        # Extraer texto de la región
-        extracted_text = page.get_text("text", clip=rect)
-        doc.close()
+        # Bloque 2: Información de la factura
+        invoice_block = page.get_text("blocks")
+        invoice_text = " ".join(block[4] for block in invoice_block if 200 < block[1] < 350)
+        #fix: done print("Texto de la factura:", invoice_text)
+        invoice_data = extract_invoice_info(invoice_text)  # Extraer datos de la factura
+        extracted_data.update(invoice_data)
 
-        return extracted_text.strip()
+        order_number = invoice_data.get("order_number")
+        if not order_number:
+            raise ValueError("No se pudo extraer el número de orden (order_number).")
+
+        # Bloque 3: Información del cliente
+        client_block = page.get_text("blocks")
+        client_text = " ".join(block[4] for block in client_block if 220 < block[1] < 400)
+        #fix: print("Texto del cliente:", client_text)
+        client_data = extract_client_info(client_text, order_number)  # Pasar `order_number`
+        extracted_data.update(client_data)
+
+        # Bloque 4: Tabla de servicios
+        total_block = page.get_text("blocks")
+        total_text = " ".join(block[4] for block in total_block if block[1] > 400)
+        #fix: print("Texto de tablas:", total_text)
+        table_data = extract_table_info(total_text)
+        extracted_data.update(table_data)
+
+        # Bloque 5: Totales
+        total_block = page.get_text("blocks")
+        total_text = " ".join(block[4] for block in total_block if block[1] > 450)
+        #fix: Descomentar linea print("Texto de totales:", total_text)
+        extracted_data.update(extract_totals(total_text))
+
     except Exception as e:
-        return f"Error extrayendo texto de la región: {e}"
-    
+        print(f"Error al procesar el PDF: {e}")
 
-def extract_invoice_data_with_camelot_tablet_two(pdf_path, page_number=1):
+    return extracted_data
+
+def extract_company_info(text):
+    text_lines = [line.strip() for line in text.splitlines() if line.strip()]  
+
+    company_data = {
+        "company_logo": "La imagen se encontró en el bloque",
+        "company_name": text_lines[0] if text_lines else None, 
+        "company_address": None,
+        "company_city": None,
+        "company_country": None,
+        "company_phone": None,
+        "company_website": None,
+        "company_email": None,
+        "company_tax_id": None,
+    }
+
+    # Encontrar campos específicos con expresiones regulares
+    for i, line in enumerate(text_lines):
+        if "Phone:" in line:
+            company_data["company_phone"] = re.search(r"Phone:\s*([\+0-9\-x]+)", line).group(1)
+        if "www." in line:
+            company_data["company_website"] = re.search(r"(www\.\S+)", line).group(1)
+        if "@" in line:
+            company_data["company_email"] = re.search(r"(\S+@\S+)", line).group(1)
+        if "Tax ID:" in line:
+            company_data["company_tax_id"] = re.search(r"Tax ID:\s*(\d+)", line).group(1)
+
+    # Determinar `company_city` y `company_country`
+    if company_data["company_phone"]:
+        phone_index = text_lines.index(next(line for line in text_lines if "Phone:" in line))
+        if phone_index >= 2:
+            company_data["company_country"] = text_lines[phone_index - 1]
+            company_data["company_city"] = text_lines[phone_index - 2]
+
+    # Determinar `company_address`
+    if company_data["company_city"]:
+        city_index = text_lines.index(company_data["company_city"])
+        if city_index >= 2:
+            company_data["company_address"] = ", ".join(text_lines[1:city_index])
+
+    return company_data
+
+def extract_invoice_info(text):
+    text_lines = [line.strip() for line in text.splitlines() if line.strip()]
+
+    if len(text_lines) < 8:
+        raise ValueError("El texto no contiene suficientes líneas para extraer datos.")
+
+    labels = text_lines[:4]
+    values = text_lines[4:8]
+
+    keys = ["invoice_number", "invoice_date", "payable_at", "order_number"]
+
+    return dict(zip(keys, values))
+
+def extract_client_info(text, order_number):
+    text_lines = [line.strip() for line in text.splitlines() if line.strip()]
+
     try:
-        # Leer el PDF con Camelot
-        tables = camelot.read_pdf(pdf_path, pages=str(page_number), flavor="stream")
+        order_index = text_lines.index(order_number)
+    except ValueError:
+        raise ValueError(f"No se encontró el número de orden {order_number} en el texto.")
 
-        if not tables or len(tables) == 0:
-            return {}, ["No se encontraron tablas en la página especificada."]
+    client_lines = text_lines[order_index + 1:] 
 
-        # Suponiendo que los datos clave-valor están en la primera tabla
-        table = tables[0].df
-        extracted_data = {}
+    client_data = {
+        "client_name": client_lines[0] if len(client_lines) > 0 else None,
+        "client_ruc": re.search(r"RUC:\s*(\d+)", client_lines[1]).group(1) if len(client_lines) > 1 and "RUC:" in client_lines[1] else None,
+        "client_address": ", ".join(client_lines[2:4]) if len(client_lines) > 3 else None,
+        "client_city": client_lines[4] if len(client_lines) > 4 else None,
+        "client_country": client_lines[5] if len(client_lines) > 5 else None,
+    }
 
-        # Iterar sobre las filas y mapear etiquetas con valores
-        for i in range(len(table)):
-            row = table.iloc[i].tolist()
-            if len(row) > 1:  # Verificar que la fila tiene más de una celda
-                key, value = row[0].strip(), row[1].strip()
-                if key and value:
-                    extracted_data[key.lower()] = value
+    return client_data
 
-        return extracted_data, []
-    except Exception as e:
-        return {}, [f"Error al extraer datos con Camelot: {e}"]
-    
+def extract_table_info(text):
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
 
-def process_invoice_document_with_camelot(file_path, schema, page_number=1):
-    extracted_data, validation_errors = extract_invoice_data_with_camelot_tablet_two(file_path, page_number)
+    # Detectar encabezados (primeros textos conocidos)
+    headers = lines[:5]  # Tomar los primeros 5 textos como encabezados
+    print("Encabezados detectados:", headers)
 
-    if validation_errors:
-        print("Errores:", validation_errors)
-        return {"validation_errors": validation_errors}
+    # Recortar las líneas hasta "Subtotal"
+    if "Subtotal" in lines:
+        subtotal_index = lines.index("Subtotal")
+        data_lines = lines[5:subtotal_index]  # Excluir líneas después de "Subtotal"
+    else:
+        data_lines = lines[5:]
+    print("Líneas de datos recortadas:", data_lines)
 
-    # Mapear datos extraídos al esquema
-    mapped_data = map_extracted_data_to_schema(extracted_data)
+    # Dividir en bloques de tamaño fijo (6 líneas por fila)
+    rows = [data_lines[i:i + 6] for i in range(0, len(data_lines), 6)]
+    print("Filas agrupadas:", rows)
 
+    # Inicializar listas para los campos
+    service_code = []
+    service_description = []
+    service_quantity = []
+    service_unit_cost = []
+    service_cost = []
+    service_hes = []
+
+    # Procesar cada fila
+    for row in rows:
+        print("Procesando fila:", row)
+        if len(row) != 6:  # Validar que la fila tenga exactamente 6 elementos
+            print(f"Fila incompleta detectada y omitida: {row}")
+            continue
+
+        # Asignar valores desde el bloque
+        service_code.append(row[0])  # Código
+        service_description.append(row[1])  # Descripción
+        service_hes.append(row[2].split(":")[1].strip())  # HES
+        service_quantity.append(row[3])  # Cantidad
+        service_unit_cost.append(row[4].replace("$", ""))  # Costo Unitario
+        service_cost.append(row[5].replace("$", ""))  # Costo Total
+
+    # Retornar los datos como un diccionario
     return {
-        "extracted_data": mapped_data,
-        "validation_errors": validation_errors,
+        "service_code": service_code,
+        "service_description": service_description,
+        "service_quantity": service_quantity,
+        "service_unit_cost": service_unit_cost,
+        "service_cost": service_cost,
+        "service_hes": service_hes,
     }
 
-
-def map_extracted_data_to_schema(extracted_data):
-    mapping = {
-        "invoice no": "invoice_number",
-        "date": "invoice_date",
-        "payable at": "payable_at",
-        "order no": "order_number",
-        "client name": "client_name",
-        "client address": "client_address",
-        "client city": "client_city",
-        "client country": "client_country",
+def extract_totals(text):
+    return {
+        "subtotal": re.search(r"Subtotal\s*\$(\d+\.\d{2})", text).group(1),
+        "tax": re.search(r"Tax\s*\$(\d+\.\d{2})", text).group(1),
+        "total_due": re.search(r"Total\s*\$(\d+\.\d{2})", text).group(1)
     }
-
-    result = {}
-    for key, value in mapping.items():
-        result[value] = extracted_data.get(key.lower(), "No encontrado")
-
-    return result

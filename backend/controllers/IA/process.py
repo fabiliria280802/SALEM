@@ -22,9 +22,8 @@ from extractions import (
     #imports use in service delivery
 
     #imports use in invoice
-    extract_table_data_invoice,
-    extract_region_text,
-    process_invoice_document_with_camelot
+    extract_invoice_data,
+
 )
 
 from utils import (
@@ -63,6 +62,7 @@ from validations import (
     validate_signatures_and_positions_record,
     #imports use in invoice
     validate_tax_id,
+    validate_service_mathematic_logic
     
 )
 
@@ -162,79 +162,35 @@ def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=
 
 
     required_fields = [
-        "company_name","company_address","company_city","company_country", "company_phone","company_website","company_email","company_tax_id","invoice_number","invoice_date","payable_at","order_number","client_name", "client_ruc", "client_address", "client_city", "client_country", "service_code", "service_description","service_quantity","service_unit_cost","service_cost","service_hes","subtotal","tax", "total_due"
+        "company_logo","company_name","company_address","company_city","company_country", "company_phone","company_website","company_email","company_tax_id","invoice_number","invoice_date","payable_at","order_number","client_name", "client_ruc", "client_address", "client_city", "client_country", "service_code", "service_description","service_quantity","service_unit_cost","service_cost","service_hes","subtotal","tax", "total_due"
     ]
 
     validations = [
-        ("company_tax_id", validate_tax_id),
-        ("", ),
-        ("", ),
-    ]
-
-    fields_order = [
-       {"field": "invoice_number", "pattern": r"(?i)\b(?:invoice no|factura n°)\s*[:\-]?\s*(\d+)"},
-       {"field": "invoice_date", "pattern": r"(?i)\b(?:date|fecha)\s*[:\-]?\s*(\d{2}-\d{2}-\d{4})"},
-       {"field": "payable_at", "pattern": r"(?i)\b(?:payable at|vencimiento)\s*[:\-]?\s*(\d{2}-\d{2}-\d{4})"},
-       {"field": "order_number", "pattern": r"(?i)\b(?:order no|orden n°)\s*[:\-]?\s*(\d+)"}
+        ("company_tax_id", validate_tax_id)
     ]
 
     try:
-        invoice_fields = schema["Invoice"]["fields"]
-        if text:
-            continuous_text = text.replace("\n", " ").strip()
-            print("continuous text:",continuous_text)
-            if "service_table" in invoice_fields:
-                table_schema = invoice_fields["service_table"]
-                table_data, table_errors = extract_table_data_invoice(text, table_schema)
-                if table_errors:
-                    validation_errors.extend(table_errors)
-                else:
-                    extracted_data["service_table"] = table_data
-          
-
-
-            for field_name, field_info in invoice_fields.items():
-                if "regex" in field_info:
-                    try:
-                        match = re.search(field_info["regex"], continuous_text)
-                        if match and match.group(1):  
-                            value = match.group(1).strip() if match.groups() else None
-                            extracted_data[field_name] = value
-                        elif field_name in required_fields:
-                            missing_fields.append(field_name)
-                    except IndexError as e:
-                        validation_errors.append(f"Error en el campo '{field_name}': {e}")
-                        missing_fields.append(field_name)
-                if "region" in field_info:
-                    region = field_info["region"]
-                    field_text = extract_region_text(file_path, region)
-                    if not field_text or field_text.strip() == "":
-                        validation_errors.append(f"No se encontró texto en la región de {field_name}.")
-                else:
-                    field_text = text
-
-
-        elif xml_tree:
-            for field_name, field_info in invoice_fields.items():
-                extracted_data[field_name] = extract_field_from_xml(xml_tree, field_info)
-                if not extracted_data[field_name]:
-                    missing_fields.append(field_name)
-
-
-       # Si no se logra extraer datos clave, intenta con Camelot
-        if not all(key in extracted_data for key in ["invoice_number", "invoice_date", "payable_at", "order_number"]):
-            camelot_result = process_invoice_document_with_camelot(file_path, schema, page_number=1)
-            if "extracted_data" in camelot_result:
-                extracted_data.update(camelot_result["extracted_data"])
-            if "validation_errors" in camelot_result:
-                validation_errors.extend(camelot_result["validation_errors"])
+        # Llama a la función principal para extraer los datos
+        extracted_data = extract_invoice_data(file_path)
 
         # Validar campos requeridos
-        for field_name, validator in validations:
-            if field_name in extracted_data:
-                valid, error = validator(extracted_data[field_name])
-                if not valid:
-                    validation_errors.append(error)
+        for field in required_fields:
+            if field not in extracted_data or not extracted_data[field]:
+                print(f"Campo faltante: {field}")
+                missing_fields.append(field)
+        
+        # Validar RUC proporcionado contra el extraído
+        if "client_ruc" in extracted_data:
+            if extracted_data["client_ruc"] != "1791239245001":
+                validation_errors.append(f"El RUC extraído ({extracted_data['client_ruc']}) no coincide con el ruc de ENAP (1791239245001).")
+
+        if all(key in extracted_data for key in ["service_quantity", "service_unit_cost", "service_cost", "subtotal", "tax", "total_due"]):
+            math_errors = validate_service_mathematic_logic(extracted_data)
+            validation_errors.extend(math_errors)
+        else:
+            validation_errors.append(
+                "No se puede validar la lógica matemática debido a datos faltantes en los campos relacionados con servicios."
+            )
 
     except Exception as e:
         validation_errors.append(f"Error general en el procesamiento: {str(e)}")

@@ -363,3 +363,46 @@ def verify_signature_in_image_record(image, position_index):
 def validate_tax_id(extracted_value):
     match = re.search(r"\b\d{8}\b", extracted_value)
     return match.group(0) if match else None
+
+def validate_service_mathematic_logic(data):
+    validation_errors = []
+
+    # Extraer datos
+    service_quantity = list(map(float, data.get("service_quantity", [])))
+    service_unit_cost = list(map(float, data.get("service_unit_cost", [])))
+    service_cost = list(map(float, data.get("service_cost", [])))
+    subtotal = float(data.get("subtotal", 0))
+    tax = float(data.get("tax", 0))
+    total_due = float(data.get("total_due", 0))
+
+    # Validar multiplicación: service_quantity * service_unit_cost == service_cost
+    for i in range(len(service_quantity)):
+        expected_cost = round(service_quantity[i] * service_unit_cost[i], 2)
+        if expected_cost != service_cost[i]:
+            validation_errors.append(
+                f"El costo calculado para el servicio {i + 1} no coincide: "
+                f"{expected_cost} != {service_cost[i]}"
+            )
+
+    # Validar suma de service_cost == subtotal
+    calculated_subtotal = round(sum(service_cost), 2)
+    if calculated_subtotal != subtotal:
+        validation_errors.append(
+            f"El subtotal calculado no coincide: {calculated_subtotal} != {subtotal}"
+        )
+
+    # Validar impuesto: subtotal * 0.15 == tax
+    expected_tax = round(subtotal * 0.15, 2)
+    if expected_tax != tax:
+        validation_errors.append(
+            f"El impuesto calculado no coincide: {expected_tax} != {tax}"
+        )
+
+    # Validar total: subtotal + tax == total_due
+    calculated_total_due = round(subtotal + tax, 2)
+    if calculated_total_due != total_due:
+        validation_errors.append(
+            f"El total calculado no coincide: {calculated_total_due} != {total_due}"
+        )
+
+    return validation_errors

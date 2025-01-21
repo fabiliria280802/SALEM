@@ -34,11 +34,11 @@ const Header = () => {
 		Administrador: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
 			{ label: 'Reportes', command: () => handleMenuItemClick('/dashboard') },
-			{ label: 'Documentos', command: () => handleMenuItemClick('/documents') },
+			{ label: 'Documentos', command: () => handleMenuItemClick('/documents') },/*
 			{
 				label: 'Entrenar IA',
 				command: () => handleMenuItemClick('/training'),
-			},
+			},*/
 			{
 				label: 'Gestionar usuarios',
 				command: () => handleMenuItemClick('/users-management'),
@@ -58,10 +58,11 @@ const Header = () => {
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
 			{ label: 'Reportes', command: () => handleMenuItemClick('/dashboard') },
 			{ label: 'Ver documentos', command: () => handleMenuItemClick('/documents') },
+			/* TODO: add funcionality 
 			{
 				label: 'Entrenar IA',
 				command: () => handleMenuItemClick('/training'),
-			},
+			},*/
 			{ label: 'Mi cuenta', command: () => handleMenuItemClick('/user-account') },
 		],
 	};

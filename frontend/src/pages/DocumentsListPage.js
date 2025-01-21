@@ -154,7 +154,11 @@ const DocumentsListPage = () => {
 					click en la lupa o presiona la tecla Enter
 				</p>
 				<div className={styles.filterContainer}>
-					<i className="pi pi-search" onClick={handleSearch} />
+				<div className={styles.searchWrapper}>
+						<i
+							className={`pi pi-search ${styles.searchIcon}`}
+							onClick={handleSearch}
+						/>
 					<input
 						type="text"
 						value={searchTerm}
@@ -163,6 +167,7 @@ const DocumentsListPage = () => {
 						className={styles.searchInput}
 						placeholder="Ejemplo: ruc:1234567890001"
 					/>
+					</div>
 					<div className={styles.appliedFiltersContainer}>
 						{appliedFilters.map((filter, index) => (
 							<span key={index} className={styles.filteredTag}>
@@ -203,7 +208,15 @@ const DocumentsListPage = () => {
 								<td>{doc.contract_number}</td>
 								<td>{doc.document_type}</td>
 								<td>{format(new Date(doc.created_at), 'dd/MM/yyyy HH:mm')}</td>
-								<td>{doc.status}</td>
+								<td
+								  className={
+								    doc.status === 'Aceptado'
+								      ? styles.cardSuccess
+								      : styles.cardError
+								  }
+								>
+								  {doc.status}
+								</td>
 								<td>{doc.ai_decision_explanation}</td>
 								<td>
 									{user.role === 'Proveedor' && doc.status === 'Denegado' && (

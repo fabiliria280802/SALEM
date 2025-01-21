@@ -211,6 +211,7 @@ exports.getAllInvoices = [
 			const invoices = await Invoice.find();
 			res.status(200).json(invoices);
 		  } catch (error) {
+			console.error('Error al obtener contratos:', error.message);
 			res.status(500).json({ message: 'Error al obtener facturas', error });
 		  }
 	},

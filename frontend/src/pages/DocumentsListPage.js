@@ -26,27 +26,24 @@ const DocumentsListPage = () => {
 	useEffect(() => {
 		const fetchDocuments = async () => {
 			try {
-				// Realizar tres llamadas independientes a los servicios
 				const [contractsResponse, invoicesResponse, serviceRecordsResponse] = await Promise.all([
 					documentService.getAllContracts(),
 					documentService.getAllInvoices(),
 					documentService.getAllServiceDeliveryRecords(),
 				]);
 	
-				// Combinar los datos en un solo arreglo
 				const combinedData = [
-					...contractsResponse.data,
-					...invoicesResponse.data,
-					...serviceRecordsResponse.data,
+					...(Array.isArray(contractsResponse) ? contractsResponse : contractsResponse.data || []),
+					...(Array.isArray(invoicesResponse) ? invoicesResponse : invoicesResponse.data || []),
+					...(Array.isArray(serviceRecordsResponse) ? serviceRecordsResponse : serviceRecordsResponse.data || []),
 				];
-	
-				// Filtrar documentos según el rol
+
+				console.log('Datos combinados:', combinedData);
+
 				const filteredData =
 					user.role === 'Proveedor'
-						? combinedData.filter(doc => doc.ruc === user.ruc)
+						? combinedData.filter(doc => doc.provider_ruc === user.ruc)
 						: combinedData;
-	
-				console.log('Documentos cargados:', filteredData); // Para debugging
 	
 				setDocuments(filteredData);
 				setFilteredDocuments(filteredData);
@@ -58,14 +55,13 @@ const DocumentsListPage = () => {
 					detail: 'Error al cargar los documentos',
 					life: 3000,
 				});
-				// Inicializar con array vacío en caso de error
 				setDocuments([]);
 				setFilteredDocuments([]);
 			}
 		};
 	
 		fetchDocuments();
-	}, [user]);
+	}, [user]);	
 
 	const handleSearch = () => {
 		if (searchTerm.trim() !== '') {
@@ -194,7 +190,7 @@ const DocumentsListPage = () => {
 							<th>RUC</th>
 							<th>Contrato</th>
 							<th>Tipo</th>
-							<th>Fecha</th>
+							<th>Fecha y Hora</th>
 							<th>Estado</th>
 							<th>Explicación IA</th>
 							<th>Control</th>
@@ -203,9 +199,9 @@ const DocumentsListPage = () => {
 					<tbody>
 						{filteredDocuments.map(doc => (
 							<tr key={doc._id}>
-								<td>{doc.ruc}</td>
-								<td>{doc.contrato}</td>
-								<td>{doc.tipoDocumento}</td>
+								<td>{doc.provider_ruc}</td>
+								<td>{doc.contract_number}</td>
+								<td>{doc.document_type}</td>
 								<td>{format(new Date(doc.created_at), 'dd/MM/yyyy HH:mm')}</td>
 								<td>{doc.status}</td>
 								<td>{doc.ai_decision_explanation}</td>

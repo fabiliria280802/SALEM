@@ -68,6 +68,10 @@ const serviceDeliveryRecordSchema = new mongoose.Schema({
 		type: String,
 		trim: true,
 	},
+	contract_number: {
+		type: String,
+		trim: true,
+	},
 	document_type: {
 		type: String,
 		trim: true,

@@ -91,7 +91,7 @@ const getAllContracts = async () => {
 			},
 		};
 
-		const response = await axios.post(`${API_URL}Contract`, {}, config); // Configuración correcta
+		const response = await axios.post(`${API_URL}Contract/getAll`, {}, config); // Configuración correcta
 		return response.data;
 	} catch (error) {
 		if (error.response && error.response.data.errors) {
@@ -111,7 +111,7 @@ const getAllInvoices = async () => {
 			},
 		};
 
-		const response = await axios.post(`${API_URL}Invoice`, {}, config); // Configuración correcta
+		const response = await axios.post(`${API_URL}Invoice/getAll`, {}, config); // Configuración correcta
 		return response.data;
 	} catch (error) {
 		if (error.response && error.response.data.errors) {
@@ -131,7 +131,7 @@ const getAllServiceDeliveryRecords = async () => {
 			},
 		};
 
-		const response = await axios.post(`${API_URL}ServiceDeliveryRecord`, {}, config); // Configuración correcta
+		const response = await axios.post(`${API_URL}ServiceDeliveryRecord/getAll`, {}, config); // Configuración correcta
 		return response.data;
 	} catch (error) {
 		if (error.response && error.response.data.errors) {

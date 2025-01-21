@@ -24,6 +24,7 @@ exports.createServiceRecord = [
             if (!contractId) {
                 return res.status(400).json({ error: 'El contract_id es obligatorio' });
             }
+            const contractNUmber = await Document.findById(contractId)
 
             const hesRecord = await Document.findOne({ number: hes });
             if (!hesRecord) {
@@ -42,6 +43,7 @@ exports.createServiceRecord = [
                     provider_ruc: ruc,
                     hes_number: hes,
                     contract_id: contractId,
+                    contract_number: contractNUmber,
                     file_path: path.join('data', 'docs', file.filename),
                     status: 'Analizando',
                     created_by: req.user.id,

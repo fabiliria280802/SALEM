@@ -191,6 +191,18 @@ exports.createContract = [
 	},
 ];
 
+exports.getAllContracts = [
+	authMiddleware,
+	async (req, res) => {
+		try {
+			const contracts = await Contract.find();
+			res.status(200).json(contracts);
+		} catch (error) {
+			res.status(500).json({ message: 'Error al obtener contratos', error });
+		}
+	},
+];
+
 exports.getContractById = [
 	authMiddleware,
 	async (req, res, next) => {

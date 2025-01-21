@@ -64,6 +64,15 @@ const serviceDeliveryRecordSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	provider_ruc: {
+		type: String,
+		trim: true,
+	},
+	document_type: {
+		type: String,
+		trim: true,
+		default: 'Acta de entrega',
+	},
 });
 
 module.exports = mongoose.model(

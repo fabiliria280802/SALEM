@@ -58,6 +58,11 @@ const contractSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	document_type: {
+		type: String,
+		trim: true,
+		default: 'Contrato',
+	},
 });
 
 module.exports = mongoose.model('Contract', contractSchema);

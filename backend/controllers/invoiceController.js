@@ -38,6 +38,7 @@ exports.createInvoice = [
 				newInvoice = new Invoice({
 					contract_id: contractId,
 					contract_number: contract,
+					provider_ruc: ruc,
 					file_path: path.join('data', 'docs', file.filename),
 					status: 'Analizando',
 					created_by: req.user.id,
@@ -207,12 +208,11 @@ exports.getAllInvoices = [
 	authMiddleware,
 	async (req, res) => {
 		try {
-			const invoices = await Invoice.find().populate('user_id', 'name email');
+			const invoices = await Invoice.find();
 			res.status(200).json(invoices);
-		} catch (error) {
-			console.error('Error al obtener las facturas:', error);
-			res.status(500).json({ error: 'Error al obtener las facturas' });
-		}
+		  } catch (error) {
+			res.status(500).json({ message: 'Error al obtener facturas', error });
+		  }
 	},
 ];
 

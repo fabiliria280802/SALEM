@@ -26,18 +26,28 @@ const DocumentsListPage = () => {
 	useEffect(() => {
 		const fetchDocuments = async () => {
 			try {
-				const response = await documentService.getDocumentsList();
-				// Asegurarse de que data sea un array
-				const data = Array.isArray(response.data) ? response.data : response;
-
+				// Realizar tres llamadas independientes a los servicios
+				const [contractsResponse, invoicesResponse, serviceRecordsResponse] = await Promise.all([
+					documentService.getAllContracts(),
+					documentService.getAllInvoices(),
+					documentService.getAllServiceDeliveryRecords(),
+				]);
+	
+				// Combinar los datos en un solo arreglo
+				const combinedData = [
+					...contractsResponse.data,
+					...invoicesResponse.data,
+					...serviceRecordsResponse.data,
+				];
+	
 				// Filtrar documentos según el rol
 				const filteredData =
 					user.role === 'Proveedor'
-						? data.filter(doc => doc.ruc === user.ruc)
-						: data;
-
+						? combinedData.filter(doc => doc.ruc === user.ruc)
+						: combinedData;
+	
 				console.log('Documentos cargados:', filteredData); // Para debugging
-
+	
 				setDocuments(filteredData);
 				setFilteredDocuments(filteredData);
 			} catch (error) {
@@ -53,7 +63,7 @@ const DocumentsListPage = () => {
 				setFilteredDocuments([]);
 			}
 		};
-
+	
 		fetchDocuments();
 	}, [user]);
 

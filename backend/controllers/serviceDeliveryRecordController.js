@@ -38,8 +38,8 @@ exports.createServiceRecord = [
             try {
 
                 newRecord = new ServiceDeliveryRecord({
-                    ruc: ruc,
                     hes_id: hesRecord._id,
+                    provider_ruc: ruc,
                     hes_number: hes,
                     contract_id: contractId,
                     file_path: path.join('data', 'docs', file.filename),

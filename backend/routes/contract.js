@@ -2,6 +2,7 @@ const express = require('express');
 const {
 	createContract,
 	getContractById,
+	getAllContracts,
 	updateContract,
 	deleteContract,
 } = require('../controllers/contractController');
@@ -10,6 +11,7 @@ const router = express.Router();
 
 router.post('/', upload.single('file'), createContract);
 router.get('/:id', getContractById);
+router.post('/',getAllContracts)
 router.put('/:id', updateContract);
 router.delete('/:id', deleteContract);
 

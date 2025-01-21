@@ -4,42 +4,58 @@ import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import documentService from '../services/documentService';
+import LoadingScreen from '../components/Layout/LoadingScreen';
 import styles from '../styles/DocumentReviewPage.module.css';
+import useAuth from '../hooks/useAuth';
 
 const ReviewInvoicePage = () => {
-	const [document, setDocument] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const [fileType, setFileType] = useState('pdf');
-	const [filePath, setFilePath] = useState('');
-	const toast = useRef(null);
-	const history = useHistory();
-	const { id } = useParams();
+    const [documentData, setDocumentData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [filePath, setFilePath] = useState('');
+    const toast = useRef(null);
+    const history = useHistory();
+    const { id } = useParams();
+    const { user } = useAuth();
 
 	useEffect(() => {
 		loadDocument();
+		if (toast.current) {
+			console.log('Toast está inicializado');
+		}
 	}, [id]);
 
-	const loadDocument = async () => {
-		try {
-			const response = await documentService.getInvoiceById(id);
-			setDocument(response.data);
-			setFileType(response.data.file_path.split('.').pop().toLowerCase());
-			setFilePath(response.data.file_path);
-		} catch (error) {
-			toast.current.show({
-				severity: 'error',
-				summary: 'Error',
-				detail: 'Error al cargar el documento',
-			});
-		} finally {
-			setLoading(false);
-		}
-	};
+    const loadDocument = async () => {
+        try {
+            const response = await documentService.getDocumentById('Invoice', id);
+            if (response) {
+                setDocumentData(response);
+                if (response.file_path) {
+                    const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost';
+                    const port = process.env.REACT_APP_API_PORT || '5000';
+                    setFilePath(`${baseUrl}:${port}/${response.file_path}`);
+                } else {
+                    throw new Error('El archivo no tiene una ruta válida.');
+                }
+            } else {
+                throw new Error('No se encontraron datos del contrato.');
+            }
+        } catch (error) {
+			if (toast.current) {
+				toast.current.show({
+					severity: 'error',
+					summary: 'Error',
+					detail: 'Error al cargar el documento.',
+				});
+			}
+        } finally {
+            setLoading(false); // Desactiva la pantalla de carga después del proceso
+        }
+    };
 
 	const handleApprove = async () => {
 		try {
 			await documentService.updateDocument(id, 'Invoice', {
-				status: 'Accepted',
+				status: 'Aceptado',
 			});
 			toast.current.show({
 				severity: 'success',
@@ -56,7 +72,7 @@ const ReviewInvoicePage = () => {
 		}
 	};
 
-	const handleRevalidationFailure = async () => {
+	const handleRevalidate = async () => {
 		try {
 			await documentService.notifyManagers(id);
 			toast.current.show({
@@ -74,9 +90,10 @@ const ReviewInvoicePage = () => {
 		}
 	};
 
-	if (loading) {
-		return <div>Cargando...</div>;
-	}
+    const handleGoToDocuments = () => history.push('/documents');
+	const handleGoBack = () => history.goBack();
+	if (loading) return <LoadingScreen />; 
+    if (!documentData) return <div>No se encontraron datos del contrato.</div>;
 
 	return (
 		<div className={styles.container}>
@@ -84,80 +101,107 @@ const ReviewInvoicePage = () => {
 			<div className={styles.leftColumn}>
 				<h1 className={styles.title}>Resultado del análisis</h1>
 				<p className={styles.info}>
-					RUC: {document.ruc}
+					Compañia: {documentData.issuing_company}
 					<br />
-					Contrato: {document.contrato}
+					Fecha: {documentData.issue_date}
 					<br />
-					Tipo de documento: {document.tipoDocumento}
+					Tipo de documento: Factura
 					<br />
-					Archivo: {document.file_path}
+					Archivo: {documentData.file_path}
 				</p>
 
-				<table className={styles.table}>
-					<thead>
-						<tr>
-							<th className={styles.tableHeader}>Parámetro</th>
-							<th className={styles.tableHeader}>Cumple</th>
-						</tr>
-					</thead>
-					<tbody>
-						{document.validationFields?.map((field, index) => (
-							<tr key={index}>
-								<td className={styles.tableCell}>{field.name}</td>
-								<td className={styles.tableCell}>
-									{document.validation_errors?.includes(field.field)
-										? 'No'
-										: 'Sí'}
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-				<p>
-					<strong>Descripción del error:</strong>{' '}
-					{document.ai_decision_explanation}
-				</p>
-				<p className={styles.status}>
-					Estado:{' '}
-					<span
-						className={
-							document.status === 'Denegado' ? styles.denied : styles.accepted
-						}
-					>
-						{document.status}
-					</span>
-				</p>
-				<Button
-					label="Aprobar"
-					className={styles.button}
-					onClick={handleApprove}
-					disabled={document.status === 'Denegado'}
-				/>
-				<Button
-					label="Solicitar revalidación"
-					className={styles.buttonReverse}
-					onClick={handleRevalidationFailure}
-					disabled={document.status === 'Aceptado'}
-				/>
-			</div>
+                <div
+                    className={
+                        documentData.status === 'Aceptado'
+                            ? styles.cardSuccess
+                            : styles.cardError
+                    }
+                >
+                    <p className={styles.cardHeader}>
+                        {documentData.status === 'Aceptado'
+                            ? 'Descripción del proceso:'
+                            : 'Descripción del error:'}
+                    </p>
+                    <p className={styles.cardContent}>
+                        {documentData.ai_decision_explanation ||
+                            (documentData.status === 'Aceptado'
+                                ? 'El documento fue procesado correctamente.'
+                                : 'No se encontraron errores.')} 
+                    </p>
+                </div>
+                <p className={styles.status}>
+                    Estado:{' '}
+                    <span
+                        className={
+                            documentData.status === 'Denegado'
+                                ? styles.denied
+                                : styles.approved
+                        }
+                    >
+                        {documentData.status}
+                    </span>
+                </p>
+                <div className={styles.buttonGroup}>
+                    {documentData.status === 'Aceptado' && (
+                        <>
+                            <Button
+                                label="Guardar y salir"
+                                className={styles.buttonReverse}
+                                onClick={handleGoToDocuments}
+                            />
+                        </>
+                    )}
+                    {documentData.status === 'Denegado' && (
+                        <>
+                            {user.role === 'Administrador' && (
+                                <Button
+                                    label="Aprobar"
+                                    className={styles.button}
+                                    onClick={handleApprove}
+                                />
+                            )}
+                            {user.role === 'Proveedor' && (
+                                <>
+                                    <Button
+                                        label="Solicitar validación manual"
+                                        className={styles.buttonReverse}
+                                        onClick={handleRevalidate}
+                                    />
+                                    <Button
+                                        label="Volver a cargar el documento"
+                                        className={styles.buttonReverse}
+                                        onClick={() =>
+                                            history.push('/upload-invoice')
+                                        }
+                                    />
+                                </>
+                            )}
+                            <Button
+                                label="Guardar y salir"
+                                className={styles.buttonReverse}
+                                onClick={handleGoToDocuments}
+                            />
+                        </>
+                    )}
+                    <Button
+                        label="Volver"
+                        className={styles.buttonReverse}
+                        onClick={handleGoBack}
+                    />
+                </div>
+            </div>
 
-			<div className={styles.rightColumn}>
-				{fileType === 'pdf' ? (
-					<Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-						<div style={{ height: '70vh', width: '100%', overflow: 'auto' }}>
-							<Viewer fileUrl={filePath} renderMode="canvas" />
-						</div>
-					</Worker>
-				) : (
-					<img
-						src={filePath}
-						alt="Preview del documento"
-						className={styles.preview}
-					/>
-				)}
-			</div>
-		</div>
-	);
+            <div className={styles.rightColumn}>
+                {filePath ? (
+                    <Worker workerUrl="/pdfjs/pdf.worker.min.js">
+                        <Viewer fileUrl={filePath} />
+                    </Worker>
+                ) : (
+                    <p>No se puede cargar el archivo. Verifique que la ruta sea válida.</p>
+                )}
+            </div>
+        </div>
+    );
 };
 
 export default ReviewInvoicePage;

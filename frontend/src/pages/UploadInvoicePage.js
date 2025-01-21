@@ -112,16 +112,16 @@ const UploadInvoicePage = () => {
 
 		try {
 			const response = await documentService.uploadDocument(documentData.documentType, formData);
-
+/*
 			toast.current.show({
 				severity: 'success',
 				summary: 'Éxito',
 				detail: 'Contrato cargado correctamente',
 				life: 5000,
 			});
-
+*/
 			setTimeout(
-				() => history.push(`/review-invoice/${response.data._id}`),
+				() => history.push(`/review-invoice/${response._id}`),
 				2000,
 			);
 		} catch (error) {

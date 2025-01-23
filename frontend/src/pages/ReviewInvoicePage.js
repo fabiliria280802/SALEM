@@ -128,11 +128,8 @@ const ReviewInvoicePage = () => {
                             : 'Descripción del error:'}
                     </p>
                     <p className={styles.cardContent}>
-                        {documentData.ai_decision_explanation ||
-                            (documentData.status === 'Aceptado'
-                                ? 'El documento fue procesado correctamente.'
-                                : 'No se encontraron errores.')} 
-                    </p>
+                                        <div dangerouslySetInnerHTML={{ __html: documentData.ai_decision_explanation }} />
+                                        </p>
                 </div>
                 <p className={styles.status}>
                     Estado:{' '}

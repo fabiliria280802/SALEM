@@ -22,7 +22,8 @@ const UploadServiceDeliveryRecordPage = () => {
         hes: '',
         documentType: 'ServiceDeliveryRecord',
         file: null,
-		contractId: ''
+		contractId: '',
+		ruc: '',
     });
 
     const [isRucReadOnly, setIsRucReadOnly] = useState(false);
@@ -67,7 +68,7 @@ const UploadServiceDeliveryRecordPage = () => {
 	};
 
 	const handleRucBlur = async () => {
-		if (user.role !== 'Proveedor' && documentData.ruc.trim().length === 13) {
+		if (user.role !== 'Proveedor' && documentData.ruc?.trim().length === 13) {
 			try {
 				const rucUser = await publicService.getUserByRuc(documentData.ruc);
 				if (rucUser) {
@@ -139,9 +140,13 @@ const UploadServiceDeliveryRecordPage = () => {
 
 			if (response._id) {
 				setTimeout(
-					() => history.push(`/review-service-record/${response._id}?hes=${response.hes_number}&contract=${response.contract_id}`),
+					() => history.push(`/review-service-record/${response._id}`),
 					2000,
 				);
+				/*setTimeout(
+					() => history.push(`/review-service-record/${response._id}?hes=${response.hes_number}&contract=${response.contract_id}`),
+					2000,
+				);*/
 			} else {
 				toast.current.show({
 					severity: 'error',

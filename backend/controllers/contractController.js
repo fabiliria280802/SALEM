@@ -343,7 +343,7 @@ exports.updateContract = [
                     req.params.id,
                     { 
 						status,         
-						ai_decision_explanation:`${ai_decision_explanation}<br><strong>Nota:</strong> Se hizo una validación manual por un Gestor de ENAP.`
+						ai_decision_explanation:`${ai_decision_explanation}<br><br><strong>Nota:</strong> Se hizo una validación manual por un Gestor de ENAP.`
 					},
                     { new: true }
                 );

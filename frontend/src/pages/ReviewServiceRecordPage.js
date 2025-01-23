@@ -102,9 +102,9 @@ const ReviewServiceRecordPage = () => {
                 <div className={styles.card}>
                     <p className={styles.cardHeader}>Información del acta de servicio:</p>
                     <p className={styles.cardContent}>
-                        HES: {hes || 'No disponible'}
+                        HES: {documentData.hes_number || 'No disponible'}
                         <br />
-                        Contrato: {contract || 'No disponible'}
+                        Contrato: {documentData.contract_number || 'No disponible'}
                         <br />
                         Orden: {documentData.order_number || 'No disponible'}
                         <br />

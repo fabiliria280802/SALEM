@@ -228,24 +228,154 @@ exports.getServiceDeliveryRecordById = [
 	},
 ];
 
-exports.updateServiceDeliveryRecord = [
-	authMiddleware,
-	async (req, res) => {
-		try {
-			const updatedRecord = await ServiceDeliveryRecord.findByIdAndUpdate(
-				req.params.id,
-				req.body,
-				{ new: true },
-			);
-			if (!updatedRecord) {
-				return res.status(404).json({ message: 'Registro no encontrado' });
-			}
-			res.status(200).json(updatedRecord);
-		} catch (error) {
-			res.status(500).json({ message: error.message });
-		}
-	},
+exports.updateServiceRecord = [
+    authMiddleware,
+    async (req, res) => {
+        const { status, ai_decision_explanation, ruc, hes, documentType, contractId } = req.body;
+
+        let filePath = req.body.filePath;
+        console.log("entra a update")
+        try {
+            console.log(`Request body:`, req.body);
+
+            const existingRecord = await ServiceDeliveryRecord.findById(req.params.id);
+            if (!existingRecord) {
+                console.error(`Registro no encontrado para ID: ${req.params.id}`);
+                return res.status(404).json({ error: 'Registro de entrega de servicio no encontrado' });
+            }
+
+            console.log(`Registro existente antes de actualizar:`, existingRecord);
+
+            if (status && !ruc && !hes && !documentType && !contractId) {
+                const updateData = {
+                    status,
+                    ai_decision_explanation: `${ai_decision_explanation}<br><br><strong>Nota:</strong> Se hizo una validación manual por un Gestor de ENAP.`,
+                };
+
+                console.log(`Intentando actualizar con datos:`, updateData);
+
+                const updatedRecord = await ServiceDeliveryRecord.findByIdAndUpdate(
+                    req.params.id,
+                    updateData,
+                    { new: true }
+                );
+
+                if (!updatedRecord) {
+                    console.error(`Error al actualizar el registro con ID: ${req.params.id}`);
+                    return res.status(500).json({ error: 'Error al actualizar el registro' });
+                }
+
+                console.log(`Registro actualizado exitosamente:`, updatedRecord);
+
+                return res.status(200).json(updatedRecord);
+            }
+
+            // Verificar y preparar los datos para invocar la IA
+            if (req.file) {
+                filePath = path.join('data', 'docs', req.file.filename);
+            }
+
+            if (!ruc || !hes || !documentType || !contractId) {
+                console.error('Faltan parámetros para realizar la validación con IA');
+                return res.status(400).json({ error: 'Faltan parámetros para realizar la validación con IA' });
+            }
+
+            const contract = await Contract.findById(contractId);
+            if (!contract) {
+                console.error(`Contrato no encontrado para ID: ${contractId}`);
+                return res.status(404).json({ error: `Contrato con ID ${contractId} no encontrado` });
+            }
+
+            console.log(`Invocando la IA con archivo: ${filePath}, documento: ${documentType}, ruc: ${ruc}, contrato: ${contract.contract_number}, HES: ${hes}`);
+
+            const fileFullPath = path.join(process.cwd(), filePath);
+            const pythonProcess = spawn(
+                'python3',
+                [
+                    'controllers/IA/ia.py',
+                    fileFullPath,
+                    documentType,
+                    ruc,
+                    contract.contract_number,
+                    hes,
+                ],
+                {
+                    env: {
+                        ...process.env,
+                        TESSDATA_PREFIX: process.env.TESSDATA_PREFIX,
+                    },
+                }
+            );
+
+            let pythonOutput = '';
+            let pythonError = '';
+
+            pythonProcess.stdout.on('data', (data) => {
+                console.log('Salida de Python (stdout):', data.toString());
+                pythonOutput += data.toString();
+            });
+
+            pythonProcess.stderr.on('data', (data) => {
+                console.error('Salida de Python (stderr):', data.toString());
+                pythonError += data.toString();
+            });
+
+            pythonProcess.on('close', async (code) => {
+                if (code !== 0) {
+                    console.error(`Error al procesar la IA: ${pythonError}`);
+                    await ServiceDeliveryRecord.findByIdAndUpdate(existingRecord._id, {
+                        status: 'Denegado',
+                        ai_decision_explanation: `Error en el procesamiento: ${pythonError}`,
+                    });
+                    return res.status(500).json({
+                        error: 'Error al procesar el documento con IA',
+                        details: pythonError,
+                    });
+                }
+
+                try {
+                    const matches = pythonOutput.match(/({[\s\S]*})/);
+                    if (!matches) throw new Error('Salida no válida del script de Python');
+
+                    const result = JSON.parse(matches[1]);
+
+                    const newStatus = result.validation_errors && result.validation_errors.length > 0 ? 'Denegado' : 'Aceptado';
+                    const newExplanation = newStatus === 'Denegado'
+                        ? `Documento denegado. Errores: ${result.validation_errors.join(', ')}`
+                        : 'Documento procesado correctamente';
+
+                    const updateData = {
+                        ...result.extracted_data,
+                        status: newStatus,
+                        ai_decision_explanation: newExplanation,
+                        missing_fields: result.missing_fields || [],
+                        validation_errors: result.validation_errors || [],
+                    };
+
+                    console.log(`Actualizando registro con datos procesados por la IA:`, updateData);
+
+                    const updatedRecord = await ServiceDeliveryRecord.findByIdAndUpdate(
+                        existingRecord._id,
+                        updateData,
+                        { new: true }
+                    );
+
+                    return res.status(200).json(updatedRecord);
+                } catch (error) {
+                    console.error('Error al procesar la salida de la IA:', error);
+                    return res.status(500).json({
+                        error: 'Error al procesar la salida de la IA',
+                        details: error.message,
+                    });
+                }
+            });
+        } catch (error) {
+            console.error('Error interno:', error);
+            return res.status(500).json({ error: 'Error interno del servidor', details: error.message });
+        }
+    },
 ];
+
 
 exports.deleteServiceDeliveryRecord = [
 	authMiddleware,
@@ -279,21 +409,4 @@ exports.getServiceRecordById = [
 	},
 ];
 
-exports.updateServiceRecord = [
-	authMiddleware,
-	async (req, res) => {
-		try {
-			const updatedRecord = await ServiceDeliveryRecord.findByIdAndUpdate(
-				req.params.id,
-				req.body,
-				{ new: true },
-			);
-			if (!updatedRecord) {
-				return res.status(404).json({ error: 'Registro no encontrado' });
-			}
-			res.status(200).json(updatedRecord);
-		} catch (error) {
-			res.status(500).json({ error: 'Error al actualizar el registro' });
-		}
-	},
-];
+

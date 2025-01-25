@@ -28,7 +28,6 @@ By: Fabiana Liria & Mateo Ávila
 - npm (Node Package Manager)
 - Account in MongoDB Atlas or you must have install MongoDB on your machine
 - Tesseract OCR
-- Azure Active Directory (AAD)
 
 ## Installation
 

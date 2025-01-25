@@ -110,6 +110,7 @@ Para garantizar la calidad del código, se utilizan los siguientes scripts:
 1. **Ejecutar Pruebas (Jest):**
   ```bash
   npm run test
+```
 
 2. **Ejecuta Linter (ESLint with Auto-fix):**
   ```bash

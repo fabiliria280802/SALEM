@@ -160,6 +160,9 @@ jobs:
       - name: Run tests for backend
         env:
           MONGODB_URI_TEST: ${{ secrets.MONGODB_URI_TEST }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          NODE_ENV: ${{ secrets.NODE_ENV }}
         run: |
           cd backend
           npm i jest-environment-jsdom@29.7.0 node-fetch@2.7.0

@@ -34,9 +34,11 @@ const decodeToken = token => {
 	return jwtDecode(token); // Decodifica el token JWT
 };
 
-export default {
+const authService = {
 	login,
 	logout,
 	getToken,
 	decodeToken,
-};
+  };
+
+export default authService;

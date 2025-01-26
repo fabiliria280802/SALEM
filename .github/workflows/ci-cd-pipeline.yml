@@ -1,7 +1,7 @@
 # Description: setup backend & frontend, init unit test & integration test
-# Last Update: 28-11-2024
+# Last Update: 25-01-2025
 # By: Fabi Liria
-# version: 1.9
+# version: 2.3
 # TODO: add e2e tests, Jmeter & Locust
 name: CI/CD Pipeline
 

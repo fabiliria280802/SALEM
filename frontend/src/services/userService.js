@@ -50,7 +50,7 @@ const getAUser = async userId => {
 	const response = await axios.get(`${API_URL}${userId}`, config);
 	return response.data;
 };
-
+//TODO: borrar endpoint
 const suspendUser = async userId => {
 	const token = authService.getToken();
 	const config = {

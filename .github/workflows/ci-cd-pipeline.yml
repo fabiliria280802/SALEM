@@ -158,6 +158,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run tests for backend
+        env:
+          MONGODB_URI_TEST: ${{ secrets.MONGODB_URI_TEST }}
         run: |
           cd backend
           npm i jest-environment-jsdom@29.7.0 node-fetch@2.7.0

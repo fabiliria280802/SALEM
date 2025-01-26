@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -17,11 +17,7 @@ const ReviewContractPage = () => {
 	const { id } = useParams();
 	const { user } = useAuth();
 
-	useEffect(() => {
-		loadDocument();
-	}, [id]);
-
-	const loadDocument = async () => {
+	const loadDocument = useCallback(async () => {
 		try {
 			const response = await documentService.getDocumentById('Contract', id);
 			if (response) {
@@ -45,7 +41,11 @@ const ReviewContractPage = () => {
 		} finally {
 			setLoading(false); // Desactiva la pantalla de carga después del proceso
 		}
-	};
+	}, [id]);
+
+	useEffect(() => {
+		loadDocument();
+	}, [loadDocument]);
 
 	const handleApprove = async () => {
 		try {

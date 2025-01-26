@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useHistory, useParams, useLocation } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -16,16 +16,7 @@ const ReviewServiceRecordPage = () => {
 	const { id } = useParams();
 	const { user } = useAuth();
 
-	const location = useLocation();
-	const queryParams = new URLSearchParams(location.search);
-	const contract = queryParams.get('contract');
-	const hes = queryParams.get('hes');
-
-	useEffect(() => {
-		loadDocument();
-	}, [id]);
-
-	const loadDocument = async () => {
+	const loadDocument = useCallback(async () => {
 		try {
 			const response = await documentService.getDocumentById(
 				'ServiceDeliveryRecord',
@@ -52,7 +43,11 @@ const ReviewServiceRecordPage = () => {
 		} finally {
 			setLoading(false);
 		}
-	};
+	}, [id]);
+
+	useEffect(() => {
+		loadDocument();
+	}, [loadDocument]);
 
 	const handleApprove = async () => {
 		try {

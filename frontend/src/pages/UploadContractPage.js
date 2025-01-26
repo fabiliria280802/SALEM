@@ -3,7 +3,6 @@ import { InputText } from 'primereact/inputtext';
 import React, { useState, useRef, useEffect } from 'react';
 import styles from '../styles/EditUserPage.module.css';
 import documentService from '../services/documentService';
-import publicService from '../services/publicService';
 import { Toast } from 'primereact/toast';
 import { useHistory, useParams } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';

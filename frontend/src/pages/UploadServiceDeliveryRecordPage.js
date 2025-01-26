@@ -44,7 +44,7 @@ const UploadServiceDeliveryRecordPage = () => {
 		if (contractId) {
 			setDocumentData(prev => ({ ...prev, contractId }));
 		}
-	}, [user, providerRuc]);
+	}, [user, providerRuc, contractId]);
 
 	const handleInputChange = e => {
 		const { name, value } = e.target;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef,useCallback } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -17,14 +17,8 @@ const ReviewInvoicePage = () => {
 	const { id } = useParams();
 	const { user } = useAuth();
 
-	useEffect(() => {
-		loadDocument();
-		if (toast.current) {
-			console.log('Toast está inicializado');
-		}
-	}, [id]);
 
-	const loadDocument = async () => {
+	const loadDocument = useCallback(async () => {
 		try {
 			const response = await documentService.getDocumentById('Invoice', id);
 			if (response) {
@@ -50,7 +44,14 @@ const ReviewInvoicePage = () => {
 		} finally {
 			setLoading(false); // Desactiva la pantalla de carga después del proceso
 		}
-	};
+	}, [id]);
+	
+	useEffect(() => {
+		loadDocument();
+		if (toast.current) {
+			console.log('Toast está inicializado');
+		}
+	}, [loadDocument]);
 
 	const handleApprove = async () => {
 		try {

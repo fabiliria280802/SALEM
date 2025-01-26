@@ -23,11 +23,6 @@ const TrainingPage = () => {
 		{ label: 'MIGO', value: 'MIGO' },
 	];
 
-	const handleInputChange = e => {
-		const { name, value } = e.target;
-		setDocumentData({ ...documentData, [name]: value });
-	};
-
 	const handleFileChange = e => {
 		const selectedFiles = Array.from(e.target.files); // Convierte a un arreglo de archivos
 		const validFiles = selectedFiles.filter(file => {

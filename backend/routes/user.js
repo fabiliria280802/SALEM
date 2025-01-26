@@ -15,6 +15,7 @@ router.get('/:id', getAUser);
 router.post('/', createUser);
 router.put('/:id', updateUser);
 router.put('/:currentUserId/:userIdToModify', changePassword);
-router.put('/:id', suspendUser);
+//TODO: validar flujo de suspend
+router.put('/suspend/:id', suspendUser);
 
 module.exports = router;

@@ -13,7 +13,11 @@ const uploadDocument = async (documentType, formData) => {
 			},
 		};
 
-		const response = await axios.post(`${API_URL}${documentType}`, formData, config);
+		const response = await axios.post(
+			`${API_URL}${documentType}`,
+			formData,
+			config,
+		);
 		return response.data;
 	} catch (error) {
 		if (error.response && error.response.data.errors) {
@@ -32,7 +36,10 @@ const getDocumentById = async (documentType, documentId) => {
 			},
 		};
 
-		const response = await axios.get(`${API_URL}${documentType}/${documentId}`, config);
+		const response = await axios.get(
+			`${API_URL}${documentType}/${documentId}`,
+			config,
+		);
 		return response.data;
 	} catch (error) {
 		if (error.response && error.response.data.errors) {
@@ -52,7 +59,11 @@ const updateDocument = async (documentType, documentId, data) => {
 			},
 		};
 
-		const response = await axios.put(`${API_URL}${documentType}/${documentId}`, data, config);
+		const response = await axios.put(
+			`${API_URL}${documentType}/${documentId}`,
+			data,
+			config,
+		);
 		return response.data;
 	} catch (error) {
 		if (error.response && error.response.data.errors) {
@@ -61,7 +72,6 @@ const updateDocument = async (documentType, documentId, data) => {
 		throw error;
 	}
 };
-
 
 /*const getAllDocuments = async () => {
 	try {
@@ -132,7 +142,11 @@ const getAllServiceDeliveryRecords = async () => {
 			},
 		};
 
-		const response = await axios.post(`${API_URL}ServiceDeliveryRecord/getAll`, {}, config); // Configuración correcta
+		const response = await axios.post(
+			`${API_URL}ServiceDeliveryRecord/getAll`,
+			{},
+			config,
+		); // Configuración correcta
 		return response.data;
 	} catch (error) {
 		if (error.response && error.response.data.errors) {

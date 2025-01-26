@@ -5,11 +5,10 @@
 }
 
 .content {
-    flex-grow: 1; /* Hace que el contenido ocupe el espacio disponible */
-    display: flex;
-    flex-direction: column;
+	flex-grow: 1; /* Hace que el contenido ocupe el espacio disponible */
+	display: flex;
+	flex-direction: column;
 }
-
 
 .App-logo {
 	aspect-ratio: 3.6;

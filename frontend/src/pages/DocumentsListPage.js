@@ -17,25 +17,32 @@ const DocumentsListPage = () => {
 
 	const fieldMap = {
 		ruc: 'provider_ruc',
-		contrato: 'contract_number', 
+		contrato: 'contract_number',
 		tipo: 'document_type',
 		estado: 'status',
 		fecha: 'created_at',
-	};	
+	};
 
 	useEffect(() => {
 		const fetchDocuments = async () => {
 			try {
-				const [contractsResponse, invoicesResponse, serviceRecordsResponse] = await Promise.all([
-					documentService.getAllContracts(),
-					documentService.getAllServiceDeliveryRecords(),
-					documentService.getAllInvoices(),
-				]);
-	
+				const [contractsResponse, invoicesResponse, serviceRecordsResponse] =
+					await Promise.all([
+						documentService.getAllContracts(),
+						documentService.getAllServiceDeliveryRecords(),
+						documentService.getAllInvoices(),
+					]);
+
 				const combinedData = [
-					...(Array.isArray(contractsResponse) ? contractsResponse : contractsResponse.data || []),
-					...(Array.isArray(invoicesResponse) ? invoicesResponse : invoicesResponse.data || []),
-					...(Array.isArray(serviceRecordsResponse) ? serviceRecordsResponse : serviceRecordsResponse.data || []),
+					...(Array.isArray(contractsResponse)
+						? contractsResponse
+						: contractsResponse.data || []),
+					...(Array.isArray(invoicesResponse)
+						? invoicesResponse
+						: invoicesResponse.data || []),
+					...(Array.isArray(serviceRecordsResponse)
+						? serviceRecordsResponse
+						: serviceRecordsResponse.data || []),
 				];
 
 				console.log('Datos combinados:', combinedData);
@@ -44,7 +51,7 @@ const DocumentsListPage = () => {
 					user.role === 'Proveedor'
 						? combinedData.filter(doc => doc.provider_ruc === user.ruc)
 						: combinedData;
-	
+
 				setDocuments(filteredData);
 				setFilteredDocuments(filteredData);
 			} catch (error) {
@@ -59,9 +66,9 @@ const DocumentsListPage = () => {
 				setFilteredDocuments([]);
 			}
 		};
-	
+
 		fetchDocuments();
-	}, [user]);	
+	}, [user]);
 
 	const handleSearch = () => {
 		if (searchTerm.trim() !== '') {
@@ -154,19 +161,19 @@ const DocumentsListPage = () => {
 					click en la lupa o presiona la tecla Enter
 				</p>
 				<div className={styles.filterContainer}>
-				<div className={styles.searchWrapper}>
+					<div className={styles.searchWrapper}>
 						<i
 							className={`pi pi-search ${styles.searchIcon}`}
 							onClick={handleSearch}
 						/>
-					<input
-						type="text"
-						value={searchTerm}
-						onKeyDown={handleSearchKeyDown}
-						onChange={e => setSearchTerm(e.target.value)}
-						className={styles.searchInput}
-						placeholder="Ejemplo: ruc:1234567890001"
-					/>
+						<input
+							type="text"
+							value={searchTerm}
+							onKeyDown={handleSearchKeyDown}
+							onChange={e => setSearchTerm(e.target.value)}
+							className={styles.searchInput}
+							placeholder="Ejemplo: ruc:1234567890001"
+						/>
 					</div>
 					<div className={styles.appliedFiltersContainer}>
 						{appliedFilters.map((filter, index) => (
@@ -209,46 +216,53 @@ const DocumentsListPage = () => {
 								<td>{doc.document_type}</td>
 								<td>{format(new Date(doc.created_at), 'dd/MM/yyyy HH:mm')}</td>
 								<td
-								  className={
-								    doc.status === 'Aceptado'
-								      ? styles.cardSuccess
-								      : styles.cardError
-								  }
+									className={
+										doc.status === 'Aceptado'
+											? styles.cardSuccess
+											: styles.cardError
+									}
 								>
-								  {doc.status}
+									{doc.status}
 								</td>
-								<td> <div dangerouslySetInnerHTML={{ __html: doc.ai_decision_explanation }} /></td>
 								<td>
-								  {user.role === 'Proveedor' && doc.status === 'Denegado' && (
-								    <button
-								      className={styles.revalidateButton}
-								      onClick={() => handleRequestRevalidation(doc._id)}
-								    >
-								      Solicitar Revalidación
-								    </button>
-								  )}
-								    <button
-								      className={styles.viewButton}
-								      onClick={() => {
-								        let route = '';
-								        switch (doc.document_type) {
-								          case 'Contrato':
-								            route = `/review-contract/${doc._id}`;
-								            break;
-								          case 'Factura':
-								            route = `/review-invoice/${doc._id}`;
-								            break;
-								          case 'Acta de entrega':
-								            route = `/review-service-record/${doc._id}`;
-								            break;
-								          default:
-								            route = '/';
-								        }
-								        history.push(route);
-								      }}
-								    >
-								      Ver Detalles
-								    </button>
+									{' '}
+									<div
+										dangerouslySetInnerHTML={{
+											__html: doc.ai_decision_explanation,
+										}}
+									/>
+								</td>
+								<td>
+									{user.role === 'Proveedor' && doc.status === 'Denegado' && (
+										<button
+											className={styles.revalidateButton}
+											onClick={() => handleRequestRevalidation(doc._id)}
+										>
+											Solicitar Revalidación
+										</button>
+									)}
+									<button
+										className={styles.viewButton}
+										onClick={() => {
+											let route = '';
+											switch (doc.document_type) {
+												case 'Contrato':
+													route = `/review-contract/${doc._id}`;
+													break;
+												case 'Factura':
+													route = `/review-invoice/${doc._id}`;
+													break;
+												case 'Acta de entrega':
+													route = `/review-service-record/${doc._id}`;
+													break;
+												default:
+													route = '/';
+											}
+											history.push(route);
+										}}
+									>
+										Ver Detalles
+									</button>
 								</td>
 							</tr>
 						))}

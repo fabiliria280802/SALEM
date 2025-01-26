@@ -38,7 +38,12 @@ const UploadInvoicePage = () => {
 			const fileSizeMB = file.size / (1024 * 1024);
 			const fileExtension = file.name.split('.').pop().toLowerCase();
 
-			if ((fileExtension === 'pdf' || fileExtension ==="xml" || fileExtension==="png") && fileSizeMB <= 50) {
+			if (
+				(fileExtension === 'pdf' ||
+					fileExtension === 'xml' ||
+					fileExtension === 'png') &&
+				fileSizeMB <= 50
+			) {
 				setDocumentData({ ...documentData, file });
 			} else {
 				toast.current.show({
@@ -111,8 +116,11 @@ const UploadInvoicePage = () => {
 		}
 
 		try {
-			const response = await documentService.uploadDocument(documentData.documentType, formData);
-/*
+			const response = await documentService.uploadDocument(
+				documentData.documentType,
+				formData,
+			);
+			/*
 			toast.current.show({
 				severity: 'success',
 				summary: 'Éxito',
@@ -120,10 +128,7 @@ const UploadInvoicePage = () => {
 				life: 5000,
 			});
 */
-			setTimeout(
-				() => history.push(`/review-invoice/${response._id}`),
-				2000,
-			);
+			setTimeout(() => history.push(`/review-invoice/${response._id}`), 2000);
 		} catch (error) {
 			console.error('Error en handleSubmit:', error);
 			toast.current.show({

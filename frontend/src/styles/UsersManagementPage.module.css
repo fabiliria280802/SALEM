@@ -294,17 +294,17 @@
 }
 
 .cardError {
-    color: #ff5630;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 1rem;
-    line-height: 1.6;
+	color: #ff5630;
+	border-radius: 8px;
+	margin-bottom: 20px;
+	font-size: 1rem;
+	line-height: 1.6;
 }
 
 .cardSuccess {
-    color: #08643e; 
-    border-radius: 8px;
-    margin-bottom: 20px;
-    font-size: 1rem;
-    line-height: 1.6;
+	color: #08643e;
+	border-radius: 8px;
+	margin-bottom: 20px;
+	font-size: 1rem;
+	line-height: 1.6;
 }

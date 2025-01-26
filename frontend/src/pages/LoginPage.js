@@ -155,7 +155,14 @@ const LoginPage = () => {
 				onHide={() => setShowPopup(false)}
 				style={{ width: '30vw', textAlign: 'center', borderRadius: '10px' }}
 				footer={
-					<div style={{ display: 'flex', justifyContent: 'center', gap: '10px', padding: '10px' }}>
+					<div
+						style={{
+							display: 'flex',
+							justifyContent: 'center',
+							gap: '10px',
+							padding: '10px',
+						}}
+					>
 						<Button
 							label="Continuar"
 							icon="pi pi-check"
@@ -175,7 +182,8 @@ const LoginPage = () => {
 			>
 				<div style={{ padding: '20px 10px' }}>
 					<p style={{ color: '#555', marginBottom: '15px' }}>
-						Hemos enviado un correo con instrucciones para restablecer tu contraseña.
+						Hemos enviado un correo con instrucciones para restablecer tu
+						contraseña.
 					</p>
 					<p style={{ color: '#999', fontSize: '14px' }}>
 						Si no lo encuentras, revisa tu carpeta de spam o correo no deseado.
@@ -187,5 +195,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
-

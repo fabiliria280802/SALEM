@@ -12,7 +12,7 @@ const Header = () => {
 
 	useEffect(() => {
 		const handleResize = () => {
-			setIsMobile(window.innerWidth <= 1200); 
+			setIsMobile(window.innerWidth <= 1200);
 		};
 
 		window.addEventListener('resize', handleResize);
@@ -34,16 +34,22 @@ const Header = () => {
 		Administrador: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
 			{ label: 'Reportes', command: () => handleMenuItemClick('/dashboard') },
-			{ label: 'Documentos', command: () => handleMenuItemClick('/documents') },/*
+			{
+				label: 'Documentos',
+				command: () => handleMenuItemClick('/documents'),
+			} /*
 			{
 				label: 'Entrenar IA',
 				command: () => handleMenuItemClick('/training'),
-			},*/
+			},*/,
 			{
 				label: 'Gestionar usuarios',
 				command: () => handleMenuItemClick('/users-management'),
 			},
-			{ label: 'Mi cuenta', command: () => handleMenuItemClick('/user-account') },
+			{
+				label: 'Mi cuenta',
+				command: () => handleMenuItemClick('/user-account'),
+			},
 		],
 		Proveedor: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
@@ -52,18 +58,27 @@ const Header = () => {
 				label: 'Mis documentos',
 				command: () => handleMenuItemClick('/documents'),
 			},
-			{ label: 'Mi cuenta', command: () => handleMenuItemClick('/user-account') },
+			{
+				label: 'Mi cuenta',
+				command: () => handleMenuItemClick('/user-account'),
+			},
 		],
 		Gestor: [
 			{ label: 'Inicio', command: () => handleMenuItemClick('/') },
 			{ label: 'Reportes', command: () => handleMenuItemClick('/dashboard') },
-			{ label: 'Ver documentos', command: () => handleMenuItemClick('/documents') },
+			{
+				label: 'Ver documentos',
+				command: () => handleMenuItemClick('/documents'),
+			},
 			/* TODO: add funcionality 
 			{
 				label: 'Entrenar IA',
 				command: () => handleMenuItemClick('/training'),
 			},*/
-			{ label: 'Mi cuenta', command: () => handleMenuItemClick('/user-account') },
+			{
+				label: 'Mi cuenta',
+				command: () => handleMenuItemClick('/user-account'),
+			},
 		],
 	};
 

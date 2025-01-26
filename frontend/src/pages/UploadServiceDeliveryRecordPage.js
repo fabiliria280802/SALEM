@@ -12,36 +12,39 @@ import { useLocation } from 'react-router-dom';
 const UploadServiceDeliveryRecordPage = () => {
 	const history = useHistory();
 	const toast = useRef(null);
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const contractId = queryParams.get('contractId');
-    const providerRuc = queryParams.get('ruc');
-    const { user } = useAuth();
+	const location = useLocation();
+	const queryParams = new URLSearchParams(location.search);
+	const contractId = queryParams.get('contractId');
+	const providerRuc = queryParams.get('ruc');
+	const { user } = useAuth();
 
-    const [documentData, setDocumentData] = useState({
-        hes: '',
-        documentType: 'ServiceDeliveryRecord',
-        file: null,
+	const [documentData, setDocumentData] = useState({
+		hes: '',
+		documentType: 'ServiceDeliveryRecord',
+		file: null,
 		contractId: '',
 		ruc: '',
-    });
+	});
 
-    const [isRucReadOnly, setIsRucReadOnly] = useState(false);
+	const [isRucReadOnly, setIsRucReadOnly] = useState(false);
 
 	useEffect(() => {
 		if (providerRuc) {
-			setIsRucReadOnly(true); 
+			setIsRucReadOnly(true);
 			setDocumentData(prev => ({ ...prev, ruc: providerRuc || '' }));
-		} else if (user && (user.role === 'Gestor' || user.role === 'Administrador')) {
-			setIsRucReadOnly(false); 
+		} else if (
+			user &&
+			(user.role === 'Gestor' || user.role === 'Administrador')
+		) {
+			setIsRucReadOnly(false);
 		} else if (user && user.role === 'Proveedor') {
 			setDocumentData(prev => ({ ...prev, ruc: user.ruc }));
-			setIsRucReadOnly(true); 
+			setIsRucReadOnly(true);
 		}
 		if (contractId) {
 			setDocumentData(prev => ({ ...prev, contractId }));
 		}
-	}, [user, providerRuc]);	
+	}, [user, providerRuc]);
 
 	const handleInputChange = e => {
 		const { name, value } = e.target;
@@ -54,7 +57,12 @@ const UploadServiceDeliveryRecordPage = () => {
 			const fileSizeMB = file.size / (1024 * 1024);
 			const fileExtension = file.name.split('.').pop().toLowerCase();
 
-			if ((fileExtension === 'pdf' || fileExtension === 'xml'|| fileExtension === 'png') && fileSizeMB <= 50) {
+			if (
+				(fileExtension === 'pdf' ||
+					fileExtension === 'xml' ||
+					fileExtension === 'png') &&
+				fileSizeMB <= 50
+			) {
 				setDocumentData({ ...documentData, file });
 			} else {
 				toast.current.show({
@@ -103,7 +111,7 @@ const UploadServiceDeliveryRecordPage = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-	
+
 		const formData = new FormData();
 		formData.append('documentType', documentData.documentType);
 		formData.append('file', documentData.file);
@@ -129,7 +137,10 @@ const UploadServiceDeliveryRecordPage = () => {
 		}
 
 		try {
-			const response = await documentService.uploadDocument(documentData.documentType, formData);
+			const response = await documentService.uploadDocument(
+				documentData.documentType,
+				formData,
+			);
 
 			toast.current.show({
 				severity: 'success',
@@ -173,7 +184,9 @@ const UploadServiceDeliveryRecordPage = () => {
 		<div className={styles.container}>
 			<Toast ref={toast} />
 			<div className={styles.formContainer}>
-				<h1 className={styles.formTitle}>Nueva acta de recepción de servicio</h1>
+				<h1 className={styles.formTitle}>
+					Nueva acta de recepción de servicio
+				</h1>
 				<p className={styles.formSubtitle}>Completa la información</p>
 
 				<div className={styles.formGrid}>

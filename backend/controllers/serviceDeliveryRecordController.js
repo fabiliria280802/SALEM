@@ -58,6 +58,47 @@ exports.updateServiceDeliveryRecord = [
 	},
 ];
 
+<<<<<<< Updated upstream
+=======
+exports.getServiceRecordsStats = [
+    authMiddleware,
+    async (req, res) => {
+        try {
+            const records = await ServiceDeliveryRecord.find()
+                .select('status validation_errors missing_errors hes_number')
+                .lean();
+
+            if (!records.length) {
+                return res
+                    .status(404)
+                    .json({ message: 'No se encontraron registros de entrega.' });
+            }
+
+            // Separar registros aceptados y rechazados
+            const acceptedRecords = records.filter((r) => r.status === 'Aceptado');
+            const rejectedRecords = records.filter((r) => r.status === 'Denegado');
+
+            const stats = {
+                totalRecords: records.length,
+                accepted: acceptedRecords.length,
+                rejected: rejectedRecords.length,
+                rejectedDetails: rejectedRecords.map((record) => ({
+                    hesNumber: record.hes_number,
+                    validationErrors: record.validation_errors,
+                    missingErrors: record.missing_errors,
+                })),
+            };
+
+            res.status(200).json(stats);
+        } catch (error) {
+            console.error('Error al obtener estadísticas de registros de entrega:', error);
+            res.status(500).json({ message: 'Error al obtener estadísticas', error });
+        }
+    },
+];
+
+
+>>>>>>> Stashed changes
 exports.deleteServiceDeliveryRecord = [
 	authMiddleware,
 	async (req, res) => {

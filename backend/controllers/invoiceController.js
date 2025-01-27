@@ -83,6 +83,46 @@ exports.deleteInvoice = [
 	},
 ];
 
+exports.getInvoicesStats = [
+    authMiddleware,
+    async (req, res) => {
+        try {
+            const invoices = await Invoice.find()
+                .select('status validation_errors missing_errors invoice_number')
+                .lean();
+
+            if (!invoices.length) {
+                return res
+                    .status(404)
+                    .json({ message: 'No se encontraron facturas procesadas.' });
+            }
+
+            const rejectedInvoices = invoices.filter((i) => i.status === 'Denegado');
+
+            const stats = {
+                totalInvoices: invoices.length,
+                totalRejected: rejectedInvoices.length,
+                totalAccepted: invoices.length - rejectedInvoices.length,
+                avgValidationErrors:
+                    rejectedInvoices.reduce(
+                        (sum, i) => sum + (i.validation_errors?.length || 0),
+                        0
+                    ) / (rejectedInvoices.length || 1),
+                rejectedDetails: rejectedInvoices.map((invoice) => ({
+                    invoiceNumber: invoice.invoice_number,
+                    validationErrors: invoice.validation_errors,
+                    missingErrors: invoice.missing_errors,
+                })),
+            };
+
+            res.status(200).json(stats);
+        } catch (error) {
+            console.error('Error al obtener estadísticas de facturas:', error);
+            res.status(500).json({ message: 'Error al obtener estadísticas de facturas', error });
+        }
+    },
+];
+
 exports.getInvoiceByNumber = [
 	authMiddleware,
 	async (req, res) => {

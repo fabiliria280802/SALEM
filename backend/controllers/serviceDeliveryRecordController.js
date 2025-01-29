@@ -9,6 +9,7 @@ const path = require('path');
 const authMiddleware = require('../middleware/authMiddleware');
 const Document = require('../models/Document');
 const Contract = require('../models/Contract');
+const DocsMetrics = require('../models/DocsMetrics');
 
 exports.createServiceRecord = [
     authMiddleware,
@@ -163,7 +164,17 @@ exports.createServiceRecord = [
                         await ServiceDeliveryRecord.findByIdAndUpdate(newRecord._id, updateData, {
                             new: true,
                         });
-            
+
+                        const docsMetrics = new DocsMetrics({
+                            documentID: newRecord._id,
+                            documentType: 'ServiceDeliveryRecord',
+							ai_accuracy: result.ai_accuracy || 0,
+							ai_confidence_score: result.ai_confidence_score || 0,
+							execution_time: result.execution_time || 0,
+                        });
+    
+                        await docsMetrics.save();
+
                         res.status(201).json({
                             message:
                                 status === 'Aceptado'

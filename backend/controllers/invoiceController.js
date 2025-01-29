@@ -1,7 +1,7 @@
 /*
     Description: Invoice logic for
     By: Fabiana Liria
-    version: 1.0
+    version: 3.1.7
 */
 const Invoice = require('../models/Invoice');
 const { spawn } = require('child_process');
@@ -9,6 +9,7 @@ const path = require('path');
 const authMiddleware = require('../middleware/authMiddleware');
 const Contract = require('../models/Contract');
 const ServiceDeliveryRecord = require('../models/ServiceDeliveryRecord');
+const DocsMetrics = require('../models/DocsMetrics');
 
 exports.createInvoice = [
 	authMiddleware,
@@ -160,9 +161,20 @@ exports.createInvoice = [
 							validation_errors: result.validation_errors || [],
 						};
 						console.log('Datos actualizados:', updateData);
+
 						await Invoice.findByIdAndUpdate(newInvoice._id, updateData, { 
 							new: true 
 						});
+
+						const docsMetrics = new DocsMetrics({
+							documentID: newInvoice._id,
+							documentType: 'Invoice',
+							ai_accuracy: result.ai_accuracy || 0,
+							ai_confidence_score: result.ai_confidence_score || 0,
+							execution_time: result.execution_time || 0,
+						});
+	
+						await docsMetrics.save();
 
 						res.status(201).json({
 							message:

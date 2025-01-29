@@ -292,9 +292,6 @@ exports.verifyResetCode = async (req, res) => {
 	}
 };
 
-//TODO: PASAR EL CREATE PASSWORD A USERCONTROLLER.JS
-exports.createPassword = [];
-
 exports.getUserByRuc = async (req, res) => {
 	try {
 		const { ruc } = req.params;

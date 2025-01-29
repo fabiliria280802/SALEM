@@ -12,9 +12,8 @@ import {
 	Legend,
 } from 'chart.js';
 import styles from '../styles/DashboardPage.module.css';
-import { getAiMetrics } from '../services/aiMetricsService';
+import aiMetricsService  from '../services/aiMetricsService';
 
-// Registrar los controladores de Chart.js
 ChartJS.register(
 	BarElement,
 	CategoryScale,
@@ -35,7 +34,7 @@ const DashboardPage = () => {
 		const fetchData = async () => {
 			try {
 				setLoading(true);
-				const metrics = await getAiMetrics();
+				const metrics = await aiMetricsService.getAiMetrics();
 				setMetricsData(metrics);
 				setFilteredMetrics(metrics);
 			} catch (err) {

@@ -23,13 +23,12 @@ exports.addDocument = async (req, res) => {
 
 exports.addDocuments = async (req, res) => {
     try {
-        const documents = req.body; // Se espera que req.body sea un arreglo de documentos
+        const documents = req.body;
 
         if (!Array.isArray(documents)) {
             return res.status(400).json({ error: 'Los datos deben ser un arreglo de documentos' });
         }
 
-        // Validar que todos los documentos tengan los campos requeridos
         for (const doc of documents) {
             if (!doc.number || !doc.register_date || !doc.type) {
                 return res.status(400).json({ 

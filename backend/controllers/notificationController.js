@@ -1,7 +1,7 @@
 /*
-    Description: Notification
-    By: Fabiana Liria
-    version: 1.6
+    Description: Notification controller
+    By: Fabiana Liria y Mateo Ávila
+    version: 2.6
 */
 const jwt = require('jsonwebtoken');
 const transporter = require('../helpers/mailerHelper');
@@ -78,19 +78,15 @@ exports.sendPasswordCreationEmail = async user => {
 	}
 };
 
-
-
 exports.sendPasswordResetEmail = async user => {
 	try {
 		const verificationCode = Math.floor(
 			100000 + Math.random() * 900000
-		).toString(); // Genera un código de 6 dígitos
+		).toString(); 
 
-		// Guarda el código sin encriptar en el usuario en la base de datos
 		user.resetCode = verificationCode;
 		await user.save();
 
-		// Envía el correo con el código
 		const mailOptions = {
 			from: process.env.EMAIL_USER,
 			to: user.email,
@@ -514,32 +510,3 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
       throw new Error('No se pudo enviar el correo de notificación a Control Interno.');
     }
   };
-
-//TODO: CREAR ESTA FUNCIONALIDAD. Función para enviar correo cuando faltan campos en un documento
-/*exports.sendMissingFieldsEmail = async (analysisResult, fileName) => {
-  const subject = `Campos faltantes en el documento: ${fileName}`;
-  const missingFields = analysisResult.missing_fields.join(', ');
-  const text = `
-    Estimado/a,
-
-    Se ha detectado que el siguiente documento tiene campos faltantes:
-
-    Documento: ${fileName}
-    Campos faltantes: ${missingFields}
-
-    Por favor revise y complete los campos.
-
-    Gracias,
-    El equipo de validación de ENAP
-  `;
-
-
-  const mailOptions = {
-    from: process.env.OUTLOOK_USER,
-    to: user.email,
-    subject: subject,
-    text: text,
-  };
-
-  await transporter.sendMail(mailOptions);
-};*/

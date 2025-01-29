@@ -11,7 +11,7 @@ import LoadingScreen from '../components/Layout/LoadingScreen';
 const UploadContractPage = () => {
 	const { id } = useParams();
 	const history = useHistory();
-	const toast = useRef(null);
+	const toast = useRef();
 	const { user } = useAuth();
 	const [documentData, setDocumentData] = useState({
 		ruc: '',
@@ -25,7 +25,6 @@ const UploadContractPage = () => {
 	useEffect(() => {
 		if (id) {
 			console.log(id);
-			// Cargar datos del contrato existente
 			const fetchDocument = async () => {
 				try {
 					const response = await documentService.getDocumentById(
@@ -115,20 +114,18 @@ const UploadContractPage = () => {
 			let response;
 			const formData = new FormData();
 			formData.append('documentType', documentData.documentType);
-			if (documentData.file) formData.append('file', documentData.file); // Agrega el archivo si existe
+			if (documentData.file) formData.append('file', documentData.file); 
 			formData.append('ruc', documentData.ruc);
 			formData.append('contract', documentData.contract);
-			formData.append('filePath', documentData.filePath); // Agrega el filePath actual
+			formData.append('filePath', documentData.filePath); 
 
 			if (id) {
-				// Actualizar el contrato existente
 				response = await documentService.updateDocument(
 					'Contract',
 					id,
 					formData,
 				);
 			} else {
-				// Crear un nuevo contrato
 				response = await documentService.uploadDocument(
 					documentData.documentType,
 					formData,

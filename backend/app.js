@@ -7,13 +7,13 @@ const invoiceRoutes = require('./routes/invoice');
 const contractRoutes = require('./routes/contract');
 const serviceDeliveryRecordRoutes = require('./routes/serviceDeliveryRecord');
 const documentRoutes = require('./routes/documents');
-const iaMetricsRoutes = require('./routes/ia_metrics');
+const iaMetricsRoutes = require('./routes/aimetrics');
 const createPasswordRoutes = require('./routes/create-password');
 const mailRoutes = require('./routes/mail');
 const authMiddleware = require('./middleware/authMiddleware');
 const errorMiddleware = require('./middleware/errorMiddleware');
 const userPublicRoutes = require('./routes/userPublicRoutes');
-
+const docsMetricsRoutes = require('./routes/docsmetrics');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
@@ -59,6 +59,7 @@ app.use(
 app.use('/api/documents', authMiddleware, documentRoutes);
 
 app.use('/api/report/ia-metrics', authMiddleware, iaMetricsRoutes);
+app.use('/api/report/docs-metrics',authMiddleware, docsMetricsRoutes)
 app.use('/data/docs', express.static(path.join(__dirname, 'data/docs')));
 
 app.use(errorMiddleware);

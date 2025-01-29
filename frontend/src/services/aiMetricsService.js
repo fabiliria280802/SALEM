@@ -1,26 +1,23 @@
 import axios from 'axios';
 
-// URL del API
-const API_URL = 'http://localhost:8080/api/report/ia-metrics';
+const API_URL = `${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/api/report/ia-metrics`;
 
-// Obtener todas las métricas de IA
-export const getAiMetrics = async () => {
+const getAiMetrics = async () => {
 	try {
-		const token = localStorage.getItem('token'); // Obtener token JWT del almacenamiento local
+		const token = localStorage.getItem('token'); 
 		const response = await axios.get(API_URL, {
 			headers: {
-				Authorization: `Bearer ${token}`, // Encabezado para autenticación
+				Authorization: `Bearer ${token}`,
 			},
 		});
-		return response.data; // Retornar los datos obtenidos
+		return response.data; 
 	} catch (error) {
 		console.error('Error al obtener las métricas de IA:', error);
 		throw error;
 	}
 };
 
-// Crear una nueva métrica de IA
-export const createAiMetrics = async metricsData => {
+const createAiMetrics = async metricsData => {
 	try {
 		const token = localStorage.getItem('token');
 		const response = await axios.post(API_URL, metricsData, {
@@ -35,4 +32,9 @@ export const createAiMetrics = async metricsData => {
 	}
 };
 
-// Exportar servicios adicionales si es necesario
+const aiMetricsService = {
+	getAiMetrics,
+	createAiMetrics,
+}
+
+export default aiMetricsService;

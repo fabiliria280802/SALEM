@@ -3,10 +3,13 @@
     By: Fabiana Liria
     version: 1.0
 */
-const AiMetrics = require('../models/AI_metrics');
+const AiMetrics = require('../models/AiMetrics');
 const mongoose = require('mongoose');
+const authMiddleware = require('../middleware/authMiddleware');
 
-exports.createAiMetrics = async (req, res) => {
+exports.createAiMetrics = [
+	authMiddleware,
+	async (req, res) => {
 	try {
 		const {
 			validationID,
@@ -16,8 +19,6 @@ exports.createAiMetrics = async (req, res) => {
 			false_positives,
 			false_negatives,
 			execution_time,
-			ai_decision_explanation,
-			human_review_needed,
 		} = req.body;
 
 		const aiMetrics = new AiMetrics({
@@ -28,8 +29,6 @@ exports.createAiMetrics = async (req, res) => {
 			false_positives,
 			false_negatives,
 			execution_time,
-			ai_decision_explanation,
-			human_review_needed,
 		});
 
 		const savedAiMetrics = await aiMetrics.save();
@@ -38,21 +37,23 @@ exports.createAiMetrics = async (req, res) => {
 		console.error('Error al crear las métricas AI:', error);
 		res.status(500).json({ error: 'Error al crear las métricas AI' });
 	}
-};
+}];
 
-exports.getAllAiMetrics = async (req, res) => {
+exports.getAllAiMetrics = [
+	authMiddleware,
+	async (req, res) => {
     try {
-        const aiMetrics = await AiMetrics.find(); // Consulta a la colección
+        const aiMetrics = await AiMetrics.find();
         res.status(200).json(aiMetrics);
     } catch (error) {
         console.error('Error al obtener las métricas AI:', error.message);
         res.status(500).json({ error: 'Error al obtener las métricas AI' });
     }
-};
+}];
 
-
-
-exports.getAiMetricsById = async (req, res) => {
+exports.getAiMetricsById = [
+	authMiddleware,
+	async (req, res) => {
 	try {
 		const { id } = req.params;
 
@@ -73,9 +74,11 @@ exports.getAiMetricsById = async (req, res) => {
 		console.error('Error al obtener las métricas AI:', error);
 		res.status(500).json({ error: 'Error al obtener las métricas AI' });
 	}
-};
+}];
 
-exports.updateAiMetrics = async (req, res) => {
+exports.updateAiMetrics = [
+	authMiddleware,
+	async (req, res) => {
 	try {
 		const { id } = req.params;
 		const {
@@ -117,9 +120,11 @@ exports.updateAiMetrics = async (req, res) => {
 		console.error('Error al actualizar las métricas AI:', error);
 		res.status(500).json({ error: 'Error al actualizar las métricas AI' });
 	}
-};
+}];
 
-exports.deleteAiMetrics = async (req, res) => {
+exports.deleteAiMetrics = [
+	authMiddleware,
+	async (req, res) => {
 	try {
 		const { id } = req.params;
 
@@ -137,9 +142,11 @@ exports.deleteAiMetrics = async (req, res) => {
 		console.error('Error al eliminar las métricas AI:', error);
 		res.status(500).json({ error: 'Error al eliminar las métricas AI' });
 	}
-};
+}];
 
-exports.getAiMetricsByModelVersion = async (req, res) => {
+exports.getAiMetricsByModelVersion = [
+	authMiddleware,
+	async (req, res) => {
 	try {
 		const { ai_model_version } = req.params;
 
@@ -163,4 +170,4 @@ exports.getAiMetricsByModelVersion = async (req, res) => {
 			error: 'Error al obtener las métricas AI por versión de modelo',
 		});
 	}
-};
+}];

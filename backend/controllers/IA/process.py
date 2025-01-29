@@ -1,6 +1,7 @@
 import os
 import re
 import pytesseract
+import time
 import traceback
 from PIL import Image
 import json
@@ -69,6 +70,7 @@ from validations import (
 # Funciones de procesamiento de documentos específicos
 def process_service_delivery_record_document(file_path, schema,  ruc_input, auxiliar_input,auxiliar_hes_input, text=None, xml_tree=None):
     print("process_service_delivery_record_document")
+    start_time = time.time() 
     extracted_data = {}
     confidence_scores = {}
     validation_errors = []
@@ -142,8 +144,17 @@ def process_service_delivery_record_document(file_path, schema,  ruc_input, auxi
             if extracted_signatures:
                 extracted_data["signatures"] = extracted_signatures
 
+        total_fields = len(required_fields)
+        found_fields = total_fields - len(missing_fields)
+        ai_accuracy = (found_fields / total_fields) * 100  
+
+        execution_time = time.time() - start_time  
+
+        max_time_threshold = 10
+        ai_confidence_score = max(0, 100 - ((execution_time / max_time_threshold) * 100))
+        ai_confidence_score = min(ai_confidence_score, 100) 
+
     except Exception as e:
-        #validation_errors.append(f"Error general en el procesamiento: {str(e)}")
         print(f"Error general en el procesamiento: {str(e)}")
 
 
@@ -151,10 +162,14 @@ def process_service_delivery_record_document(file_path, schema,  ruc_input, auxi
         "extracted_data": extracted_data,
         "confidence_scores": confidence_scores,
         "validation_errors": validation_errors,
-        "missing_fields": missing_fields
+        "missing_fields": missing_fields,
+        "ai_accuracy": ai_accuracy,
+        "ai_confidence_score": ai_confidence_score,
+        "execution_time": execution_time,
     }
 
 def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
+    start_time = time.time() 
     extracted_data = {}
     confidence_scores = {}    
     validation_errors = []
@@ -192,6 +207,16 @@ def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=
                 "No se puede validar la lógica matemática debido a datos faltantes en los campos relacionados con servicios."
             )
 
+        total_fields = len(required_fields)
+        found_fields = total_fields - len(missing_fields)
+        ai_accuracy = (found_fields / total_fields) * 100  
+    
+        execution_time = time.time() - start_time  
+    
+        max_time_threshold = 10
+        ai_confidence_score = max(0, 100 - ((execution_time / max_time_threshold) * 100))
+        ai_confidence_score = min(ai_confidence_score, 100) 
+
     except Exception as e:
         validation_errors.append(f"Error general en el procesamiento: {str(e)}")
 
@@ -200,16 +225,19 @@ def process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text=
         "confidence_scores": confidence_scores,
         "validation_errors": validation_errors,
         "missing_fields": missing_fields,
+        "ai_accuracy": ai_accuracy,
+        "ai_confidence_score": ai_confidence_score,
+        "execution_time": execution_time,
     }
 
 def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text=None, xml_tree=None):
     print("process_contract_document")
+    start_time = time.time() 
     extracted_data = {}
     confidence_scores = {}
     validation_errors = []
     missing_fields = []
 
-    # Lista de campos requeridos
     required_fields = [
         "provider_info_intro", "provider_name", "provider_ruc", "provider_transaction",
         "provider_address", "provider_city", "provider_country", "provider_phone",
@@ -220,11 +248,9 @@ def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text
         "second_person_name", "second_person_position","payment_terms_intro", "service_table", "contract_start_date", "service_code", "service_description", "service_hes","service_quantity", "service_unit_cost", "service_cost"
     ]
 
-    # Cargar campos del esquema
     contract_fields = schema["Contract"]["fields"]
 
     if text:
-    # Procesar texto extraído de PDF
         for field_name, field_info in contract_fields.items():
             if "regex" in field_info and "relative_to" not in field_info:
                 match = re.search(field_info["regex"], text)
@@ -248,7 +274,6 @@ def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text
         provider_data = extract_sequential_fields(text, schema, "provider_info_intro", provider_fields)
         extracted_data.update(provider_data)
 
-        # Procesar tabla de servicios si existe
         if "service_table" in contract_fields:
             table_schema = contract_fields["service_table"]
             table_data, table_errors = extract_table_data(text, table_schema)
@@ -280,7 +305,6 @@ def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text
             elif field_name in required_fields:
                 missing_fields.append(field_name)
 
-    # Validaciones específicas
     validations = [
         ("client_name", validate_company_name),
         ("client_direction", validate_company_direction),
@@ -306,7 +330,6 @@ def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text
             if not valid:
                 validation_errors.append(error)
 
-    # Validar RUC y Número de Contrato contra entrada del usuario
     if "client_ruc" in extracted_data:
         valid_ruc, error = validate_input_vs_extracted(ruc_input, extracted_data["provider_ruc"], "RUC")
         if not valid_ruc:
@@ -317,16 +340,28 @@ def process_contract_document(file_path, schema, ruc_input, auxiliar_input, text
         if not valid_number:
             validation_errors.append(error)
 
-    # Verificar campos requeridos faltantes
     for field in required_fields:
         if field not in extracted_data and field not in missing_fields:
             missing_fields.append(field)
+
+    total_fields = len(required_fields)
+    found_fields = total_fields - len(missing_fields)
+    ai_accuracy = (found_fields / total_fields) * 100  
+
+    execution_time = time.time() - start_time  
+
+    max_time_threshold = 10
+    ai_confidence_score = max(0, 100 - ((execution_time / max_time_threshold) * 100))
+    ai_confidence_score = min(ai_confidence_score, 100) 
 
     return {
         "extracted_data": extracted_data,
         "confidence_scores": confidence_scores,
         "validation_errors": validation_errors,
-        "missing_fields": missing_fields
+        "missing_fields": missing_fields,
+        "ai_accuracy": ai_accuracy,
+        "ai_confidence_score": ai_confidence_score,
+        "execution_time": execution_time,
     }
 
 def process_single_document(file_path, document_type, ruc_input, auxiliar_input, auxiliar_hes_input=None):
@@ -336,28 +371,24 @@ def process_single_document(file_path, document_type, ruc_input, auxiliar_input,
         text = None
         xml_tree = None
 
-        # Procesar el archivo según su extensión
         if file_path.endswith('.pdf'):
-            text = extract_text_from_pdf(file_path)  # Extraer texto directamente del PDF
+            text = extract_text_from_pdf(file_path)  
         elif file_path.endswith('.xml'):
-            xml_tree = ET.parse(file_path)  # Procesar XML directamente
+            xml_tree = ET.parse(file_path)
         elif file_path.endswith('.png'):
-            text = extract_text_from_document(file_path)  # Usar OCR para PNG
+            text = extract_text_from_document(file_path)
         else:
             raise ValueError(f"Tipo de archivo no soportado: {file_path}")
 
-        # Procesar según el tipo de documento
         if document_type == "Invoice":
             result = process_invoice_document(file_path, schema, ruc_input, auxiliar_input, text, xml_tree)
         elif document_type == "ServiceDeliveryRecord":
             result = process_service_delivery_record_document(file_path, schema, ruc_input, auxiliar_input, auxiliar_hes_input, text, xml_tree)
         elif document_type == "Contract":
-            # No pasar auxiliar_hes_input a process_contract_document
             result = process_contract_document(file_path, schema, ruc_input, auxiliar_input, text, xml_tree)
         else:
             raise ValueError(f"Tipo de documento no soportado: {document_type}")
 
-        # Actualizar resultado con metadatos
         result.update({
             "document_type": document_type,
             "processing_time": time.time() - start_time,

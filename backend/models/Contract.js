@@ -44,7 +44,7 @@ const contractSchema = new mongoose.Schema({
 	ai_decision_explanation: {
 		type: String,
 	},
-	missing_errors: [
+	missing_fields: [
 		{
 			type: String,
 		},

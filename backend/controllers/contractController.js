@@ -1,12 +1,13 @@
 /*
     Description: Contract Controller for create, get, update and delete contracts.
     By: Fabiana Liria
-    version: 1.0
+    version: 2.3.1
 */
 const Contract = require('../models/Contract');
 const { spawn } = require('child_process');
 const path = require('path');
 const authMiddleware = require('../middleware/authMiddleware');
+const DocsMetrics = require('../models/DocsMetrics');
 
 exports.createContract = [
 	authMiddleware,
@@ -144,6 +145,16 @@ exports.createContract = [
 							new: true,
 						});
 
+						const docsMetrics = new DocsMetrics({
+							documentID: newContract._id,
+							documentType: 'Contract',
+							ai_accuracy: result.ai_accuracy || 0,
+							ai_confidence_score: result.ai_confidence_score || 0,
+							execution_time: result.execution_time || 0,
+						});
+	
+						await docsMetrics.save();
+
 						res.status(201).json({
 							message:
 								status === 'Aceptado'
@@ -172,13 +183,6 @@ exports.createContract = [
 						ai_decision_explanation:
 							'Error al procesar la respuesta: formato inválido',
 					});
-
-					/*
-					res.status(500).json({
-						error: 'Error al procesar la respuesta de la IA',
-						details: pythonError,
-					});
-					*/
 				}
 			});
 		} catch (error) {
@@ -355,27 +359,6 @@ exports.updateContract = [
         }
     },
 ];
-
-/* TODO: Delete
-
-exports.updateContract = [
-	authMiddleware,
-	async (req, res) => {
-		try {
-			const updatedContract = await Contract.findByIdAndUpdate(
-				req.params.id,
-				req.body,
-				{ new: true },
-			);
-			if (!updatedContract) {
-				return res.status(404).json({ error: 'Contrato no encontrado' });
-			}
-			res.status(200).json(updatedContract);
-		} catch (error) {
-			res.status(500).json({ error: 'Error al actualizar el contrato' });
-		}
-	},
-];*/
 
 exports.deleteContract = [
 	authMiddleware,

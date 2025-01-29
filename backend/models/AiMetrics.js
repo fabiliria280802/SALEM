@@ -13,16 +13,6 @@ const aiMetricsSchema = new mongoose.Schema({
 	total_true_positives: { type: Number, required: true },
 	total_true_negatives: { type: Number, required: true },
 	execution_time: { type: Number, required: true },
-	missing_errors: [
-		{
-			type: String,
-		},
-	],
-	validation_errors: [
-		{
-			type: String,
-		},
-	],
 	ai_model_version: { type: String, default:'5.24.5' },
 	batch_id: { type: String, default:'BATCH24'},
 	date_recorded: { type: Date, default: Date.now },

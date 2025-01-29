@@ -1,7 +1,7 @@
 /*
     Description: Contract Controller for create, get, update and delete contracts.
-    By: Fabiana Liria
-    version: 2.3.1
+    By: Fabiana Liria y Mateo Ávila
+    version: 2.5.9
 */
 const Contract = require('../models/Contract');
 const { spawn } = require('child_process');

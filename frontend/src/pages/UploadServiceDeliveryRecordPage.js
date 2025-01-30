@@ -8,6 +8,7 @@ import { Toast } from 'primereact/toast';
 import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
 import { useLocation } from 'react-router-dom';
+import LoadingScreen from '../components/Layout/LoadingScreen';
 
 const UploadServiceDeliveryRecordPage = () => {
 	const history = useHistory();
@@ -17,6 +18,7 @@ const UploadServiceDeliveryRecordPage = () => {
 	const contractId = queryParams.get('contractId');
 	const providerRuc = queryParams.get('ruc');
 	const { user } = useAuth();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [documentData, setDocumentData] = useState({
 		hes: '',
@@ -135,20 +137,20 @@ const UploadServiceDeliveryRecordPage = () => {
 			});
 			return;
 		}
-
+		setIsLoading(true);
 		try {
 			const response = await documentService.uploadDocument(
 				documentData.documentType,
 				formData,
 			);
-
+/*
 			toast.current.show({
 				severity: 'success',
 				summary: 'Éxito',
 				detail: 'Acta de recepción cargada correctamente',
 				life: 5000,
 			});
-
+*/
 			if (response._id) {
 				setTimeout(
 					() => history.push(`/review-service-record/${response._id}`),
@@ -174,11 +176,18 @@ const UploadServiceDeliveryRecordPage = () => {
 				detail: error.message || 'Error al cargar el contrato',
 				life: 10000,
 			});
+		} finally {
+			setIsLoading(false);
 		}
 	};
+
 	const handleCancel = () => {
 		history.push(`/review-contract/${contractId}`);
 	};
+
+	if (isLoading) {
+		return <LoadingScreen />;
+	}
 
 	return (
 		<div className={styles.container}>

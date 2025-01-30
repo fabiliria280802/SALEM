@@ -94,7 +94,7 @@ const AppContent = () => {
 					<PrivateRoute
 						path="/dashboard"
 						component={DashboardPage}
-						roles={['Administrador', 'Gestor']}
+						roles={['Administrador', 'Gestor','Proveedor']}
 					/>
 					<PrivateRoute
 						path="/create-user"

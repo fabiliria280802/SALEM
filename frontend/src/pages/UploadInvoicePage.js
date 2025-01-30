@@ -7,6 +7,7 @@ import publicService from '../services/publicService';
 import { Toast } from 'primereact/toast';
 import { useHistory } from 'react-router-dom';
 import useAuth from '../hooks/useAuth';
+import LoadingScreen from '../components/Layout/LoadingScreen';
 
 const UploadInvoicePage = () => {
 	const history = useHistory();
@@ -19,6 +20,7 @@ const UploadInvoicePage = () => {
 		file: null,
 	});
 	const [isRucReadOnly, setIsRucReadOnly] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
 		if (user && user.role === 'Proveedor') {
@@ -114,7 +116,7 @@ const UploadInvoicePage = () => {
 			});
 			return;
 		}
-
+		setIsLoading(true);
 		try {
 			const response = await documentService.uploadDocument(
 				documentData.documentType,
@@ -137,12 +139,18 @@ const UploadInvoicePage = () => {
 				detail: error.message || 'Error al cargar el contrato',
 				life: 10000,
 			});
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const handleCancel = () => {
 		history.push('/');
 	};
+
+	if (isLoading) {
+		return <LoadingScreen />;
+	}
 
 	return (
 		<div className={styles.container}>

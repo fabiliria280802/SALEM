@@ -365,7 +365,7 @@ exports.sendDocumentApprovalEmail = async (user, documentName, contractNumber) =
     }
   };
 
-  exports.sendManualReviewNotificationEmail = async (enapUser, documentName, contractNumber, senderName) => {
+exports.sendManualReviewNotificationEmail = async (enapUser, documentName, contractNumber, senderName, companyName) => {
     try {
       const mailOptions = {
         from: process.env.EMAIL_USER,

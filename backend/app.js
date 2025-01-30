@@ -21,11 +21,11 @@ const path = require('path');
 const app = express();
 
 app.use(cors({
-    origin: '*', // Permite todas las solicitudes (puedes restringirlo según sea necesario)
+    origin: '*', 
 }));
 app.use(express.json());
 
-// Crear estructura de directorios necesaria
+
 const dataDir = path.join(process.cwd(), 'data');
 const docsDir = path.join(dataDir, 'docs');
 

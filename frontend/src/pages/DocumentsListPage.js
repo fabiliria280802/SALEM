@@ -5,6 +5,7 @@ import documentService from '../services/documentService';
 import { Toast } from 'primereact/toast';
 import useAuth from '../hooks/useAuth';
 import { format } from 'date-fns';
+import axios from 'axios';
 
 const DocumentsListPage = () => {
 	const history = useHistory();
@@ -48,9 +49,10 @@ const DocumentsListPage = () => {
 				console.log('Datos combinados:', combinedData);
 
 				const filteredData =
-					user.role === 'Proveedor'
-						? combinedData.filter(doc => doc.provider_ruc === user.ruc)
-						: combinedData;
+				user.role === 'Proveedor'
+					? combinedData.filter(doc => doc.provider_ruc === user.ruc || doc.uploaded_by === user._id)
+					: combinedData;
+			
 
 				setDocuments(filteredData);
 				setFilteredDocuments(filteredData);
@@ -124,20 +126,44 @@ const DocumentsListPage = () => {
 
 	const handleRequestRevalidation = async documentId => {
 		try {
-			await documentService.requestRevalidation(documentId);
-			toast.current.show({
-				severity: 'success',
-				summary: 'Éxito',
-				detail: 'Solicitud de revalidación enviada correctamente',
-				life: 3000,
-			});
-			// Actualizar la lista de documentos
-			const updatedDocs = documents.map(doc =>
-				doc._id === documentId ? { ...doc, status: 'Revalidación' } : doc,
+			const document = documents.find(doc => doc._id === documentId);
+			if (!document) {
+				toast.current.show({
+					severity: 'error',
+					summary: 'Error',
+					detail: 'Documento no encontrado',
+					life: 3000,
+				});
+				return;
+			}
+	
+			const response = await axios.post(
+				`${process.env.REACT_APP_API_URL}:${process.env.REACT_APP_API_PORT}/api/mail/send-manual-review-notification`,
+				{
+					documentName: document.document_type,
+					contractNumber: document.contract_number,
+					senderName: user.name,
+					companyName: user.company_name, 
+				}
 			);
-			setDocuments(updatedDocs);
-			setFilteredDocuments(updatedDocs);
+	
+			if (response.status === 200) {
+				toast.current.show({
+					severity: 'success',
+					summary: 'Éxito',
+					detail: 'Solicitud de revalidación enviada correctamente',
+					life: 3000,
+				});
+	
+				// Actualizar la lista de documentos
+				const updatedDocs = documents.map(doc =>
+					doc._id === documentId ? { ...doc, status: 'Revalidación' } : doc,
+				);
+				setDocuments(updatedDocs);
+				setFilteredDocuments(updatedDocs);
+			}
 		} catch (error) {
+			console.error('Error en la solicitud de revalidación:', error);
 			toast.current.show({
 				severity: 'error',
 				summary: 'Error',

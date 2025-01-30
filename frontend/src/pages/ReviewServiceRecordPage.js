@@ -6,6 +6,7 @@ import { Worker, Viewer } from '@react-pdf-viewer/core';
 import documentService from '../services/documentService';
 import styles from '../styles/DocumentReviewPage.module.css';
 import useAuth from '../hooks/useAuth';
+import axios from 'axios';
 
 const ReviewServiceRecordPage = () => {
 	const [documentData, setDocumentData] = useState(null);

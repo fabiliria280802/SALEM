@@ -65,7 +65,7 @@ exports.createContract = [
 
 			pythonProcess.stderr.on('data', data => {
 				console.error('Error de Python:', data.toString());
-				pythonError += data.toString(); // Acumula los errores aquí
+				pythonError += data.toString(); 
 			});
 
 			pythonProcess.on('close', async code => {

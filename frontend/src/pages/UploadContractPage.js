@@ -195,7 +195,7 @@ const UploadContractPage = () => {
 						/>
 					</div>
 					<div className={styles.formGroup}>
-						<label htmlFor="file">Cargar archivo (PDF o XML):</label>
+						<label htmlFor="file">Cargar archivo (PDF):</label>
 						<InputText
 							type="file"
 							id="file"

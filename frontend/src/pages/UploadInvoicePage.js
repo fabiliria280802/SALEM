@@ -94,19 +94,12 @@ const UploadInvoicePage = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-
-		// Crear FormData y agregar los campos
 		const formData = new FormData();
-
-		// Asegurarnos de que el tipo de documento se envíe primero
 		formData.append('documentType', documentData.documentType);
 		formData.append('file', documentData.file);
 		formData.append('ruc', documentData.ruc);
 		formData.append('contract', documentData.contract);
-
-		// Debug para verificar que se está enviando correctamente
-		console.log('DocumentType siendo enviado:', formData.get('documentType'));
-
+	
 		if (!documentData.ruc || !documentData.contract || !documentData.file) {
 			toast.current.show({
 				severity: 'warn',
@@ -116,31 +109,32 @@ const UploadInvoicePage = () => {
 			});
 			return;
 		}
+	
 		setIsLoading(true);
 		try {
 			const response = await documentService.uploadDocument(
 				documentData.documentType,
-				formData,
+				formData
 			);
-			/*
-			toast.current.show({
-				severity: 'success',
-				summary: 'Éxito',
-				detail: 'Contrato cargado correctamente',
-				life: 5000,
-			});
-*/
-			setTimeout(() => history.push(`/review-invoice/${response._id}`), 2000);
+	
+			if (response._id) {
+				history.push(`/review-invoice/${response._id}`);
+			} else {
+				toast.current.show({
+					severity: 'error',
+					summary: 'Error',
+					detail: 'No se pudo obtener el ID del documento. Intente nuevamente.',
+					life: 5000,
+				});
+			}
 		} catch (error) {
 			console.error('Error en handleSubmit:', error);
 			toast.current.show({
 				severity: 'error',
 				summary: 'Error',
-				detail: error.message || 'Error al cargar el contrato',
+				detail: error.message || 'Error al cargar la factura',
 				life: 10000,
 			});
-		} finally {
-			setIsLoading(false);
 		}
 	};
 

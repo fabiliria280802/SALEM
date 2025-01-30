@@ -113,21 +113,13 @@ const UploadServiceDeliveryRecordPage = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-
 		const formData = new FormData();
 		formData.append('documentType', documentData.documentType);
 		formData.append('file', documentData.file);
 		formData.append('ruc', documentData.ruc);
 		formData.append('hes', documentData.hes);
 		formData.append('contractId', contractId);
-
-		// Debug para verificar que se está enviando correctamente
-		console.log('DocumentType siendo enviado:', formData.get('documentType'));
-
-		for (let [key, value] of formData.entries()) {
-			console.log(`${key}: ${value}`);
-		}
-
+	
 		if (!documentData.ruc || !contractId || !documentData.file) {
 			toast.current.show({
 				severity: 'warn',
@@ -137,34 +129,21 @@ const UploadServiceDeliveryRecordPage = () => {
 			});
 			return;
 		}
+	
 		setIsLoading(true);
 		try {
 			const response = await documentService.uploadDocument(
 				documentData.documentType,
-				formData,
+				formData
 			);
-/*
-			toast.current.show({
-				severity: 'success',
-				summary: 'Éxito',
-				detail: 'Acta de recepción cargada correctamente',
-				life: 5000,
-			});
-*/
+	
 			if (response._id) {
-				setTimeout(
-					() => history.push(`/review-service-record/${response._id}`),
-					2000,
-				);
-				/*setTimeout(
-					() => history.push(`/review-service-record/${response._id}?hes=${response.hes_number}&contract=${response.contract_id}`),
-					2000,
-				);*/
+				history.push(`/review-service-record/${response._id}`);
 			} else {
 				toast.current.show({
 					severity: 'error',
 					summary: 'Error',
-					detail: 'No se pudo obtener el ID del contrato. Intente nuevamente.',
+					detail: 'No se pudo obtener el ID del documento. Intente nuevamente.',
 					life: 5000,
 				});
 			}
@@ -173,11 +152,9 @@ const UploadServiceDeliveryRecordPage = () => {
 			toast.current.show({
 				severity: 'error',
 				summary: 'Error',
-				detail: error.message || 'Error al cargar el contrato',
+				detail: error.message || 'Error al cargar el documento',
 				life: 10000,
 			});
-		} finally {
-			setIsLoading(false);
 		}
 	};
 
@@ -222,7 +199,7 @@ const UploadServiceDeliveryRecordPage = () => {
 						/>
 					</div>
 					<div className={styles.formGroup}>
-						<label htmlFor="file">Cargar archivo (PDF, XML o PNG):</label>
+						<label htmlFor="file">Cargar archivo (PDF):</label>
 						<InputText
 							type="file"
 							id="file"

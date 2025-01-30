@@ -50,24 +50,31 @@ const DashboardPage = () => {
                 setLoading(true);
                 const docsMetrics = await docsMetricsService.getDocsMetrics();
 
-                const docsWithCreator = await Promise.all(
+                // **Extraer `created_by` y `provider_ruc` si no vienen en `docsMetrics`**
+                const docsWithDetails = await Promise.all(
                     docsMetrics.map(async (metric) => {
                         const documentData = await documentService.getDocumentById(metric.documentType, metric.documentID);
                         return {
                             ...metric,
-                            created_by: documentData?.created_by || null
+                            created_by: documentData?.created_by || null,
+                            provider_ruc: documentData?.provider_ruc || null
                         };
                     })
                 );
 
-                let filteredDocs = docsWithCreator;
+                let filteredDocs = docsWithDetails;
+
+                // **Filtrar documentos si el usuario es Proveedor**
                 if (user && user.role === 'Proveedor') {
-                    filteredDocs = docsWithCreator.filter(metric => metric.created_by === user.id);
+                    filteredDocs = docsWithDetails.filter(
+                        metric => metric.created_by === user.id || metric.provider_ruc === user.ruc
+                    );
                 }
 
                 setMetricsData(filteredDocs);
                 setFilteredMetrics(filteredDocs);
 
+                // **Distribución de Errores y Estado de Documentos**
                 const errorCounts = {};
                 const statusCounts = {};
 
@@ -112,11 +119,23 @@ const DashboardPage = () => {
         let filtered = metricsData;
 
         if (dateRange) {
-            const [startDate, endDate] = dateRange;
-            filtered = filtered.filter(metric => {
-                const date = new Date(metric.date_recorded);
-                return date >= startDate && date <= endDate;
-            });
+            let [startDate, endDate] = dateRange;
+            if (startDate && endDate) {
+                // **Ajustar fechas a medianoche para asegurar comparación precisa**
+                startDate = new Date(startDate);
+                startDate.setUTCHours(0, 0, 0, 0);
+
+                endDate = new Date(endDate);
+                endDate.setUTCHours(23, 59, 59, 999);
+
+                console.log("Filtrando documentos entre:", startDate, "y", endDate);
+
+                filtered = filtered.filter(metric => {
+                    const metricDate = new Date(metric.date_recorded);
+                    metricDate.setUTCHours(0, 0, 0, 0);
+                    return metricDate >= startDate && metricDate <= endDate;
+                });
+            }
         }
 
         if (documentType) {
@@ -125,6 +144,47 @@ const DashboardPage = () => {
 
         setFilteredMetrics(filtered);
     }, [dateRange, documentType, metricsData]);
+
+    useEffect(() => {
+        const calculateDistributions = async () => {
+            const errorCounts = {};
+            const statusCounts = {};
+
+            for (const metric of filteredMetrics) {
+                const documentData = await documentService.getDocumentById(metric.documentType, metric.documentID);
+                if (!documentData) continue;
+
+                const translatedName = documentNamesMap[metric.documentType] || metric.documentType;
+
+                if (!errorCounts[translatedName]) {
+                    errorCounts[translatedName] = { missing: 0, validation: 0 };
+                }
+
+                if (!statusCounts[translatedName]) {
+                    statusCounts[translatedName] = { accepted: 0, denied: 0 };
+                }
+
+                errorCounts[translatedName].missing += documentData.missing_fields?.length || 0;
+                errorCounts[translatedName].validation += documentData.validation_errors?.length || 0;
+
+                if (documentData.status === "Aceptado") {
+                    statusCounts[translatedName].accepted += 1;
+                } else if (documentData.status === "Denegado") {
+                    statusCounts[translatedName].denied += 1;
+                }
+            }
+
+            setErrorDistribution(errorCounts);
+            setStatusDistribution(statusCounts);
+        };
+
+        if (filteredMetrics.length > 0) {
+            calculateDistributions();
+        } else {
+            setErrorDistribution({});
+            setStatusDistribution({});
+        }
+    }, [filteredMetrics]);
 
     const resetFilters = () => {
         setDateRange(null);

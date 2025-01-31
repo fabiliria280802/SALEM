@@ -1,0 +1,21 @@
+@import 'primereact/resources/themes/saga-blue/theme.css';
+@import 'primereact/resources/primereact.min.css';
+@import 'primeicons/primeicons.css';
+
+/* No se importa fonts.css aquí, ya que se cargará directamente desde index.html */
+
+body,
+html {
+	font-family: 'New Rubrik', sans-serif; /* Cambia Roboto por New Rubrik */
+}
+
+body {
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+		monospace, Arial, Helvetica, sans-serif;
+}

@@ -1,0 +1,182 @@
+/* Estilo base para escritorio */
+.container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 70px;
+	background-color: #f5f6fa; /* Fondo claro para resaltar el formulario */
+	min-height: 100vh; /* Asegura que el fondo cubra toda la altura de la pantalla */
+	width: 100%; /* Cubre todo el ancho */
+}
+
+.formContainer {
+	max-width: 800px;
+	width: 100%;
+	padding: 30px;
+	background-color: white;
+	border-radius: 12px;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave para elegancia */
+}
+
+.formTitle {
+	font-size: 36px;
+	font-weight: bold;
+	color: #333;
+	text-align: left;
+	margin-bottom: 25px;
+}
+
+.formGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+}
+
+.formGroup {
+	display: flex;
+	flex-direction: column; /* Coloca etiquetas encima de los inputs */
+}
+
+.formGroup label {
+	font-size: 16px;
+	font-weight: 500;
+	color: #555;
+	margin-bottom: 8px;
+}
+
+.formGroup input,
+.formGroup select {
+	padding: 12px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	width: 100%;
+	font-size: 16px;
+	background-color: #fafafa; /* Fondo suave */
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+	border-color: #007bff; /* Color de borde en foco */
+	outline: none;
+	box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.buttonContainer {
+	display: flex;
+	justify-content: flex-end;
+	gap: 15px;
+	margin-top: 30px;
+}
+
+.saveButton,
+.cancelButton,
+.resetButton {
+	padding: 12px 20px;
+	font-size: 16px;
+	border-radius: 8px;
+	cursor: pointer;
+	transition:
+		background-color 0.3s ease,
+		box-shadow 0.2s ease;
+}
+
+.saveButton {
+	background-color: black;
+	color: white;
+	border: 1px solid black;
+}
+
+.saveButton:hover {
+	background-color: #333;
+}
+
+.cancelButton {
+	background-color: white;
+	color: black;
+	border: 1px solid black;
+}
+
+.cancelButton:hover {
+	background-color: #f0f0f0;
+}
+
+.resetButton {
+	background-color: #f07a0b;
+	color: white;
+	border: 1px solid #f07a0b;
+}
+
+.resetButton:hover {
+	background-color: #d66909;
+}
+
+/* Vista Tablet */
+@media (max-width: 1024px) {
+	.formGrid {
+		grid-template-columns: 1fr; /* Una columna en tablet */
+		gap: 25px;
+	}
+
+	.formTitle {
+		font-size: 30px;
+		text-align: center; /* Centra el título en tablet */
+	}
+
+	.buttonContainer {
+		justify-content: center; /* Centra los botones */
+	}
+}
+
+/* Vista Móvil */
+@media (max-width: 768px) {
+	.container {
+		padding: 20px;
+	}
+
+	.formContainer {
+		padding: 20px;
+	}
+
+	.formTitle {
+		font-size: 26px;
+		margin-bottom: 20px;
+	}
+
+	.formGrid {
+		grid-template-columns: 1fr; /* Una columna en móvil */
+		gap: 20px;
+	}
+
+	.formGroup label {
+		font-size: 14px;
+	}
+
+	.formGroup input,
+	.formGroup select {
+		font-size: 14px;
+		padding: 10px;
+	}
+
+	.buttonContainer {
+		flex-direction: column; /* Botones apilados */
+		gap: 15px; /* Más espacio entre botones */
+	}
+}
+
+/* Estilos específicos para UserAccountPage */
+.userAccountButtonContainer {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px; /* Espacio entre botones */
+	justify-content: flex-start; /* Alinea los botones a la izquierda */
+	margin-top: 30px;
+}
+
+/* Vista móvil */
+@media (max-width: 768px) {
+	.userAccountButtonContainer {
+		flex-direction: column; /* Botones apilados en móvil */
+		gap: 15px;
+		justify-content: center; /* Centra los botones en móvil */
+	}
+}

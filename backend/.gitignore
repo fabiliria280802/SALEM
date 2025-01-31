@@ -1,0 +1,18 @@
+# dependencies
+/node_modules
+
+# misc
+.env
+
+# data
+data/docs/
+data/practice/
+data/docs-internal-test/
+# IA related files
+controllers/IA/learning/
+controllers/IA/data/
+controllers/IA/pytorch-env/
+controllers/IA/requirements.txt
+assets/
+
+controllers/IA/__pycache__/

@@ -1,0 +1,147 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh; /* Asegura que el fondo ocupe toda la altura de la página */
+	padding: 20px;
+	background-color: #f9f9f9; /* Fondo gris claro */
+}
+
+@media (min-width: 768px) {
+	.container {
+		flex-direction: row;
+		justify-content: space-between;
+	}
+}
+
+.leftColumn {
+	flex: 1;
+	margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+	.leftColumn {
+		margin-right: 20px;
+	}
+}
+
+.rightColumn {
+	flex: 2;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #ffffff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+	font-size: 1.8rem;
+	font-weight: bold;
+	color: #000000;
+	margin-bottom: 10px;
+}
+
+.card {
+	background-color: #ffffff;
+	padding: 15px 20px;
+	border-radius: 8px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	margin-bottom: 20px;
+}
+
+.cardHeader {
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-bottom: 10px;
+	color: #000000;
+}
+
+.cardContent {
+	font-size: 1rem;
+	color: #333;
+}
+
+.cardError {
+	background-color: #ffe6e6; /* Fondo rojo claro */
+	padding: 15px 20px;
+	border-left: 5px solid #ff5630; /* Borde rojo */
+	border-radius: 8px;
+	margin-bottom: 20px;
+	font-size: 1rem;
+	color: #333;
+	line-height: 1.6;
+}
+
+.cardSuccess {
+	background-color: #e6ffe6; /* Fondo verde claro */
+	padding: 15px 20px;
+	border-left: 5px solid #36b37e; /* Borde verde */
+	border-radius: 8px;
+	margin-bottom: 20px;
+	font-size: 1rem;
+	color: #333;
+	line-height: 1.6;
+}
+
+.status {
+	font-size: 1.2rem;
+	font-weight: bold;
+	margin-top: 20px;
+	text-align: center;
+}
+
+.approved {
+	color: #36b37e;
+}
+
+.denied {
+	color: #ff5630;
+}
+
+.buttonGroup {
+	display: flex;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 20px;
+	flex-wrap: wrap; /* Permite que los botones se ajusten al ancho disponible */
+}
+
+@media (max-width: 768px) {
+	.buttonGroup {
+		flex-direction: column; /* Apila los botones de arriba hacia abajo */
+		gap: 15px; /* Espaciado entre botones */
+	}
+}
+
+.button {
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	background-color: #000000;
+	color: white;
+	cursor: pointer;
+	transition: background-color 0.3s;
+}
+
+.button:hover {
+	background-color: #333333;
+}
+
+.buttonReverse {
+	padding: 10px 20px;
+	color: #000000;
+	background-color: white;
+	border: 1px solid #000000;
+	border-radius: 5px;
+	cursor: pointer;
+	transition:
+		background-color 0.3s,
+		color 0.3s;
+}
+
+.buttonReverse:hover {
+	background-color: #f0f0f0;
+	color: #333333;
+}

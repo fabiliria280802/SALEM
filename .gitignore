@@ -1,0 +1,5 @@
+sonar-project.properties
+.vscode/settings.json
+backend/controllers/contractController.js
+backend/controllers/IA/requirements.txt
+backend/controllers/invoiceController.js

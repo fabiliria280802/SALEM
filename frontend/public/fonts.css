@@ -1,0 +1,97 @@
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Regular.otf') format('opentype');
+	font-weight: 400; /* Regular */
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Regular Italic.otf') format('opentype');
+	font-weight: 400; /* Regular Italic */
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Bold.otf') format('opentype');
+	font-weight: 700; /* Bold */
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Bold Italic.otf') format('opentype');
+	font-weight: 700; /* Bold Italic */
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Light.otf') format('opentype');
+	font-weight: 300; /* Light */
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Light Italic.otf') format('opentype');
+	font-weight: 300; /* Light Italic */
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Semi Bold.otf') format('opentype');
+	font-weight: 600; /* Semi Bold */
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Semi Bold Italic.otf') format('opentype');
+	font-weight: 600; /* Semi Bold Italic */
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Medium.otf') format('opentype');
+	font-weight: 500; /* Medium */
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Medium Italic.otf') format('opentype');
+	font-weight: 500; /* Medium Italic */
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Extra Bold.otf') format('opentype');
+	font-weight: 800; /* Extra Bold */
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Extra Bold Italic.otf') format('opentype');
+	font-weight: 800; /* Extra Bold Italic */
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Extra Light.otf') format('opentype');
+	font-weight: 200; /* Extra Light */
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'New Rubrik';
+	src: url('/fonts/New Rubrik Extra Light Italic.otf') format('opentype');
+	font-weight: 200; /* Extra Light Italic */
+	font-style: italic;
+}

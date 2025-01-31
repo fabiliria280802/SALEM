@@ -1,0 +1,105 @@
+.card {
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	padding: 1.5rem;
+	margin-bottom: 1rem;
+	transition: transform 0.2s ease;
+}
+
+.card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cardHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 1px solid #eee;
+}
+
+.cardHeader h3 {
+	margin: 0;
+	font-size: 1.2rem;
+	color: #2c3e50;
+}
+
+.status {
+	padding: 0.25rem 0.75rem;
+	border-radius: 999px;
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.activo {
+	background-color: #e8f5e9;
+	color: #2e7d32;
+}
+
+.inactivo {
+	background-color: #ffebee;
+	color: #c62828;
+}
+
+.cardBody {
+	margin-bottom: 1rem;
+}
+
+.field {
+	display: flex;
+	margin-bottom: 0.5rem;
+	font-size: 0.95rem;
+}
+
+.label {
+	font-weight: 600;
+	min-width: 100px;
+	color: #666;
+}
+
+.value {
+	color: #2c3e50;
+}
+
+.cardActions {
+	display: flex;
+	gap: 0.5rem;
+	justify-content: flex-end;
+	padding-top: 1rem;
+	border-top: 1px solid #eee;
+}
+
+.editButton,
+.deleteButton,
+.resumeButton {
+	padding: 0.5rem 1rem;
+	border: none;
+	border-radius: 6px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: opacity 0.2s ease;
+}
+
+.editButton {
+	background-color: #3498db;
+	color: white;
+}
+
+.deleteButton {
+	background-color: #e74c3c;
+	color: white;
+}
+
+.resumeButton {
+	background-color: #138804;
+	color: white;
+}
+
+.editButton:hover,
+.deleteButton:hover,
+.resumeButton:hover {
+	opacity: 0.9;
+}
